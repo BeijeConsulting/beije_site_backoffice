@@ -29,6 +29,7 @@ function handleError(error) {
         resolve();
       } catch {
         console.log("Unauthorized");
+        reject(error);
       }
     }
     reject(error);

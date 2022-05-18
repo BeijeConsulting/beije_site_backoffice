@@ -1,5 +1,5 @@
 import useFileReader from "./hooks/useFileReader";
-import Select from "./components/Select";
+import ImageInput from "./components/ImageInput";
 
 const containerStyles = {
   display: "grid",
@@ -11,7 +11,7 @@ const containerStyles = {
 function App() {
   return (
     <div style={containerStyles}>
-      <Select />
+      <ImageInput label="Seleziona un'immagine cliccando il pulsante qui sotto o trascinandone una nell'area tratteggiata" />
     </div>
   );
 }
