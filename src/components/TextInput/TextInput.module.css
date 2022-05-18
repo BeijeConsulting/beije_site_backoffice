@@ -1,0 +1,40 @@
+.inputWrapper {
+  --p-inline: 8px;
+  position: relative;
+  max-width: 550px;
+  flex: auto;
+}
+
+.inputWrapper input {
+  display: block;
+  width: 100%;
+  padding-inline: var(--p-inline);
+  padding-block: 0.5rem;
+  border: 1px solid var(--grey);
+  border-radius: var(--border-radius);
+}
+
+.inputWrapper input:focus {
+  outline: 1px solid var(--red);
+  outline-offset: -1px;
+}
+
+.inputWrapper span {
+  position: absolute;
+  top: 50%;
+  left: var(--p-inline);
+  transform: translateY(-50%);
+  color: var(--grey);
+  pointer-events: none;
+  transition: top var(--transition-speed) linear,
+    font-size var(--transition-speed) ease-in-out,
+    color var(--transition-speed) ease-in-out;
+}
+
+.inputWrapper input:is(:focus, :not(:placeholder-shown)) ~ span {
+  top: 0;
+  font-size: 0.7em;
+  line-height: 2px;
+  background-color: var(--white);
+  color: var(--black);
+}
