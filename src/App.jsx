@@ -1,17 +1,22 @@
-import useFileReader from "./hooks/useFileReader";
-import ImageInput from "./components/ImageInput";
+import Checkbox from "./components/Checkbox";
+import Select from "./components/Select";
 
 const containerStyles = {
-  display: "grid",
-  placeItems: "center",
-  height: "100vh",
   padding: "2rem",
 };
 
 function App() {
   return (
     <div style={containerStyles}>
-      <ImageInput label="Seleziona un'immagine cliccando il pulsante qui sotto o trascinandone una nell'area tratteggiata" />
+      <Checkbox checked />
+      <Select
+        value={{ label: "pippo", value: "pippo" }}
+        options={[
+          { label: "pippo", value: "pippo" },
+          { label: "paperino", value: "paperino" },
+          { label: "topolino", value: "topolino" },
+        ]}
+      />
     </div>
   );
 }
