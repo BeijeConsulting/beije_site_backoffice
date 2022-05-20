@@ -1,4 +1,4 @@
-import MarkdownEditor from "./components/MarkdownEditor";
+import UserDetail from "./components/UserDetail";
 
 const containerStyles = {
   padding: "2rem",
@@ -7,7 +7,7 @@ const containerStyles = {
 function App() {
   return (
     <div style={containerStyles}>
-      <MarkdownEditor value="Ciao sono una **stringa**" />
+      <UserDetail />
     </div>
   );
 }

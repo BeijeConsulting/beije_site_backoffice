@@ -2,7 +2,6 @@
   --p-inline: 8px;
   position: relative;
   max-width: 550px;
-  flex: auto;
 }
 
 .inputWrapper input {

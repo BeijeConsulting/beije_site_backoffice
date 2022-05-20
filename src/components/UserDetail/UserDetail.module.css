@@ -1,0 +1,32 @@
+.userDetailCard {
+  width: 50%;
+  border-radius: calc(3 * var(--border-radius));
+  border: 1px solid var(--grey);
+  padding: 3rem;
+  box-shadow: 4px 5px 10px var(--alpha-black);
+}
+
+.userDetailInputs {
+  display: flex;
+  gap: 5rem;
+  padding-bottom: 2rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.container:first-child {
+  width: 100%;
+}
+
+.btn {
+  background: var(--red);
+  border: none;
+  color: white;
+  padding: 0.5rem 4rem;
+  margin-top: 4rem;
+  font-size: 1.3rem;
+}
