@@ -41,11 +41,11 @@ export default function useService(url, options = {}) {
       } else {
         dispatch({ type: "REQUEST" });
         try {
-          const { data } = await axios[method](url, {
-            body: method !== "get" ? params : undefined,
-            params: method === "get" ? params : undefined,
-            signal,
-          });
+          const { data } = await axios[method](
+            url,
+            method !== "get" ? { ...params } : { params },
+            { signal }
+          );
           dispatch({ type: "SUCCESS", payload: data });
           if (options.cache) setCache((prev) => ({ ...prev, [url]: data }));
         } catch (error) {

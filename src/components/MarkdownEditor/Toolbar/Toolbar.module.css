@@ -1,0 +1,22 @@
+.toolbar {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: end;
+  align-items: center;
+  height: var(--editor-toolbar-height);
+  padding-inline: 1rem;
+  background-color: #eee;
+  border: 1px solid var(--grey);
+  border-bottom: none;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.toolbar button {
+  filter: brightness(1.1);
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 20px;
+  cursor: pointer;
+}

@@ -1,0 +1,14 @@
+.editor {
+  resize: none;
+  flex: auto;
+  border: 1px solid var(--grey);
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  padding-inline: 8px;
+  padding-block: 0.5rem;
+}
+
+.editor:focus {
+  outline: none;
+  border-color: var(--red);
+}

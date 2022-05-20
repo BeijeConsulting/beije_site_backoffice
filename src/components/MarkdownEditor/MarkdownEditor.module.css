@@ -1,0 +1,13 @@
+.wrapper {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  height: 60vh;
+  width: 50%;
+}

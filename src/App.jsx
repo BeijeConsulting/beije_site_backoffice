@@ -1,5 +1,4 @@
-import Checkbox from "./components/Checkbox";
-import Select from "./components/Select";
+import MarkdownEditor from "./components/MarkdownEditor";
 
 const containerStyles = {
   padding: "2rem",
@@ -8,15 +7,7 @@ const containerStyles = {
 function App() {
   return (
     <div style={containerStyles}>
-      <Checkbox checked />
-      <Select
-        value={{ label: "pippo", value: "pippo" }}
-        options={[
-          { label: "pippo", value: "pippo" },
-          { label: "paperino", value: "paperino" },
-          { label: "topolino", value: "topolino" },
-        ]}
-      />
+      <MarkdownEditor value="Ciao sono una **stringa**" />
     </div>
   );
 }
