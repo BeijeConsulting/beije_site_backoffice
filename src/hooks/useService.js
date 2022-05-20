@@ -41,11 +41,9 @@ export default function useService(url, options = {}) {
       } else {
         dispatch({ type: "REQUEST" });
         try {
-          const { data } = await axios[method](
-            url,
+          const { data } = await axios[method](url,
             method !== "get" ? { ...params } : { params },
-            { signal }
-          );
+            { signal });
           dispatch({ type: "SUCCESS", payload: data });
           if (options.cache) setCache((prev) => ({ ...prev, [url]: data }));
         } catch (error) {
