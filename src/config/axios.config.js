@@ -3,7 +3,7 @@ import axios from "axios";
 let AUTH_TOKEN = window.localStorage.getItem("tk");
 
 const instance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
+  baseURL: "https://mgmt-test-api.beije.it/",
   headers: {
     Authorization: AUTH_TOKEN ? "Bearer: " + AUTH_TOKEN : "",
   },

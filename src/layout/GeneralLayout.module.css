@@ -1,0 +1,40 @@
+.header {
+  background-color: var(--black);
+  width: 100%;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1440px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+}
+
+.header img {
+  height: 30px;
+  width: auto;
+}
+
+.header .topNav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header .topNav a {
+  text-decoration: none;
+  color: var(--white);
+  padding: 10px;
+  transition: all 1s;
+}
+
+.header .topNav a:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
