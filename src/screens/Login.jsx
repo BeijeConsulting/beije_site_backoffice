@@ -18,7 +18,6 @@ const Login = () => {
   const [result, call] = useService("/signin", { method: "post" });
 
   useEffect(() => {
-    console.log("result", result);
     if (result.error) {
       toast.error('Errore. Email o password errati!')
       if (result.error.status === 500) {

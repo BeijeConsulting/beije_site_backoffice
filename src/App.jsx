@@ -5,6 +5,7 @@ import Community from "./screens/Community";
 import Home from "./screens/Home";
 import Job from "./screens/Job";
 import Login from "./screens/Login";
+import EditCommunity from "./screens/EditCommunity";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route index element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
         <Route path="community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+        <Route path='community/:id' element={<ProtectedRoute><EditCommunity /></ProtectedRoute>} />
       </Route>
     </Routes>
   )

@@ -23,14 +23,17 @@ function handleError(error) {
     if (response?.status === 401 && !config.url.includes("signin")) {
       try {
         const { data } = await instance.post("/updateAuthToken");
-        window.localStorage.setItem("tk", data.token);
-        instance.defaults.headers.common["Authorization"] = data.token;
-        await axios.request(config);
-        resolve();
+        window.localStorage.setItem("tk", data.refreshToken);
+        instance.defaults.headers.common["Authorization"] = data.refreshToken;
+        const retry = await axios.request(config);
+        resolve(retry);
       } catch {
         console.log("Unauthorized");
         reject(error);
       }
+    }
+    if (response?.status === 403) {
+      window.localStorage.removeItem('tk');
     }
     reject(error);
   });
