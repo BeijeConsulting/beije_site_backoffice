@@ -1,0 +1,61 @@
+.headers,
+.row {
+  display: grid;
+  gap: 1rem;
+  padding-inline: 1rem;
+  padding-block: 0.7rem;
+  width: max-content;
+  justify-content: center;
+  align-items: center;
+}
+
+.headers {
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--grey-700);
+}
+
+.headers > *,
+.row > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row:not(:last-child) {
+  border-bottom: 1px solid var(--grey-700);
+}
+
+.headers p {
+  font-weight: 600;
+}
+
+.row:nth-child(even) {
+  background-color: var(--grey-300);
+}
+
+.row-container {
+  border-radius: 4px;
+  border: 1px solid var(--grey-700);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.action-btn {
+  padding-inline: 8px;
+  padding-block: 6px;
+  background-color: transparent;
+  border: 2px solid var(--red-500);
+  color: var(--red-500);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background-color: var(--red-500);
+  color: var(--white);
+}
+
+.row:hover > *:not(button) {
+  color: var(--red-500);
+}

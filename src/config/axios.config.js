@@ -20,20 +20,23 @@ function handleSuccess(response) {
 function handleError(error) {
   const { config, response } = error;
   return new Promise(async (resolve, reject) => {
-    if (response?.status === 401 && !config.url.includes("signin")) {
+    if (
+      response?.status === 401 &&
+      !config.url.includes("signin") &&
+      !config.url.includes("updateAuthToken")
+    ) {
       try {
         const { data } = await instance.post("/updateAuthToken");
-        window.localStorage.setItem("tk", data.refreshToken);
-        instance.defaults.headers.common["Authorization"] = data.refreshToken;
-        const retry = await axios.request(config);
-        resolve(retry);
+        window.localStorage.setItem("tk", data.token);
+        instance.defaults.headers.common["Authorization"] = data.token;
+        await axios.request(config);
+        resolve();
       } catch {
+        window.localStorage.clear();
+        window.location.href = "/login";
         console.log("Unauthorized");
         reject(error);
       }
-    }
-    if (response?.status === 403) {
-      window.localStorage.removeItem('tk');
     }
     reject(error);
   });

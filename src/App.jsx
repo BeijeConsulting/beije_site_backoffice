@@ -1,43 +1,50 @@
-import { Route, Routes } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import GeneralLayout from "./layout/GeneralLayout";
-import Community from "./screens/Community";
-import Home from "./screens/Home";
-import Job from "./screens/Job";
-import Login from "./screens/Login";
-import EditCommunity from "./screens/EditCommunity";
+import {
+  BrowserRouter,
+  useLocation,
+  Navigate,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 
-export default function App() {
+import Login from "./pages/Login";
+import Layout from "./pages/Layout";
+import Home from "./pages/Home";
+import Jobs from "./pages/Jobs";
+import Job from "./pages/Job";
+import Users from "./pages/Users";
+import User from "./pages/User";
+
+function RequireAuth() {
+  const location = useLocation();
+  const token = window.localStorage.getItem("tk");
+
+  return token ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" state={{ from: location }} />
+  );
+}
+
+function App() {
   return (
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route element={<GeneralLayout />}>
-        <Route index element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
-        <Route path="community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-        <Route path='community/:id' element={<ProtectedRoute><EditCommunity /></ProtectedRoute>} />
-      </Route>
-    </Routes>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/:id" element={<Job />} />
+            <Route path="/jobs/new" element={<Job isNew />} />
+            <Route path="/community" element={<Users />} />
+            <Route path="/community/:id" element={<User />} />
+            <Route path="/community/new" element={<User isNew />} />
+          </Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-function ProtectedRoute({ children }) {
-  let token = localStorage.getItem('tk');
-
-  if (!token) {
-    return <Navigate to={`/login`} />
-  }
-
-  return children;
-}
-
-// function UserAuth ({children}){
-  // let auth = localStorage.getItem(obj);
-  // let token = ...
-
-  // if (!auth.user || !token) {
-  //   return <Navigate to={`/login`} />
-  // }
-
-  // return children;
-// }
+export default App;

@@ -5,16 +5,12 @@
 }
 
 :root {
-  --red: #b12009;
-  --grey: #818f9a;
-  --black: #323e48;
+  --grey-700: hsl(207, 18%, 25%);
+  --grey-500: hsl(207, 18%, 50%);
+  --grey-300: hsl(207, 18%, 75%);
+  --red-700: hsl(8, 90%, 25%);
+  --red-500: hsl(8, 90%, 35%);
   --white: #fff;
-  --alpha-black: rgba(0, 0, 0, 0.4);
-
-  --transition-speed: 250ms;
-  --border-radius: 0.3em;
-
-  --editor-toolbar-height: 3.5rem;
 }
 
 /* Box sizing rules */
@@ -25,7 +21,7 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 10px;
 }
 
 /* Remove default margin */
@@ -45,9 +41,9 @@ dd {
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
 ul[role="list"],
 ol[role="list"] {
-  padding: 0;
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* Set core root defaults */
@@ -60,8 +56,9 @@ body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.1;
-  font-family: Inter, sans-serif;
-  color: var(--black);
+  font-family: Inter, Helvetica, sans-serif;
+  font-size: clamp(14px, calc(1px + 1.8vmin), 40px);
+  color: var(--grey-700);
 }
 
 /* A elements that don't have a class get default styles */
@@ -85,6 +82,33 @@ select {
   color: inherit;
 }
 
+.hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+.primary-button {
+  padding-inline: 10px;
+  padding-block: 8px;
+  border-radius: 4px;
+  background-color: var(--red-500);
+  color: var(--white);
+  border: 1px solid var(--red-500);
+  cursor: pointer;
+}
+
+a.primary-button {
+  text-decoration: none;
+}
+
+.primary-button:hover {
+  background-color: var(--red-700);
+  border-color: var(--red-700);
+}
+
 /* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
@@ -98,5 +122,17 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  html {
+    font-size: 7px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  html {
+    font-size: 5px;
   }
 }

@@ -1,0 +1,145 @@
+.container {
+  position: relative;
+}
+
+.placeholder {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  color: var(--grey-500);
+  transform: translateY(-50%);
+  transition: top 250ms ease-in-out, font-size 250ms linear,
+    color 250ms ease-in-out;
+}
+
+.calendar {
+  position: absolute;
+  width: 200%;
+  top: 0;
+  left: 0;
+  border: 1px solid var(--grey-300);
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 450px;
+  opacity: 0;
+  pointer-events: none;
+  transition: top 250ms ease-in-out, opacity 250ms ease-in-out;
+  background-color: var(--white);
+}
+
+.picker {
+  position: relative;
+  width: 240px;
+  padding-inline: max(10px, 1rem);
+  padding-block: max(8px, 0.8rem);
+  border: 1px solid var(--grey-500);
+  border-radius: 4px;
+  background-color: var(--white);
+  min-height: 32px;
+  text-align: left;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.container:focus-within .calendar {
+  top: calc(100% + 4px);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.container:focus-within .picker {
+  outline: 2px solid var(--red-500);
+  outline-offset: -2px;
+}
+
+.container:focus-within .placeholder,
+.placeholder.up {
+  top: 0;
+  line-height: 5px;
+  font-size: 75%;
+  background-color: var(--white);
+  color: var(--grey-700);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 2rem;
+  padding-block-start: 1rem;
+  padding-block-start: 2rem;
+}
+
+.header-btns {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-btns button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.header-btns button::before {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--grey-500);
+  border-top: none;
+  border-left: none;
+}
+
+.header-btns button:hover::before {
+  border-width: 2px;
+}
+
+.header-btns button:first-child::before {
+  transform: rotate(135deg);
+}
+
+.header-btns button:last-child::before {
+  transform: rotate(-45deg);
+}
+
+.weekdays {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  place-items: center;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-inline: 1rem;
+}
+
+.days-container {
+  padding-inline: 1rem;
+  padding-block-end: 2rem;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  place-items: center;
+}
+
+.days-container > * {
+  background-color: transparent;
+  border: none;
+  width: 45px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.days-container > *:hover {
+  background-color: var(--grey-300);
+}
+
+.days-container .selected {
+  background-color: var(--red-500);
+  color: var(--white);
+}

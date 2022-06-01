@@ -1,0 +1,35 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 4rem;
+  padding-block: 2rem;
+  background-color: var(--grey-500);
+}
+
+.logo {
+  max-width: 100px;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.menu a {
+  text-decoration: none;
+  color: var(--white);
+  font-size: 1.8rem;
+}
+
+.menu a:hover:not(.active) {
+  text-decoration: underline;
+}
+
+.menu .active {
+  text-decoration: underline;
+  text-decoration-color: var(--red-500);
+  text-decoration-style: double;
+}

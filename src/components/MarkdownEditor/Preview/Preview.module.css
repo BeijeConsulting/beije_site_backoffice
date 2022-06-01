@@ -1,8 +1,0 @@
-.preview {
-  flex: auto;
-  width: 50%;
-  padding-inline: 8px;
-  padding-top: calc(var(--editor-toolbar-height) + 0.5rem);
-  font: inherit;
-  color: inherit;
-}

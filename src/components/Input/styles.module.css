@@ -1,0 +1,48 @@
+.label {
+  --padding-inline: max(10px, 1rem);
+  --padding-block: max(8px, 0.8rem);
+  display: inline-block;
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  padding-inline: var(--padding-inline);
+  padding-block: var(--padding-block);
+  border: 1px solid var(--grey-500);
+  border-radius: 4px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+
+.input:focus {
+  outline-color: var(--red-500);
+}
+
+.placeholder {
+  position: absolute;
+  top: 50%;
+  left: var(--padding-inline);
+  color: var(--grey-500);
+  transform: translateY(-50%);
+  transition: top 250ms ease-in-out, font-size 250ms linear,
+    color 250ms ease-in-out;
+}
+
+.input:is(:focus, :not(:placeholder-shown)) ~ .placeholder {
+  top: 0;
+  line-height: 5px;
+  font-size: 75%;
+  background-color: var(--white);
+  color: var(--grey-700);
+}
+
+.show-password {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  font-size: 60%;
+  background: transparent;
+  border: none;
+  transform: translateY(-50%);
+}
