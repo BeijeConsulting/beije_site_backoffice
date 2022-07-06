@@ -20,9 +20,17 @@ const Navbar = () => {
         <li>
           <NavLink
             className={({ isActive }) => (isActive ? styles["active"] : "")}
-            to="/community"
+            to="/blog"
           >
-            Community
+            Blog
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles["active"] : "")}
+            to="/case-study"
+          >
+            Case study
           </NavLink>
         </li>
         <li>
@@ -36,17 +44,9 @@ const Navbar = () => {
         <li>
           <NavLink
             className={({ isActive }) => (isActive ? styles["active"] : "")}
-            to="/blog"
+            to="/community"
           >
-            Blog
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles["active"] : "")}
-            to="/case-study"
-          >
-            Case study
+            Community
           </NavLink>
         </li>
       </ul>
