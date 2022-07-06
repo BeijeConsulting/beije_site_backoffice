@@ -121,9 +121,10 @@ const Job = ({ isNew }) => {
               <Checkbox
                 checked={state.disable_date}
                 onChange={(e) => {
+                  console.log(state);
                   setState((p) => ({ ...p, disable_date: e.target.checked }));
                 }}
-                label="Attivo: "
+                label="Visibile: "
               />
             </div>
             <MDEditor
