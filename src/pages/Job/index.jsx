@@ -72,8 +72,8 @@ const Job = ({ isNew }) => {
             {isNew
               ? "Nuova offerta di lavoro"
               : getJobResult.response
-              ? `Modifica ${getJobResult.response.title_it}`
-              : ""}
+                ? `Modifica ${getJobResult.response.title_it}`
+                : ""}
           </h2>
           <button type="submit" className="primary-button">
             Salva
@@ -103,6 +103,7 @@ const Job = ({ isNew }) => {
                 value={state.mode}
                 label="Sede"
                 options={[
+                  {value: "-", label: "vuoto"},
                   { value: "remote", label: "Da remoto" },
                   { value: "milan", label: "Milano" },
                   { value: "hybrid", label: "Ibrido" },
@@ -115,6 +116,14 @@ const Job = ({ isNew }) => {
                   setState((p) => ({ ...p, academy: e.target.checked }));
                 }}
                 label="Academy: "
+              />
+
+              <Checkbox
+                checked={state.disable_date}
+                onChange={(e) => {
+                  setState((p) => ({ ...p, disable_date: e.target.checked }));
+                }}
+                label="Attivo: "
               />
             </div>
             <MDEditor
