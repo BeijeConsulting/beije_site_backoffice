@@ -31,6 +31,7 @@ const Jobs = () => {
               "Titolo",
               "Tipologia",
               "Data di creazione",
+              "Sede",
               "Visibile",
               "Academy",
             ]}
@@ -41,12 +42,14 @@ const Jobs = () => {
                 academy,
                 type,
                 date_creation,
+                mode,
                 disable_date,
               }) => ({
                 id,
                 title_it,
                 type,
                 date_creation,
+                mode,
                 visible: !disable_date,
                 academy,
               })
