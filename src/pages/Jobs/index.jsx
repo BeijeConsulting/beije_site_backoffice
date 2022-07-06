@@ -5,8 +5,18 @@ import Table from "../../components/Table";
 
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
+import Select from "../../components/Select";
+import { useState } from "react";
+
+const initState = {
+  academy: "all",
+  active: "all",
+}
 
 const Jobs = () => {
+
+  const [state, setState] = useState(initState);
+
   const [{ response, error, loading }, getJobs] =
     useService("/job_applications");
 
@@ -21,7 +31,30 @@ const Jobs = () => {
       <div className={styles["container"]}>
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
+
             <h1>Offerte di lavoro</h1>
+
+            <Select
+              value={state.active} //aggiungere stato per il valore
+              label="Attivi"
+              options={[
+                { value: "all", label: "Tutti" },
+                { value: "yes", label: "Attivi" },
+                { value: "no", label: "Non attivi" },
+              ]}
+              onChange={(active) => setState((p) => ({ ...p, active }))}
+            />
+
+            <Select
+              value={state.academy} //aggiungere stato per il valore
+              label="Academy"
+              options={[
+                { value: "all", label: "Tutti" },
+                { value: "yes", label: "Academy" },
+                { value: "no", label: "Non Academy" },
+              ]}
+              onChange={(academy) => setState((p) => ({ ...p, academy }))}
+            />
             <Link to="new" className="primary-button">
               + Nuova offerta di lavoro
             </Link>

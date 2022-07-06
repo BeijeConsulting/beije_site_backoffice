@@ -123,7 +123,7 @@ const Job = ({ isNew }) => {
                 onChange={(e) => {
                   setState((p) => ({ ...p, disable_date: e.target.checked }));
                 }}
-                label="Attivo: "
+                label="Visibile: "
               />
             </div>
             <MDEditor
