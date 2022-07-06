@@ -16,54 +16,54 @@ const Jobs = () => {
     getJobs();
   }, []);
 
-  return ( response ?
-    <div className={styles["container"]}>
-      {console.log(loading)}
-      <div className={styles["wrapper"]}>
-        <div className={styles["header"]}>
-          <h1>Offerte di lavoro</h1>
-          <Link to="new" className="primary-button">
-            + Nuova offerta di lavoro
-          </Link>
+  return (
+    response ?
+      <div className={styles["container"]}>
+        <div className={styles["wrapper"]}>
+          <div className={styles["header"]}>
+            <h1>Offerte di lavoro</h1>
+            <Link to="new" className="primary-button">
+              + Nuova offerta di lavoro
+            </Link>
+          </div>
+          {response && (
+            <Table
+              headers={[
+                "ID",
+                "Titolo",
+                "Tipologia",
+                "Data di creazione",
+                "Sede",
+                "Visibile",
+                "Academy",
+              ]}
+              records={response.map(
+                ({
+                  id,
+                  title_it,
+                  academy,
+                  type,
+                  date_creation,
+                  mode,
+                  disable_date,
+                }) => ({
+                  id,
+                  title_it,
+                  type,
+                  date_creation,
+                  mode: mode.charAt(0).toUpperCase() + mode.slice(1),
+                  visible: !disable_date,
+                  academy,
+                })
+              )}
+              actionLabel="Modifica"
+              onAction={(record) => navigate(record.id.toString())}
+            />
+          )}
         </div>
-        {response && (
-          <Table
-            headers={[
-              "ID",
-              "Titolo",
-              "Tipologia",
-              "Data di creazione",
-              "Sede",
-              "Visibile",
-              "Academy",
-            ]}
-            records={response.map(
-              ({
-                id,
-                title_it,
-                academy,
-                type,
-                date_creation,
-                mode,
-                disable_date,
-              }) => ({
-                id,
-                title_it,
-                type,
-                date_creation,
-                mode,
-                visible: !disable_date,
-                academy,
-              })
-            )}
-            actionLabel="Modifica"
-            onAction={(record) => navigate(record.id.toString())}
-          />
-        )}
       </div>
-    </div>
-    : 
-    <Loader />
+      :
+      <Loader />
   );
 };
 
