@@ -103,6 +103,7 @@ const Job = ({ isNew }) => {
                 value={state.mode}
                 label="Sede"
                 options={[
+                  {value: "-", label: "vuoto"},
                   { value: "remote", label: "Da remoto" },
                   { value: "milan", label: "Milano" },
                   { value: "hybrid", label: "Ibrido" },
