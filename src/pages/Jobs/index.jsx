@@ -4,6 +4,7 @@ import useService from "../../hooks/useService";
 import Table from "../../components/Table";
 
 import styles from "./styles.module.css";
+import Loader from "../../components/Loader";
 
 const Jobs = () => {
   const [{ response, error, loading }, getJobs] =
@@ -15,8 +16,9 @@ const Jobs = () => {
     getJobs();
   }, []);
 
-  return (
+  return ( response ?
     <div className={styles["container"]}>
+      {console.log(loading)}
       <div className={styles["wrapper"]}>
         <div className={styles["header"]}>
           <h1>Offerte di lavoro</h1>
@@ -60,6 +62,8 @@ const Jobs = () => {
         )}
       </div>
     </div>
+    : 
+    <Loader />
   );
 };
 
