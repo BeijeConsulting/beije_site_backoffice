@@ -1,13 +1,12 @@
 import styles from "./styles.module.css";
 
-const Table = ({ headers, records, onAction, actionLabel }) => {
+const Table = ({ headers, records, onAction, actionLabel, formatDimension }) => {
   return (
     <div className={styles["container"]}>
       <div
         style={{
-          gridTemplateColumns: `repeat(${headers.length}, 150px) ${
-            actionLabel ? "120px" : ""
-          }`,
+          gridTemplateColumns: `repeat(${headers.length}, ${formatDimension}px) ${actionLabel ? "120px" : ""
+            }`,
         }}
         className={styles["headers"]}
       >
@@ -21,9 +20,8 @@ const Table = ({ headers, records, onAction, actionLabel }) => {
           <div
             key={JSON.stringify(r)}
             style={{
-              gridTemplateColumns: `repeat(${headers.length}, 150px) ${
-                actionLabel ? "120px" : ""
-              }`,
+              gridTemplateColumns: `repeat(${headers.length}, ${formatDimension}px) ${actionLabel ? "120px" : ""
+                }`,
             }}
             className={styles["row"]}
           >

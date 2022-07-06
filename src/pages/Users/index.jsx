@@ -34,10 +34,11 @@ const Users = () => {
               "Cognome",
               "Data di assunzione",
               "Immagini",
+              "Visibile"
             ]}
             records={response.team.map(
               (
-                { firstName, lastName, hireDate, picImage, picImageThumbnail },
+                { firstName, lastName, hireDate, picImage, picOnSite },
                 i
               ) => ({
                 id: i + 1,
@@ -46,11 +47,13 @@ const Users = () => {
                 hireDate: hireDate
                   ? format(hireDate, "dd MMMM yyyy", { locale })
                   : "",
-                hasImage: !!picImage && !!picImageThumbnail,
+                hasImage: !!picImage,
+                picOnSite
               })
             )}
             actionLabel="Modifica"
             onAction={(record) => navigate(record.id.toString())}
+            formatDimension={250}
           />
         )}
       </div>
