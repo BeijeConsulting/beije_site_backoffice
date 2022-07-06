@@ -5,7 +5,7 @@ const Table = ({ headers, records, onAction, actionLabel }) => {
     <div className={styles["container"]}>
       <div
         style={{
-          gridTemplateColumns: `repeat(${headers.length}, 200px) ${
+          gridTemplateColumns: `repeat(${headers.length}, 150px) ${
             actionLabel ? "120px" : ""
           }`,
         }}
@@ -21,7 +21,7 @@ const Table = ({ headers, records, onAction, actionLabel }) => {
           <div
             key={JSON.stringify(r)}
             style={{
-              gridTemplateColumns: `repeat(${headers.length}, 200px) ${
+              gridTemplateColumns: `repeat(${headers.length}, 150px) ${
                 actionLabel ? "120px" : ""
               }`,
             }}
