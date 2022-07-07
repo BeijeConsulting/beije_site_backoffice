@@ -1,7 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useId } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
+
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
@@ -16,6 +19,18 @@ const initState = {
 const Jobs = () => {
 
   const [state, setState] = useState(initState);
+  const location = useLocation();
+
+  console.log('toast', location);
+
+  const toastId = useId();
+
+  const notify = (type, message) => {
+    toast[type](message, {
+      position: toast.POSITION.TOP_CENTER,
+      toastId
+    })
+  }
 
   const [{ response, error, loading }, getJobs] =
     useService("/job_applications");
@@ -24,6 +39,10 @@ const Jobs = () => {
 
   useEffect(() => {
     getJobs();
+  }, []);
+
+  useEffect(() => {
+    location?.state?.toast === true ? notify("success", "success") : notify("error", "qualcosa è andato storto")
   }, []);
 
   return (
@@ -95,6 +114,7 @@ const Jobs = () => {
             />
           )}
         </div>
+        <ToastContainer />
       </div>
       :
       <Loader />

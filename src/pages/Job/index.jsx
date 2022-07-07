@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+
 
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
@@ -11,7 +10,6 @@ import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
 
 import styles from "./styles.module.css";
-import { useId } from "react";
 
 const emptyState = {
   title_it: "",
@@ -28,16 +26,14 @@ const emptyState = {
 
 
 const Job = ({ isNew }) => {
+
   const { id } = useParams();
-  const toastId = useId();
+
   const [state, setState] = useState(emptyState);
 
-  const notify = (type, message) => {
-    toast[type](message, { 
-      position: toast.POSITION.TOP_CENTER,
-      toastId
-    })
-  }
+  const navigate = useNavigate();
+
+  
 
   const [getJobResult, getJob] = useService(`/job_application/${id}`);
 
@@ -52,7 +48,7 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     if (!isNew) getJob()
   }, []);
-  
+
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
@@ -63,16 +59,24 @@ const Job = ({ isNew }) => {
   return (
     <div className={styles["container"]}>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
 
-          if (isNew) saveJob(state).then(res => {
-            if (res) notify('success', "Salvato!");
-          }).catch(err => notify("error", `Qualcosa è andato storto: ${err?.message}`));
-
-          else updateJob(state).then(res => {
-            if (res) notify("success", "Aggiornato!");
-          }).catch(err => notify("error", `Qualcosa è andato storto: ${err?.message}`));
+          if (isNew) {
+            await saveJob();
+            navigate('/', {
+              state: {
+                toast: saveJobResult.error === null ? true : false
+              }
+            })
+          } else {
+            await updateJob(state);
+            navigate('/', {
+              state: {
+                toast: updateJob.response ? true : false
+              }
+            })
+          }
         }}
       >
         <div className={styles["title-row"]}>
@@ -136,13 +140,16 @@ const Job = ({ isNew }) => {
                 label="Academy: "
               />
 
-              <Checkbox
-                checked={state.disable_date}
-                onChange={(e) => {
-                  setState((p) => ({ ...p, disable_date: e.target.checked }));
-                }}
-                label="Visibile: "
-              />
+              {
+                !isNew &&
+                <Checkbox
+                  checked={state.disable_date}
+                  onChange={(e) => {
+                    setState((p) => ({ ...p, disable_date: e.target.checked }));
+                  }}
+                  label="Visibile: "
+                />
+              }
             </div>
             <MDEditor
               value={state.description_it}
@@ -153,7 +160,6 @@ const Job = ({ isNew }) => {
           </>
         )}
       </form>
-      <ToastContainer />
     </div>
   );
 };

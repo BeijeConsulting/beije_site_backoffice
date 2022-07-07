@@ -17,24 +17,25 @@ const Blogs = () => {
 
   const [state, setState] = useState(initState);
 
-  const [{ response, error, loading }, getJobs] =
-    useService("/job_applications");
+  const [{ response, error, loading }, getBlogs] =
+    useService("/blogs");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    getJobs();
+    getBlogs();
   }, []);
 
   return (
     response ?
       <div className={styles["container"]}>
+        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
 
-            <h1>Offerte di lavoro</h1>
+            <h1>Posts</h1>
 
-            <Select
+            {/* <Select
               value={state.active} //aggiungere stato per il valore
               label="Attivi"
               options={[
@@ -54,7 +55,7 @@ const Blogs = () => {
                 { value: "no", label: "Non Academy" },
               ]}
               onChange={(academy) => setState((p) => ({ ...p, academy }))}
-            />
+            /> */}
             <Link to="new" className="primary-button">
               + Nuovo Post
             </Link>
@@ -64,34 +65,25 @@ const Blogs = () => {
               headers={[
                 "ID",
                 "Titolo",
-                "Tipologia",
+                "Autore",
                 "Data di creazione",
-                "Sede",
-                "Visibile",
-                "Academy",
               ]}
               records={response.map(
                 ({
                   id,
-                  title_it,
-                  academy,
-                  type,
-                  date_creation,
-                  mode,
-                  disable_date,
+                  title,
+                  author,
+                  createDateTime,
                 }) => ({
                   id,
-                  title_it,
-                  type,
-                  date_creation,
-                  mode: mode.charAt(0).toUpperCase() + mode.slice(1),
-                  visible: !disable_date,
-                  academy,
+                  title,
+                  author,
+                  createDateTime: `${createDateTime.dayOfMonth}/${createDateTime.monthValue}/${createDateTime.year}`,
                 })
               )}
               actionLabel="Modifica"
               onAction={(record) => navigate(record.id.toString())}
-              formatDimension={150}
+              formatDimension={250}
             />
           )}
         </div>
