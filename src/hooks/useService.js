@@ -53,7 +53,7 @@ export default function useService(url, options = {}) {
         }
       }
     },
-    [cache]
+    [cache, url]
   );
 
   return [state, execute];
