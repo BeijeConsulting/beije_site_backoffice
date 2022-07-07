@@ -24,12 +24,13 @@ const Blogs = () => {
 
   useEffect(() => {
     getBlogs();
+    if (location.state !== null) {
+      location.state?.toast === true ? notify("success", toastId) : notify("error", toastId)
+    }
   }, []);
 
   useEffect(() => {
-    if(location.state !== null){
-      location.state?.toast === true ? notify("success", toastId) : notify("error", toastId)
-    }
+
   }, []);
 
   return (
@@ -44,30 +45,30 @@ const Blogs = () => {
               + Nuovo Post
             </Link>
           </div>
-            <Table
-              headers={[
-                "ID",
-                "Titolo",
-                "Autore",
-                // "Data di creazione",
-              ]}
-              records={response.map(
-                ({
-                  id,
-                  title,
-                  author,
-                  // createDateTime,
-                }) => ({
-                  id,
-                  title,
-                  author,
-                  // createDateTime: `${createDateTime.dayOfMonth} ${createDateTime.month.toLowerCase()} ${createDateTime.year}`,
-                })
-              )}
-              actionLabel="Modifica"
-              onAction={(record) => navigate(record.id.toString())}
-              formatDimension={250}
-            />
+          <Table
+            headers={[
+              "ID",
+              "Titolo",
+              "Autore",
+              // "Data di creazione",
+            ]}
+            records={response.map(
+              ({
+                id,
+                title,
+                author,
+                // createDateTime,
+              }) => ({
+                id,
+                title,
+                author,
+                // createDateTime: `${createDateTime.dayOfMonth} ${createDateTime.month.toLowerCase()} ${createDateTime.year}`,
+              })
+            )}
+            actionLabel="Modifica"
+            onAction={(record) => navigate(record.id.toString())}
+            formatDimension={250}
+          />
         </div>
         <ToastContainer />
       </div>
