@@ -18,3 +18,9 @@
   align-items: center;
   width: 100%;
 }
+
+.header .selectContainer{
+  display: flex;
+  width: 300px;
+  gap: 20px;
+}
