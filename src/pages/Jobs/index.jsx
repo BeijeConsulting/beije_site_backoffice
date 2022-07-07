@@ -22,13 +22,13 @@ const Jobs = () => {
   const toastId = useId();
 
   const [{ response }, getJobs] =
-    useService("/job_applications");
+    useService(`/admin/job_applications/${state.academy}`);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     getJobs();
-  }, []);
+  }, [state.academy]);
 
   useEffect(() => {
     if (location.state !== null) {
