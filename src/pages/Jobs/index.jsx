@@ -1,12 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useId, useState } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
+import { notify, ToastContainer } from "../../utils/toast";
+
 
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
 import Select from "../../components/Select";
-import { useState } from "react";
 
 const initState = {
   academy: "all",
@@ -17,13 +18,22 @@ const Jobs = () => {
 
   const [state, setState] = useState(initState);
 
-  const [{ response, error, loading }, getJobs] =
+  const location = useLocation();
+  const toastId = useId();
+
+  const [{ response }, getJobs] =
     useService("/job_applications");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     getJobs();
+  }, []);
+
+  useEffect(() => {
+    if (location.state !== null) {
+      location.state?.toast === true ? notify("success", toastId) : notify("error", toastId)
+    }
   }, []);
 
   return (
@@ -35,7 +45,7 @@ const Jobs = () => {
             <h1>Offerte di lavoro</h1>
 
             <Select
-              value={state.active} //aggiungere stato per il valore
+              value={state.active}
               label="Attivi"
               options={[
                 { value: "all", label: "Tutti" },
@@ -46,7 +56,7 @@ const Jobs = () => {
             />
 
             <Select
-              value={state.academy} //aggiungere stato per il valore
+              value={state.academy}
               label="Academy"
               options={[
                 { value: "all", label: "Tutti" },
@@ -59,7 +69,6 @@ const Jobs = () => {
               + Nuova offerta di lavoro
             </Link>
           </div>
-          {response && (
             <Table
               headers={[
                 "ID",
@@ -93,8 +102,8 @@ const Jobs = () => {
               onAction={(record) => navigate(record.id.toString())}
               formatDimension={150}
             />
-          )}
         </div>
+        <ToastContainer />
       </div>
       :
       <Loader />
