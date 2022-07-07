@@ -13,6 +13,7 @@ const notify = (type, toastId) => {
     }
     toast[type](message, {
         position: toast.POSITION.TOP_CENTER,
+        pauseOnHover: false,
         toastId
     })
 }
