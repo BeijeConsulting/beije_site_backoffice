@@ -11,21 +11,29 @@ import Select from "../../components/Select";
 
 const initState = {
   active: "all",
-  hasImage: "all"
+  picOnSite: "all",
 }
 
 const Users = () => {
-  const [{ response, error, loading }, getUsers] = useService("/team/users");
+
   const [state, setState] = useState(initState);
   const navigate = useNavigate();
 
+  const [{ response, error, loading }, getUsers] = useService(`/team/admin/users/LastName/${state.active}/${state.picOnSite}`);
+
+
+
   useEffect(() => {
+    console.log('state', state)
     getUsers();
-  }, []);
+  }, [state.active, state.picOnSite])
 
   return (
     response ?
+
+
       <div className={styles["container"]}>
+        {console.log('res', response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
             <h1>Community</h1>
@@ -40,14 +48,14 @@ const Users = () => {
                 ]}
                 onChange={(active) => setState((p) => ({ ...p, active }))} />
               <Select
-                value={state.hasImage}
+                value={state.picOnSite}
                 label={"Immagine onsite"}
                 options={[
                   { value: "all", label: "Tutti" },
                   { value: "yes", label: "Si" },
                   { value: "no", label: "No" },
                 ]}
-                onChange={(hasImage) => setState((p) => ({ ...p, hasImage }))} />
+                onChange={(picOnSite) => setState((p) => ({ ...p, picOnSite }))} />
             </div>
             <Link to="new" className="primary-button">
               + Nuovo utente
