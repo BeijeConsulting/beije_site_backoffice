@@ -73,7 +73,7 @@ const Job = ({ isNew }) => {
             await updateJob(state);
             navigate('/jobs', {
               state: {
-                toast: updateJob.response ? true : false
+                toast: updateJobResult.response ? true : false
               }
             })
           }
