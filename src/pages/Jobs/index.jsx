@@ -1,15 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useId } from "react";
+import { useEffect, useId, useState } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
+import { notify, ToastContainer } from "../../utils/toast";
 
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
 import Select from "../../components/Select";
-import { useState } from "react";
 
 const initState = {
   academy: "all",
@@ -19,20 +17,11 @@ const initState = {
 const Jobs = () => {
 
   const [state, setState] = useState(initState);
+
   const location = useLocation();
-
-  console.log('toast', location);
-
   const toastId = useId();
 
-  const notify = (type, message) => {
-    toast[type](message, {
-      position: toast.POSITION.TOP_CENTER,
-      toastId
-    })
-  }
-
-  const [{ response, error, loading }, getJobs] =
+  const [{ response }, getJobs] =
     useService("/job_applications");
 
   const navigate = useNavigate();
@@ -42,8 +31,8 @@ const Jobs = () => {
   }, []);
 
   useEffect(() => {
-    if(location.state !== null){
-      location.state?.toast === true ? notify("success", "success") : notify("error", "qualcosa è andato storto")
+    if (location.state !== null) {
+      location.state?.toast === true ? notify("success", toastId) : notify("error", toastId)
     }
   }, []);
 
@@ -56,7 +45,7 @@ const Jobs = () => {
             <h1>Offerte di lavoro</h1>
 
             <Select
-              value={state.active} //aggiungere stato per il valore
+              value={state.active}
               label="Attivi"
               options={[
                 { value: "all", label: "Tutti" },
@@ -67,7 +56,7 @@ const Jobs = () => {
             />
 
             <Select
-              value={state.academy} //aggiungere stato per il valore
+              value={state.academy}
               label="Academy"
               options={[
                 { value: "all", label: "Tutti" },
@@ -80,7 +69,6 @@ const Jobs = () => {
               + Nuova offerta di lavoro
             </Link>
           </div>
-          {response && (
             <Table
               headers={[
                 "ID",
@@ -114,7 +102,6 @@ const Jobs = () => {
               onAction={(record) => navigate(record.id.toString())}
               formatDimension={150}
             />
-          )}
         </div>
         <ToastContainer />
       </div>

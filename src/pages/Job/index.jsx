@@ -33,7 +33,7 @@ const Job = ({ isNew }) => {
 
   const navigate = useNavigate();
 
-  
+
 
   const [getJobResult, getJob] = useService(`/job_application/${id}`);
 
@@ -56,28 +56,30 @@ const Job = ({ isNew }) => {
     }
   }, [getJobResult?.response]);
 
+  const handleSubmitJob = async (e) => {
+    e.preventDefault();
+
+    if (isNew) {
+      await saveJob(state);
+      navigate('/jobs', {
+        state: {
+          toast: saveJobResult.error === null ? true : false
+        }
+      })
+    } else {
+      await updateJob(state);
+      navigate('/jobs', {
+        state: {
+          toast: updateJobResult.response ? true : false
+        }
+      })
+    }
+  }
+
   return (
     <div className={styles["container"]}>
       <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-
-          if (isNew) {
-            await saveJob();
-            navigate('/jobs', {
-              state: {
-                toast: saveJobResult.error === null ? true : false
-              }
-            })
-          } else {
-            await updateJob(state);
-            navigate('/jobs', {
-              state: {
-                toast: updateJobResult.response ? true : false
-              }
-            })
-          }
-        }}
+        onSubmit={handleSubmitJob}
       >
         <div className={styles["title-row"]}>
           <Link
