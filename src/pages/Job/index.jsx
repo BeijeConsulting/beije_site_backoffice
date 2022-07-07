@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
@@ -27,6 +29,10 @@ const Job = ({ isNew }) => {
   const { id } = useParams();
   const [state, setState] = useState(emptyState);
 
+  const notify = (type, message) => {
+    toast[type](message, { position: toast.POSITION.TOP_CENTER })
+  }
+
   const [getJobResult, getJob] = useService(`/job_application/${id}`);
 
   const [saveJobResult, saveJob] = useService("/job_application", {
@@ -38,9 +44,9 @@ const Job = ({ isNew }) => {
   });
 
   useEffect(() => {
-    if (!isNew) getJob();
+    if (!isNew) getJob()
   }, []);
-
+  
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
@@ -53,8 +59,14 @@ const Job = ({ isNew }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (isNew) saveJob(state);
-          else updateJob(state);
+
+          if (isNew) saveJob(state).then(res => {
+            if (res) notify('success', "Salvato!");
+          }).catch(err => notify("error", `Qualcosa è andato storto: ${err?.message}`));
+
+          else updateJob(state).then(res => {
+            if (res) notify("success", "Aggiornato!");
+          }).catch(err => notify("error", `Qualcosa è andato storto: ${err?.message}`));
         }}
       >
         <div className={styles["title-row"]}>
@@ -103,7 +115,7 @@ const Job = ({ isNew }) => {
                 value={state.mode}
                 label="Sede"
                 options={[
-                  {value: "-", label: "vuoto"},
+                  { value: "-", label: "vuoto" },
                   { value: "remote", label: "Da remoto" },
                   { value: "milan", label: "Milano" },
                   { value: "hybrid", label: "Ibrido" },
@@ -135,6 +147,7 @@ const Job = ({ isNew }) => {
           </>
         )}
       </form>
+      <ToastContainer />
     </div>
   );
 };
