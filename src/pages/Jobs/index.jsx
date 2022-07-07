@@ -42,7 +42,9 @@ const Jobs = () => {
   }, []);
 
   useEffect(() => {
-    location?.state?.toast === true ? notify("success", "success") : notify("error", "qualcosa è andato storto")
+    if(location.state !== null){
+      location.state?.toast === true ? notify("success", "success") : notify("error", "qualcosa è andato storto")
+    }
   }, []);
 
   return (
