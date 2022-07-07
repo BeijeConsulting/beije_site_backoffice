@@ -54,13 +54,6 @@ const Job = ({ isNew }) => {
     if (response) {
       setState(response);
     }
-    if(error){
-      navigate('/jobs', {
-        state: {
-          toast: saveJobResult.error === null ? true : false
-        }
-      })
-    }
   }, [getJobResult?.response]);
 
   return (
