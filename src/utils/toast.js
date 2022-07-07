@@ -1,7 +1,7 @@
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-const notify = (type, id) => {
+const notify = (type, toastId) => {
     let message = ""
     switch (type.toLowerCase()) {
         case "success":
@@ -13,7 +13,7 @@ const notify = (type, id) => {
     }
     toast[type](message, {
         position: toast.POSITION.TOP_CENTER,
-        id
+        toastId
     })
 }
 
