@@ -3,7 +3,7 @@ import axios from "axios";
 let AUTH_TOKEN = window.localStorage.getItem("tk");
 
 const instance = axios.create({
-  // baseURL: "https://mgmt-test-api.beije.it/",
+  /* baseURL: "https://mgmt-test-api.beije.it/", */
   baseURL: "http://mgmtbeije-dev.eba-cnhbbz4f.eu-south-1.elasticbeanstalk.com/",
   headers: {
     Authorization: AUTH_TOKEN ? "Bearer " + AUTH_TOKEN : "",
