@@ -65,17 +65,18 @@ const Users = () => {
               ]}
               records={response.team.map(
                 (
-                  { firstName, lastName, hireDate, picImage, picOnSite },
-                  i
+                  { firstName, lastName, hireDate, picImage, picOnSite, id, disableDate }
+
                 ) => ({
-                  id: i + 1,
+                  id: id,
                   firstName,
                   lastName,
                   hireDate: hireDate
                     ? format(hireDate, "dd MMMM yyyy", { locale })
                     : "",
-                  hasImage: !!picImage,
-                  picOnSite
+                  picOnSite,
+                  active: disableDate ? false : true
+
                 })
               )}
               actionLabel="Modifica"

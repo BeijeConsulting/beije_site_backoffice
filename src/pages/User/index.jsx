@@ -21,7 +21,6 @@ const emptyState = {
   picImage: "",
   picImageThumbnail: "",
   picOnSite: false,
-  active: true
 };
 
 const User = ({ isNew }) => {
@@ -35,12 +34,18 @@ const User = ({ isNew }) => {
     method: "post",
   });
 
+  const [updateUserResult, updateUser] = useService(`/team/user/${id}`, {
+    method: "put",
+
+  })
+
   useEffect(() => {
     if (!isNew) getUser();
   }, []);
 
   useEffect(() => {
     const { response } = getUserResult ?? { response: null };
+    console.log(response)
     if (response) {
       setState(response);
     }
@@ -50,7 +55,7 @@ const User = ({ isNew }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          saveUser({ ...state, hireDate: new Date(state.hireDate).getTime() });
+          isNew ? saveUser({ ...state, hireDate: new Date(state.hireDate).getTime() }) : updateUser({ ...state })
         }}
       >
         <div className={styles["title-row"]}>
@@ -155,12 +160,6 @@ const User = ({ isNew }) => {
                   ]}
                   onChange={(role) => setState((p) => ({ ...p, role }))}
                 />
-                <Checkbox
-                  label="Visibile"
-                  onChange={(e) => {
-                    setState((p) => ({ ...p, active: e.target.checked }));
-                  }}
-                  checked={state.active} />
                 {isNew ? "" : <button className="primary-button"
                   onClick={(e) => {
                     e.preventDefault();
