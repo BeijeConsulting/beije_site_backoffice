@@ -9,6 +9,8 @@ import Select from "../../components/Select";
 import DatePicker from "../../components/DatePicker";
 import SingleImageInput from "../../components/SingleImageInput";
 import styles from "./styles.module.css";
+import { notify, ToastContainer } from "../../components/Toast";
+import { useId } from "react";
 
 
 const emptyState = {
@@ -24,6 +26,7 @@ const emptyState = {
 
 const User = ({ isNew }) => {
   const { id } = useParams();
+  const toastId = useId();
   const [state, setState] = useState(emptyState);
 
   const [getUserResult, getUser] = useService(`/team/user/${id}`);
@@ -42,7 +45,6 @@ const User = ({ isNew }) => {
       setState(response);
     }
   }, [getUserResult.response]);
-
   return (
     <div className={styles["container"]}>
       <form
@@ -160,12 +162,16 @@ const User = ({ isNew }) => {
                   }}
                   checked={state.active} />
                 {isNew ? "" : <button className="primary-button"
-                  Onclick={console.log('disabilita utente')}>Disabilita</button>}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    notify('success', toastId)
+                  }}>Disabilita</button>}
               </div>
             </div>
           </div>
         )}
       </form>
+      <ToastContainer />
     </div>
   );
 };
