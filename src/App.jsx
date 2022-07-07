@@ -14,6 +14,8 @@ import Jobs from "./pages/Jobs";
 import Job from "./pages/Job";
 import Users from "./pages/Users";
 import User from "./pages/User";
+import Blogs from "./pages/Blogs";
+import Blog from "./pages/Blog";
 
 function RequireAuth() {
   const location = useLocation();
@@ -37,6 +39,9 @@ function App() {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<Job />} />
             <Route path="/jobs/new" element={<Job isNew />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blogs/:id" element={<Blog />} />
+            <Route path="/blogs/new" element={<Blog isNew />} />
             <Route path="/community" element={<Users />} />
             <Route path="/community/:id" element={<User />} />
             <Route path="/community/new" element={<User isNew />} />
