@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import useService from "../../hooks/useService";
 
 import Table from "../../components/Table";
-
+import Loader from "../../components/Loader";
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
 
@@ -24,66 +24,69 @@ const Users = () => {
   }, []);
 
   return (
-    <div className={styles["container"]}>
-      <div className={styles["wrapper"]}>
-        <div className={styles["header"]}>
-          <h1>Community</h1>
-          <div className={styles["selectContainer"]}>
-            <Select
-              value={state.active}
-              label={"Utenti visibili"}
-              options={[
-                { value: "all", label: "Tutti" },
-                { value: "yes", label: "visibili" },
-                { value: "no", label: "Non visibili" },
-              ]}
-              onChange={(active) => setState((p) => ({ ...p, active }))} />
-            <Select
-              value={state.hasImage}
-              label={"Immagine onsite"}
-              options={[
-                { value: "all", label: "Tutti" },
-                { value: "yes", label: "Si" },
-                { value: "no", label: "No" },
-              ]}
-              onChange={(hasImage) => setState((p) => ({ ...p, hasImage }))} />
+    response ?
+      <div className={styles["container"]}>
+        <div className={styles["wrapper"]}>
+          <div className={styles["header"]}>
+            <h1>Community</h1>
+            <div className={styles["selectContainer"]}>
+              <Select
+                value={state.active}
+                label={"Utenti visibili"}
+                options={[
+                  { value: "all", label: "Tutti" },
+                  { value: "yes", label: "visibili" },
+                  { value: "no", label: "Non visibili" },
+                ]}
+                onChange={(active) => setState((p) => ({ ...p, active }))} />
+              <Select
+                value={state.hasImage}
+                label={"Immagine onsite"}
+                options={[
+                  { value: "all", label: "Tutti" },
+                  { value: "yes", label: "Si" },
+                  { value: "no", label: "No" },
+                ]}
+                onChange={(hasImage) => setState((p) => ({ ...p, hasImage }))} />
+            </div>
+            <Link to="new" className="primary-button">
+              + Nuovo utente
+            </Link>
           </div>
-          <Link to="new" className="primary-button">
-            + Nuovo utente
-          </Link>
+          {response && (
+            <Table
+              headers={[
+                "ID",
+                "Nome",
+                "Cognome",
+                "Data di assunzione",
+                "Immagini",
+                "Visibile"
+              ]}
+              records={response.team.map(
+                (
+                  { firstName, lastName, hireDate, picImage, picOnSite },
+                  i
+                ) => ({
+                  id: i + 1,
+                  firstName,
+                  lastName,
+                  hireDate: hireDate
+                    ? format(hireDate, "dd MMMM yyyy", { locale })
+                    : "",
+                  hasImage: !!picImage,
+                  picOnSite
+                })
+              )}
+              actionLabel="Modifica"
+              onAction={(record) => navigate(record.id.toString())}
+              formatDimension={250}
+            />
+          )}
         </div>
-        {response && (
-          <Table
-            headers={[
-              "ID",
-              "Nome",
-              "Cognome",
-              "Data di assunzione",
-              "Immagini",
-              "Visibile"
-            ]}
-            records={response.team.map(
-              (
-                { firstName, lastName, hireDate, picImage, picOnSite },
-                i
-              ) => ({
-                id: i + 1,
-                firstName,
-                lastName,
-                hireDate: hireDate
-                  ? format(hireDate, "dd MMMM yyyy", { locale })
-                  : "",
-                hasImage: !!picImage,
-                picOnSite
-              })
-            )}
-            actionLabel="Modifica"
-            onAction={(record) => navigate(record.id.toString())}
-            formatDimension={250}
-          />
-        )}
       </div>
-    </div>
+      :
+      <Loader />
   );
 };
 

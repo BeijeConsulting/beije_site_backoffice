@@ -8,8 +8,10 @@ import Checkbox from "../../components/Checkbox";
 import Select from "../../components/Select";
 import DatePicker from "../../components/DatePicker";
 import SingleImageInput from "../../components/SingleImageInput";
-
 import styles from "./styles.module.css";
+import { useId } from "react";
+import { notify, ToastContainer } from "../../utils/toast";
+
 
 const emptyState = {
   firstName: "",
@@ -19,10 +21,12 @@ const emptyState = {
   picImage: "",
   picImageThumbnail: "",
   picOnSite: false,
+  active: true
 };
 
 const User = ({ isNew }) => {
   const { id } = useParams();
+  const toastId = useId();
   const [state, setState] = useState(emptyState);
 
   const [getUserResult, getUser] = useService(`/team/user/${id}`);
@@ -41,7 +45,6 @@ const User = ({ isNew }) => {
       setState(response);
     }
   }, [getUserResult.response]);
-
   return (
     <div className={styles["container"]}>
       <form
@@ -65,8 +68,8 @@ const User = ({ isNew }) => {
             {isNew
               ? "Nuovo utente"
               : getUserResult.response
-              ? `Modifica ${getUserResult.response.firstName} ${getUserResult.response.lastName}`
-              : ""}
+                ? `Modifica ${getUserResult.response.firstName} ${getUserResult.response.lastName}`
+                : ""}
           </h2>
           <button type="submit" className="primary-button">
             Salva
@@ -152,11 +155,23 @@ const User = ({ isNew }) => {
                   ]}
                   onChange={(role) => setState((p) => ({ ...p, role }))}
                 />
+                <Checkbox
+                  label="Visibile"
+                  onChange={(e) => {
+                    setState((p) => ({ ...p, active: e.target.checked }));
+                  }}
+                  checked={state.active} />
+                {isNew ? "" : <button className="primary-button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    notify('success', toastId)
+                  }}>Disabilita</button>}
               </div>
             </div>
           </div>
         )}
       </form>
+      <ToastContainer />
     </div>
   );
 };
