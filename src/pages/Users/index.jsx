@@ -18,7 +18,6 @@ const Users = () => {
 
   const [state, setState] = useState(initState);
   const navigate = useNavigate();
-  console.log('state', state)
   const url =
     `/team/admin/users/LastName/${state.active}/${state.picOnSite}`
 
@@ -31,7 +30,6 @@ const Users = () => {
     response ?
 
       <div className={styles["container"]}>
-        {console.log('res', response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
             <h1>Community</h1>

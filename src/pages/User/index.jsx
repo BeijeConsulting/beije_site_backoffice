@@ -45,7 +45,6 @@ const User = ({ isNew }) => {
 
   useEffect(() => {
     const { response } = getUserResult ?? { response: null };
-    console.log(response)
     if (response) {
       setState(response);
     }
