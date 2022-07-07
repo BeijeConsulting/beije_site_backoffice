@@ -11,6 +11,7 @@ import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
 
 import styles from "./styles.module.css";
+import { useId } from "react";
 
 const emptyState = {
   title_it: "",
@@ -25,12 +26,17 @@ const emptyState = {
   permalink: "",
 };
 
+
 const Job = ({ isNew }) => {
   const { id } = useParams();
+  const toastId = useId();
   const [state, setState] = useState(emptyState);
 
   const notify = (type, message) => {
-    toast[type](message, { position: toast.POSITION.TOP_CENTER })
+    toast[type](message, { 
+      position: toast.POSITION.TOP_CENTER,
+      toastId
+    })
   }
 
   const [getJobResult, getJob] = useService(`/job_application/${id}`);
