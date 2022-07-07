@@ -3,11 +3,11 @@ import { format } from "date-fns";
 import locale from "date-fns/locale/it";
 import { useEffect, useState } from "react";
 import useService from "../../hooks/useService";
-
 import Table from "../../components/Table";
 import Loader from "../../components/Loader";
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
+import useStorage from "../../hooks/useStorage";
 
 const initState = {
   active: "all",
@@ -18,19 +18,17 @@ const Users = () => {
 
   const [state, setState] = useState(initState);
   const navigate = useNavigate();
+  console.log('state', state)
+  const url =
+    `/team/admin/users/LastName/${state.active}/${state.picOnSite}`
 
-  const [{ response, error, loading }, getUsers] = useService(`/team/admin/users/LastName/${state.active}/${state.picOnSite}`);
-
-
-
+  const [{ response, error, loading }, getUsers] = useService(url);
   useEffect(() => {
-    console.log('state', state)
     getUsers();
   }, [state.active, state.picOnSite])
 
   return (
     response ?
-
 
       <div className={styles["container"]}>
         {console.log('res', response)}
