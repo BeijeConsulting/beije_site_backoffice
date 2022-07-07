@@ -54,6 +54,13 @@ const Job = ({ isNew }) => {
     if (response) {
       setState(response);
     }
+    if(error){
+      navigate('/jobs', {
+        state: {
+          toast: saveJobResult.error === null ? true : false
+        }
+      })
+    }
   }, [getJobResult?.response]);
 
   return (
@@ -64,14 +71,14 @@ const Job = ({ isNew }) => {
 
           if (isNew) {
             await saveJob();
-            navigate('/', {
+            navigate('/jobs', {
               state: {
                 toast: saveJobResult.error === null ? true : false
               }
             })
           } else {
             await updateJob(state);
-            navigate('/', {
+            navigate('/jobs', {
               state: {
                 toast: updateJob.response ? true : false
               }
