@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
 
@@ -8,6 +8,8 @@ import Checkbox from "../../components/Checkbox";
 import Select from "../../components/Select";
 import DatePicker from "../../components/DatePicker";
 import SingleImageInput from "../../components/SingleImageInput";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
 import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
@@ -24,39 +26,66 @@ const emptyState = {
 };
 
 const User = ({ isNew }) => {
+
   const { id } = useParams();
   const toastId = useId();
+  const navigate = useNavigate();
+
   const [state, setState] = useState(emptyState);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
 
-  const [getUserResult, getUser] = useService(`/team/user/${id}`);
-
-  const [saveUserResult, saveUser] = useService("/team/create-new-team-user", {
-    method: "post",
+  const [getUserResult, getUser] = useService(`team/user/${id}`);
+  const [disableUserResult, disableUser] = useService(`/user/${id}`, {
+    method: "delete"
   });
-
-  const [updateUserResult, updateUser] = useService(`/team/user/${id}`, {
-    method: "put",
-
-  })
-
+  const [saveUserResult, saveUser] = useService(isNew ? "/team/create-new-team-user" : `/team/user/${id}`, {
+    method: isNew ? "post" : "put",
+  }
+  )
   useEffect(() => {
     if (!isNew) getUser();
   }, []);
 
   useEffect(() => {
     const { response } = getUserResult ?? { response: null };
+
     if (response) {
       setState(response);
     }
-  }, [getUserResult.response]);
+    const save = saveUserResult ?? { response: null };
+    if (save.response) {
+      navigate('/community', {
+        state: {
+          toast: true
+        }
+      })
+    }
+  }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
+
+
+  const handleRequestsModal = (type) => () => {
+    switch (type) {
+      case "yes":
+        disableUser();
+        setShouldShowModal(false);
+        break;
+
+      default:
+        setShouldShowModal(false);
+        break;
+    }
+  }
+
   return (
     <div className={styles["container"]}>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          isNew ? saveUser({ ...state, hireDate: new Date(state.hireDate).getTime() }) : updateUser({ ...state })
+          saveUser({ ...state, hireDate: format(isNew ? Date.now() : state.hireDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") })
         }}
       >
+
         <div className={styles["title-row"]}>
           <Link
             to="/community"
@@ -162,14 +191,23 @@ const User = ({ isNew }) => {
                 {isNew ? "" : <button className="primary-button"
                   onClick={(e) => {
                     e.preventDefault();
-                    notify('success', toastId)
+                    setShouldShowModal(true)
                   }}>Disabilita</button>}
               </div>
             </div>
           </div>
         )}
       </form>
-      <ToastContainer />
+      <Modal
+        shouldShow={shouldShowModal}
+        onRequestClose={handleRequestsModal("no")}
+        onRequestYes={handleRequestsModal("yes")}
+      >
+        <Message message={"Sicur* di Procedere?"} />
+      </Modal>
+      {
+        saveUserResult?.error && <ToastContainer />
+      }
     </div>
   );
 };
