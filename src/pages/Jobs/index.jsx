@@ -3,11 +3,11 @@ import { useEffect, useId, useState } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
 import { notify, ToastContainer } from "../../utils/toast";
-
-
+import locale from "date-fns/locale/it";
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
 import Select from "../../components/Select";
+import { format } from "date-fns/esm";
 
 const initState = {
   academy: "all",
@@ -29,7 +29,7 @@ const Jobs = () => {
   useEffect(() => {
     getJobs();
     if (location.state !== null) {
-       notify("success", toastId) 
+      notify("success", toastId)
     }
   }, [state.academy]);
 
@@ -89,6 +89,7 @@ const Jobs = () => {
                 id,
                 title_it,
                 type,
+                // date_creation: format(date_creation, "dd MMMM yyyy", { locale }),
                 date_creation,
                 mode: mode.charAt(0).toUpperCase() + mode.slice(1),
                 visible: !disable_date,
