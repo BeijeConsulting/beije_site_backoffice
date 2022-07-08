@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 
 // router & format
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 
-// hooks
+// hooks & utils
 import useService from "../../hooks/useService";
+import { notify, ToastContainer } from "../../utils/toast";
+
 
 // components
 import Input from "../../components/Input";
@@ -22,7 +24,7 @@ const emptyState = {
   description: "",
   images: [],
   author: "",
-  createDateTime: format(Date.now(), "yyyy-MM-dd"),
+  create_datetime: format(Date.now(), "yyyy-MM-dd"),
   cover_img: "",
   permalink: "",
 };
@@ -31,6 +33,7 @@ const emptyState = {
 const Blog = ({ isNew }) => {
 
   const { id } = useParams();
+  const toastId = useId();
 
   const [state, setState] = useState(emptyState);
 
@@ -39,12 +42,8 @@ const Blog = ({ isNew }) => {
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${id}`);
 
-  const [saveBlogResult, saveBlog] = useService("/blog", {
-    method: "post",
-  });
-
-  const [updateBlogResult, updateBlog] = useService(`/blog/id/${id}`, {
-    method: "put",
+  const [saveBlogResult, saveBlog] = useService(isNew ? "/blog" : `/blog/${id}`, {
+    method: isNew ? "post" : "put",
   });
 
   useEffect(() => {
@@ -54,34 +53,31 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
+      console.log(response);
       setState(response);
     }
-  }, [getBlogResult?.response]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (isNew) {
-      await saveBlog({ ...state, createDateTime: new Date(state.createDateTime).getTime() });
-      navigate('/blogs', {
+    const save = saveBlogResult ?? { response: null };
+    if (save.response) {
+      navigate('/jobs', {
         state: {
-          toast: saveBlogResult.error === null ? true : false
-        }
-      })
-    } else {
-      await updateBlog({ ...state });
-      navigate('/blogs', {
-        state: {
-          toast: updateBlogResult.response ? true : false
+          toast: true
         }
       })
     }
+    if (save.error) notify('error', toastId);
+
+  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error]);
+
+  const handleSubmitPost = (e) => {
+    e.preventDefault();
+    saveBlog({ ...state, create_datetime: format(isNew ? Date.now() : state.create_datetime, "yyyy-MM-dd HH:mm") });
   }
 
   return (
     <div className={styles["container"]}>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitPost}
       >
         <div className={styles["title-row"]}>
           <Link
@@ -148,6 +144,9 @@ const Blog = ({ isNew }) => {
           </>
         )}
       </form>
+      {
+        saveBlogResult?.error && <ToastContainer />
+      }
     </div>
   );
 };
