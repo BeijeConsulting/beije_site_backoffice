@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
+import { notify, ToastContainer } from '../../utils/toast';
 
 
 import Input from "../../components/Input";
@@ -28,6 +29,7 @@ const emptyState = {
 const Job = ({ isNew }) => {
 
   const { id } = useParams();
+  const toastId = useId();
 
   const [state, setState] = useState(emptyState);
 
@@ -35,15 +37,13 @@ const Job = ({ isNew }) => {
 
 
 
-  const [getJobResult, getJob] = useService(`/job_application/${id}`);
+  const [getJobResult, getJob] = useService(`admin/job_application/${id}`);
 
-  const [saveJobResult, saveJob] = useService("/job_application", {
-    method: "post",
+  const [saveJobResult, saveJob] = useService(isNew ? "/admin/job_application" :`/admin/job_application/${id}`, {
+    method: isNew ? "post": "put",
   });
 
-  const [updateJobResult, updateJob] = useService(`/job_application/${id}`, {
-    method: "put",
-  });
+ 
 
   useEffect(() => {
     if (!isNew) getJob()
@@ -52,28 +52,30 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
+      console.log(response)
+
       setState(response);
     }
   }, [getJobResult?.response]);
 
-  const handleSubmitJob = async (e) => {
-    e.preventDefault();
-
-    if (isNew) {
-      await saveJob(state);
+  useEffect(() => {
+    const save = saveJobResult ?? { response: null };
+    if (save.response) {
+      console.log('save', save);
       navigate('/jobs', {
         state: {
-          toast: saveJobResult.error === null ? true : false
-        }
-      })
-    } else {
-      await updateJob(state);
-      navigate('/jobs', {
-        state: {
-          toast: updateJobResult.response ? true : false
+          toast: true
         }
       })
     }
+    if (save.error) notify('error', toastId);
+
+  }, [saveJobResult?.response, saveJobResult?.error]);
+
+  const handleSubmitJob = (e) => {
+    e.preventDefault();
+
+    saveJob(state);
   }
 
   return (
@@ -162,6 +164,9 @@ const Job = ({ isNew }) => {
           </>
         )}
       </form>
+      {
+        saveJobResult?.error && <ToastContainer />
+      }
     </div>
   );
 };

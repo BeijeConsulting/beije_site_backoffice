@@ -22,19 +22,16 @@ const Jobs = () => {
   const toastId = useId();
 
   const [{ response }, getJobs] =
-    useService(`/admin/job_applications/${state.academy}`);
+    useService((state.academy === "all" && state.active === "all") ? "/job_applications" : `/admin/job_applications/${state.academy}`);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     getJobs();
-  }, [state.academy]);
-
-  useEffect(() => {
     if (location.state !== null) {
-      location.state?.toast === true ? notify("success", toastId) : notify("error", toastId)
+       notify("success", toastId) 
     }
-  }, []);
+  }, [state.academy]);
 
   return (
     response ?
@@ -69,39 +66,39 @@ const Jobs = () => {
               + Nuova offerta di lavoro
             </Link>
           </div>
-            <Table
-              headers={[
-                "ID",
-                "Titolo",
-                "Tipologia",
-                "Data di creazione",
-                "Sede",
-                "Visibile",
-                "Academy",
-              ]}
-              records={response.map(
-                ({
-                  id,
-                  title_it,
-                  academy,
-                  type,
-                  date_creation,
-                  mode,
-                  disable_date,
-                }) => ({
-                  id,
-                  title_it,
-                  type,
-                  date_creation,
-                  mode: mode.charAt(0).toUpperCase() + mode.slice(1),
-                  visible: !disable_date,
-                  academy,
-                })
-              )}
-              actionLabel="Modifica"
-              onAction={(record) => navigate(record.id.toString())}
-              formatDimension={150}
-            />
+          <Table
+            headers={[
+              "ID",
+              "Titolo",
+              "Tipologia",
+              "Data di creazione",
+              "Sede",
+              "Visibile",
+              "Academy",
+            ]}
+            records={response.map(
+              ({
+                id,
+                title_it,
+                academy,
+                type,
+                date_creation,
+                mode,
+                disable_date,
+              }) => ({
+                id,
+                title_it,
+                type,
+                date_creation,
+                mode: mode.charAt(0).toUpperCase() + mode.slice(1),
+                visible: !disable_date,
+                academy,
+              })
+            )}
+            actionLabel="Modifica"
+            onAction={(record) => navigate(record.id.toString())}
+            formatDimension={150}
+          />
         </div>
         <ToastContainer />
       </div>
