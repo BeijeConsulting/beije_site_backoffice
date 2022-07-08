@@ -1,14 +1,16 @@
 import { useState, useEffect, useId } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import locale from "date-fns/locale/it";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from '../../utils/toast';
-
 
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
 import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
 
 import styles from "./styles.module.css";
 
@@ -25,25 +27,23 @@ const emptyState = {
   permalink: "",
 };
 
-
 const Job = ({ isNew }) => {
 
   const { id } = useParams();
   const toastId = useId();
 
   const [state, setState] = useState(emptyState);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
 
-
-
   const [getJobResult, getJob] = useService(`admin/job_application/${id}`);
 
-  const [saveJobResult, saveJob] = useService(isNew ? "/admin/job_application" :`/admin/job_application/${id}`, {
-    method: isNew ? "post": "put",
+  const [saveJobResult, saveJob] = useService(isNew ? "/admin/job_application" : `/admin/job_application/${id}`, {
+    method: isNew ? "post" : "put",
   });
 
- 
+
 
   useEffect(() => {
     if (!isNew) getJob()
@@ -52,16 +52,11 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
-      console.log(response)
-
       setState(response);
     }
-  }, [getJobResult?.response]);
 
-  useEffect(() => {
     const save = saveJobResult ?? { response: null };
     if (save.response) {
-      console.log('save', save);
       navigate('/jobs', {
         state: {
           toast: true
@@ -69,13 +64,24 @@ const Job = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
-
-  }, [saveJobResult?.response, saveJobResult?.error]);
+  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error]);
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
+    saveJob({ ...state, date_creation: new Date(state.hireDate).getTime() });
+  }
 
-    saveJob(state);
+  const handleRequestsModal = (type) => () => {
+    switch (type) {
+      case "yes":
+        saveJob({ ...state, date_creation: new Date(state.hireDate).getTime() });
+        setShouldShowModal(false);
+        break;
+
+      default:
+        setShouldShowModal(false);
+        break;
+    }
   }
 
   return (
@@ -146,13 +152,11 @@ const Job = ({ isNew }) => {
 
               {
                 !isNew &&
-                <Checkbox
-                  checked={state.disable_date}
-                  onChange={(e) => {
-                    setState((p) => ({ ...p, disable_date: e.target.checked }));
-                  }}
-                  label="Visibile: "
-                />
+                <button className="primary-button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShouldShowModal(true)
+                  }}>Disabilita</button>
               }
             </div>
             <MDEditor
@@ -164,6 +168,13 @@ const Job = ({ isNew }) => {
           </>
         )}
       </form>
+      <Modal
+        shouldShow={shouldShowModal}
+        onRequestClose={handleRequestsModal("no")}
+        onRequestYes={handleRequestsModal("yes")}
+      >
+        <Message message={"Sicur* di Procedere?"} />
+      </Modal>
       {
         saveJobResult?.error && <ToastContainer />
       }
