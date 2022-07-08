@@ -11,7 +11,17 @@
 
 .modalBody {
   background-color: white;
-  margin: 10% auto;
+  margin: 30% auto;
   padding: 20px;
-  width: 50%;
+  width: 40%;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.btnMargin{
+  margin-right: 1rem;
 }
