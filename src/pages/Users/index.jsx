@@ -1,13 +1,14 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { format } from "date-fns";
 import locale from "date-fns/locale/it";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useId } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
 import Loader from "../../components/Loader";
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
 import useStorage from "../../hooks/useStorage";
+import { notify, ToastContainer } from "../../utils/toast";
 
 const initState = {
   active: "all",
@@ -15,15 +16,21 @@ const initState = {
 }
 
 const Users = () => {
-
   const [state, setState] = useState(initState);
+  const location = useLocation();
   const navigate = useNavigate();
+
   const url =
     `/team/admin/users/LastName/${state.active}/${state.picOnSite}`
+  const toastId = useId();
 
   const [{ response, error, loading }, getUsers] = useService(url);
   useEffect(() => {
     getUsers();
+    console.log('res', response)
+    if (location.state !== null) {
+      notify("success", toastId)
+    }
   }, [state.active, state.picOnSite])
 
   return (
@@ -77,7 +84,7 @@ const Users = () => {
                   lastName,
                   hireDate: hireDate
                     ? format(hireDate, "dd MMMM yyyy", { locale })
-                    : "",
+                    : "Non pervenuta",
                   picOnSite,
                   active: disableDate ? false : true
 
