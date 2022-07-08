@@ -1,6 +1,5 @@
 import { useState, useEffect, useId } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import locale from "date-fns/locale/it";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from '../../utils/toast';
@@ -68,13 +67,13 @@ const Job = ({ isNew }) => {
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
-    saveJob({ ...state, date_creation: new Date(state.hireDate).getTime() });
+    saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
   }
 
   const handleRequestsModal = (type) => () => {
     switch (type) {
       case "yes":
-        saveJob({ ...state, date_creation: new Date(state.hireDate).getTime() });
+        saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
         setShouldShowModal(false);
         break;
 

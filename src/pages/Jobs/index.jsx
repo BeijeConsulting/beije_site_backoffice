@@ -3,10 +3,10 @@ import { useEffect, useId, useState } from "react";
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
 import { notify, ToastContainer } from "../../utils/toast";
-import locale from "date-fns/locale/it";
 import styles from "./styles.module.css";
 import Loader from "../../components/Loader";
 import Select from "../../components/Select";
+import locale from "date-fns/locale/it";
 import { format } from "date-fns/esm";
 
 const initState = {
@@ -36,6 +36,7 @@ const Jobs = () => {
   return (
     response ?
       <div className={styles["container"]}>
+        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
 
@@ -73,7 +74,7 @@ const Jobs = () => {
               "Tipologia",
               "Data di creazione",
               "Sede",
-              "Visibile",
+              // "Visibile",
               "Academy",
             ]}
             records={response.map(
@@ -84,14 +85,14 @@ const Jobs = () => {
                 type,
                 date_creation,
                 mode,
-                disable_date,
+                // disable_date,
               }) => ({
                 id,
                 title_it,
                 type,
                 date_creation: format(date_creation, "dd MMMM yyyy", { locale }),
                 mode: mode.charAt(0).toUpperCase() + mode.slice(1),
-                visible: !disable_date,
+                // visible: format(disable_date, "dd MMMM yyyy", { locale }),
                 academy,
               })
             )}
