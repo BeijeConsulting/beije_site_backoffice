@@ -12,6 +12,7 @@ import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 
 import styles from "./styles.module.css";
+import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
   title_it: "",
@@ -70,17 +71,8 @@ const Job = ({ isNew }) => {
     saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
   }
 
-  const handleRequestsModal = (type) => () => {
-    switch (type) {
-      case "yes":
-        saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
-        setShouldShowModal(false);
-        break;
-
-      default:
-        setShouldShowModal(false);
-        break;
-    }
+  function onClickYes() {
+    saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
   }
 
   return (
@@ -169,8 +161,8 @@ const Job = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no")}
-        onRequestYes={handleRequestsModal("yes")}
+        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={"Sicur* di Procedere?"} />
       </Modal>
