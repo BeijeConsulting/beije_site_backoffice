@@ -16,6 +16,7 @@ import MDEditor from "../../components/MDEditor";
 
 // styles
 import styles from "./styles.module.css";
+import SingleImageInput from "../../components/SingleImageInput";
 
 const emptyState = {
   title: "",
@@ -104,6 +105,28 @@ const Blog = ({ isNew }) => {
         {(isNew || getBlogResult.response) && (
           <>
             <div className={styles["inputs-row"]}>
+              <div className={styles["images"]}>
+                <SingleImageInput
+                  aspectRatio="1"
+                  style={{ maxWidth: "200px" }}
+                  label="Cover_img"
+                  value={state.cover_img}
+                  onChange={(cover_img) => {
+                    setState((p) => ({ ...p, cover_img }));
+                  }}
+                />
+
+                <SingleImageInput
+                  aspectRatio="1"
+                  style={{ maxWidth: "200px" }}
+                  label="Images"
+                  value={state.images}
+                  onChange={(images) => {
+                    setState((p) => ({ ...p, images }));
+                  }}
+                />
+              </div>
+
               <Input
                 style={{ width: "40%" }}
                 placeholder="Titolo"
