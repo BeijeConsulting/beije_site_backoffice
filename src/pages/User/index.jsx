@@ -13,6 +13,7 @@ import Message from "../../components/Message";
 import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
+import { handleRequestsModal } from "../../utils/modal";
 
 
 const emptyState = {
@@ -61,19 +62,8 @@ const User = ({ isNew }) => {
       })
     }
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
-
-
-  const handleRequestsModal = (type) => () => {
-    switch (type) {
-      case "yes":
-        disableUser();
-        setShouldShowModal(false);
-        break;
-
-      default:
-        setShouldShowModal(false);
-        break;
-    }
+  function onClickYes() {
+    disableUser();
   }
 
   return (
@@ -200,8 +190,8 @@ const User = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no")}
-        onRequestYes={handleRequestsModal("yes")}
+        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={"Sicur* di Procedere?"} />
       </Modal>
