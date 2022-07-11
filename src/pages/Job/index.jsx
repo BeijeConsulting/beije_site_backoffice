@@ -1,9 +1,20 @@
 import { useState, useEffect, useId } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { format } from "date-fns";
-import useService from "../../hooks/useService";
-import { notify, ToastContainer } from '../../utils/toast';
 
+// navigation
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+// date format
+import { format } from "date-fns";
+import { todayWithTime } from "../../utils/date";
+
+// hooks custom
+import useService from "../../hooks/useService";
+
+// utils
+import { notify, ToastContainer } from '../../utils/toast';
+import { handleRequestsModal } from "../../utils/modal";
+
+// components
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
 import Select from "../../components/Select";
@@ -11,8 +22,8 @@ import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 
+// style
 import styles from "./styles.module.css";
-import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
   title_it: "",
@@ -21,7 +32,7 @@ const emptyState = {
   description_en: "-",
   type: "",
   mode: "",
-  date_creation: format(Date.now(), "yyyy-MM-dd"),
+  date_creation: todayWithTime(),
   academy: false,
   disable_date: null,
   permalink: "",
@@ -68,11 +79,12 @@ const Job = ({ isNew }) => {
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
-    saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
+    const date = new Date();
+    saveJob({ ...state, date_creation: format(isNew ? todayWithTime() : state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
 
   function onClickYes() {
-    saveJob({ ...state, date_creation: format(isNew ? Date.now() : state.date_creation, "yyyy-MM-dd") });
+    saveJob({ ...state, date_creation: format(isNew ? todayWithTime() : state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
 
   return (

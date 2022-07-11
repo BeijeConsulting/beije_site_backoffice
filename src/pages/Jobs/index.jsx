@@ -22,7 +22,7 @@ const Jobs = () => {
   const toastId = useId();
 
   const [{ response }, getJobs] =
-    useService((state.academy === "all" && state.active === "all") ? "/job_applications" : `/admin/job_applications/${state.academy}`);
+    useService((state.academy === "all" && state.active === "all") ? "/job_applications" : `/admin/job_applications/${state.academy}/${state.active}`);
 
   const navigate = useNavigate();
 
@@ -31,12 +31,11 @@ const Jobs = () => {
     if (location.state !== null) {
       notify("success", toastId)
     }
-  }, [state.academy]);
+  }, [state.academy, state.active]);
 
   return (
     response ?
       <div className={styles["container"]}>
-        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
 
