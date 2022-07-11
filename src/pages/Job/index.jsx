@@ -54,6 +54,10 @@ const Job = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
+  const [deleteJobResult, deleteJob] = useService(`/admin/job_application/delete/${id}`,{
+    method: "delete"
+  })
+
 
 
   useEffect(() => {
@@ -63,10 +67,12 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
+      console.log(response);
       setState(response);
     }
 
     const save = saveJobResult ?? { response: null };
+    console.log(save.response);
     if (save.response) {
       navigate('/jobs', {
         state: {
@@ -79,12 +85,11 @@ const Job = ({ isNew }) => {
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
-    const date = new Date();
-    saveJob({ ...state, date_creation: format(isNew ? todayWithTime() : state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+    saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
 
   function onClickYes() {
-    saveJob({ ...state, date_creation: format(isNew ? todayWithTime() : state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+    deleteJob();
   }
 
   return (
