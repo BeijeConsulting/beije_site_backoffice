@@ -61,7 +61,9 @@ const User = ({ isNew }) => {
         }
       })
     }
+    if (save.error) notify('error', toastId);
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
+  
   function onClickYes() {
     disableUser();
   }
