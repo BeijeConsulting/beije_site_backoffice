@@ -41,7 +41,7 @@ const MDEditor = ({ value, onChange }) => {
             });
           }}
         >
-          <img src={boldIcon} />
+          <img src={boldIcon} alt="icon bold" />
         </button>
         <button
           type="button"
@@ -55,7 +55,7 @@ const MDEditor = ({ value, onChange }) => {
             });
           }}
         >
-          <img src={italicIcon} />
+          <img src={italicIcon} alt="italic icon" />
         </button>
         <button
           type="button"
@@ -69,7 +69,7 @@ const MDEditor = ({ value, onChange }) => {
             });
           }}
         >
-          <img src={underlineIcon} />
+          <img src={underlineIcon} alt="underline icon" />
         </button>
         <button
           type="button"
@@ -83,7 +83,7 @@ const MDEditor = ({ value, onChange }) => {
             });
           }}
         >
-          <img src={listIcon} />
+          <img src={listIcon} alt="list icon" />
         </button>
         <button
           type="button"
@@ -99,7 +99,7 @@ const MDEditor = ({ value, onChange }) => {
             });
           }}
         >
-          <img src={orderedListIcon} />
+          <img src={orderedListIcon} alt="orderedList icon" />
         </button>
         <button
           type="button"
@@ -118,7 +118,7 @@ const MDEditor = ({ value, onChange }) => {
             }
           }}
         >
-          <img src={linkIcon} />
+          <img src={linkIcon} alt="link icon" />
         </button>
       </div>
       <textarea
