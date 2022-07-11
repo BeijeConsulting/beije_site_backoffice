@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 function Loader() {
   return (
     <div className={styles['logo-container']}>
-      <img className={styles['element']} src={logoColored} />
+      <img className={styles['element']} src={logoColored} alt="loader" />
     </div>
   )
 }
