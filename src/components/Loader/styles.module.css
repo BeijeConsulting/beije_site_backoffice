@@ -14,7 +14,7 @@
   box-shadow: 0 0 0 0 rgb(155, 56, 56);
   transform: scale(1);
   animation-name: pulse;
-  animation-duration: 1.3s;
+  animation-duration: 1.4s;
   animation-timing-function: ease-out;
   animation-direction: alternate;
   animation-iteration-count: infinite;
@@ -24,17 +24,17 @@
 
 @keyframes pulse {
   0% {
-    transform: scale(0.95);
+    transform: scale(1);
     box-shadow: 0 0 0 0 rgb(155, 56, 50);
   }
 
   70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgb(155, 56, 56);
+    transform: scale(1.1);
+    box-shadow: 10px 0 10px  rgb(155, 56, 56);
   }
 
   100% {
-    transform: scale(0.95);
+    transform: scale(1);
     box-shadow: 0 0 0 0 rgb(155, 56, 56);
   }
 }
