@@ -54,8 +54,12 @@ const Job = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
-  const [deleteJobResult, deleteJob] = useService(`/admin/job_application/delete/${id}`,{
+  const [deleteJobResult, deleteJob] = useService(`/admin/job_application/delete/${id}`, {
     method: "delete"
+  })
+
+  const [reActiveJobResult, reActiveJob] = useService(`/admin/job_application/reActive/${id}`, {
+    method: "put"
   })
 
 
@@ -67,12 +71,10 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
-      console.log(response);
       setState(response);
     }
 
     const save = saveJobResult ?? { response: null };
-    console.log(save.response);
     if (save.response) {
       navigate('/jobs', {
         state: {
@@ -81,7 +83,11 @@ const Job = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
-  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error]);
+
+    const hasDeleted = deleteJobResult ?? { response: null };
+    hasDeleted.error ? notify("error", toastId) : notify("success", toastId);
+
+  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, deleteJobResult?.response]);
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
@@ -89,7 +95,7 @@ const Job = ({ isNew }) => {
   }
 
   function onClickYes() {
-    deleteJob();
+    state.disable_date ? reActiveJob() : deleteJob();
   }
 
   return (
@@ -164,7 +170,7 @@ const Job = ({ isNew }) => {
                   onClick={(e) => {
                     e.preventDefault();
                     setShouldShowModal(true)
-                  }}>Disabilita</button>
+                  }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
               }
             </div>
             <MDEditor
@@ -185,6 +191,10 @@ const Job = ({ isNew }) => {
       </Modal>
       {
         saveJobResult?.error && <ToastContainer />
+      }
+
+      {
+        deleteJobResult?.response && <ToastContainer />
       }
     </div>
   );
