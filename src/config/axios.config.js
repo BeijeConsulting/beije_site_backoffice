@@ -13,8 +13,12 @@ const instance = axios.create({
 function handleSuccess(response) {
   if (response.config.url.includes("signin")) {
     window.localStorage.setItem("tk", response.data.token);
-    instance.defaults.headers.common["Authorization"] = response.data.token;
+    instance.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
   }
+  if (response.config.headers.Authorization === "") {
+    response.config.headers.Authorization = `Bearer ${response.data.token}`
+  }
+
   return response;
 }
 
@@ -29,7 +33,7 @@ function handleError(error) {
       try {
         const { data } = await instance.post("/updateAuthToken");
         window.localStorage.setItem("tk", data.token);
-        instance.defaults.headers.common["Authorization"] = data.token;
+        instance.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         await axios.request(config);
         resolve();
       } catch {
