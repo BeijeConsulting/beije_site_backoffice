@@ -36,3 +36,9 @@
   display: flex;
   gap: 4rem;
 }
+
+.text-row {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 4rem;
+}

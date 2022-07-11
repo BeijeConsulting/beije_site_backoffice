@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 
-
 // components
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
@@ -17,6 +16,7 @@ import MDEditor from "../../components/MDEditor";
 // styles
 import styles from "./styles.module.css";
 import SingleImageInput from "../../components/SingleImageInput";
+import { todayWithTime } from "../../utils/date";
 
 const emptyState = {
   title: "",
@@ -30,6 +30,15 @@ const emptyState = {
   permalink: "",
 };
 
+const imageState = {
+  blog_id: null,
+  description: "",
+  desktop: "",
+  mobile: "",
+  original: "",
+  tablet: "",
+  thumbnail: ""
+}
 
 const Blog = ({ isNew }) => {
 
@@ -43,9 +52,13 @@ const Blog = ({ isNew }) => {
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${id}`);
 
-  const [saveBlogResult, saveBlog] = useService(isNew ? "/blog" : `/blog/${id}`, {
+  const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${id}`, {
     method: isNew ? "post" : "put",
   });
+
+  const [saveImageResult, saveImage] = useService("/site_image", {
+    method: "post"
+  })
 
   useEffect(() => {
     if (!isNew) getBlog()
@@ -54,7 +67,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
-      console.log(response);
+      // console.log(response);
       setState(response);
     }
 
@@ -72,7 +85,7 @@ const Blog = ({ isNew }) => {
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    saveBlog({ ...state, create_datetime: format(isNew ? Date.now() : state.create_datetime, "yyyy-MM-dd HH:mm") });
+    saveBlog({ ...state, create_datetime: format(isNew ? todayWithTime() : state.create_datetime, "yyyy-MM-dd HH:mm") });
   }
 
   return (
@@ -108,25 +121,39 @@ const Blog = ({ isNew }) => {
               <div className={styles["images"]}>
                 <SingleImageInput
                   aspectRatio="1"
-                  style={{ maxWidth: "200px" }}
+                  style={{ maxWidth: "300px" }}
                   label="Cover_img"
                   value={state.cover_img}
                   onChange={(cover_img) => {
                     setState((p) => ({ ...p, cover_img }));
                   }}
                 />
-
-                <SingleImageInput
-                  aspectRatio="1"
-                  style={{ maxWidth: "200px" }}
-                  label="Images"
-                  value={state.images}
-                  onChange={(images) => {
-                    setState((p) => ({ ...p, images }));
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
                   }}
-                />
-              </div>
+                >
 
+                  <SingleImageInput
+                    aspectRatio="1"
+                    style={{ maxWidth: "200px" }}
+                    label="Images"
+                    value={state.images}
+                    onChange={(images) => {
+                      saveImage({
+                        blog_id: id,
+                        description: "prova",
+                        desktop: images,
+                        mobile: images,
+                        original: images,
+                        tablet: images,
+                        thumbnail: images
+                      })
+                      setState((p) => ({ ...p, images }));
+                    }}
+                  />
+                </div>
               <Input
                 style={{ width: "40%" }}
                 placeholder="Titolo"
@@ -136,7 +163,6 @@ const Blog = ({ isNew }) => {
                   setState((p) => ({ ...p, title: e.target.value }))
                 }
               />
-
               <Input
                 style={{ width: "40%" }}
                 placeholder="Autore"
@@ -146,6 +172,11 @@ const Blog = ({ isNew }) => {
                   setState((p) => ({ ...p, author: e.target.value }))
                 }
               />
+
+              </div>
+            </div>
+
+            <div className={styles["text-row"]}>
 
               {
                 !isNew &&
@@ -157,6 +188,7 @@ const Blog = ({ isNew }) => {
                   label="Visibile: "
                 />
               }
+
             </div>
             <MDEditor
               value={state.description}
