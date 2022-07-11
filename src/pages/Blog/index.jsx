@@ -17,6 +17,7 @@ import MDEditor from "../../components/MDEditor";
 import styles from "./styles.module.css";
 import SingleImageInput from "../../components/SingleImageInput";
 import { todayWithTime } from "../../utils/date";
+import Select from "../../components/Select";
 
 const emptyState = {
   title: "",
@@ -26,7 +27,7 @@ const emptyState = {
   images: [],
   author: "",
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
-  cover_img: "",
+  cover_img: null,
   permalink: "",
 };
 
@@ -73,7 +74,7 @@ const Blog = ({ isNew }) => {
 
     const save = saveBlogResult ?? { response: null };
     if (save.response) {
-      navigate('/jobs', {
+      navigate('/blogs', {
         state: {
           toast: true
         }
@@ -85,7 +86,8 @@ const Blog = ({ isNew }) => {
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd HH:mm"), permalink: state.title });
+    console.log(state);
+    saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"), permalink: isNew ? `${state.title}-${toastId}` : state.permalink, cover_img: null });
   }
 
   return (
@@ -168,6 +170,17 @@ const Blog = ({ isNew }) => {
                     setState((p) => ({ ...p, title: e.target.value }))
                   }
                 />
+
+                <Input
+                  style={{ width: "40%" }}
+                  placeholder="Sottotitolo"
+                  name="subtitle"
+                  value={state.subtitle}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, subtitle: e.target.value }))
+                  }
+                />
+
                 <Input
                   style={{ width: "40%" }}
                   placeholder="Autore"
@@ -176,6 +189,16 @@ const Blog = ({ isNew }) => {
                   onChange={(e) =>
                     setState((p) => ({ ...p, author: e.target.value }))
                   }
+                />
+
+                <Select
+                  value={state.language}
+                  label="Lingua"
+                  options={[
+                    { value: "it", label: "italiano" },
+                    { value: "eng", label: "Inglese" },
+                  ]}
+                  onChange={(language) => setState((p) => ({ ...p, language }))}
                 />
 
                 {
