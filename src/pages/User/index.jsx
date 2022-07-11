@@ -72,7 +72,7 @@ const User = ({ isNew }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          saveUser({ ...state, hireDate: format(isNew ? Date.now() : state.hireDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") })
+          saveUser({ ...state, hireDate: format(isNew ? Date.now() : state.hireDate, "yyyy-MM-dd'T'HH:mm") })
         }}
       >
 

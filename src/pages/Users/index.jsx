@@ -11,7 +11,7 @@ import useStorage from "../../hooks/useStorage";
 import { notify, ToastContainer } from "../../utils/toast";
 
 const initState = {
-  active: "all",
+  archive_date: "all",
   picOnSite: "all",
 }
 
@@ -21,7 +21,7 @@ const Users = () => {
   const navigate = useNavigate();
 
   const url =
-    `/team/admin/users/LastName/${state.active}/${state.picOnSite}`
+    `/team/admin/users/LastName/${state.archive_date}/${state.picOnSite}`
   const toastId = useId();
 
   const [{ response, error, loading }, getUsers] = useService(url);
@@ -31,25 +31,26 @@ const Users = () => {
     if (location.state !== null) {
       notify("success", toastId)
     }
-  }, [state.active, state.picOnSite])
+  }, [state.archive_date, state.picOnSite])
 
   return (
     response ?
 
       <div className={styles["container"]}>
+        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
             <h1>Community</h1>
             <div className={styles["selectContainer"]}>
               <Select
-                value={state.active}
+                value={state.archive_date}
                 label={"Utenti visibili"}
                 options={[
                   { value: "all", label: "Tutti" },
                   { value: "yes", label: "visibili" },
                   { value: "no", label: "Non visibili" },
                 ]}
-                onChange={(active) => setState((p) => ({ ...p, active }))} />
+                onChange={(archive_date) => setState((p) => ({ ...p, archive_date }))} />
               <Select
                 value={state.picOnSite}
                 label={"Immagine onsite"}
@@ -76,7 +77,7 @@ const Users = () => {
               ]}
               records={response.team.map(
                 (
-                  { firstName, lastName, hireDate, picImage, picOnSite, id, disableDate }
+                  { firstName, lastName, hireDate, picImage, picOnSite, id, archive_date }
 
                 ) => ({
                   id: id,
@@ -86,7 +87,7 @@ const Users = () => {
                     ? format(hireDate, "dd MMMM yyyy", { locale })
                     : "Non pervenuta",
                   picOnSite,
-                  active: disableDate ? false : true
+                  archive_date: archive_date ? false : true
 
                 })
               )}
