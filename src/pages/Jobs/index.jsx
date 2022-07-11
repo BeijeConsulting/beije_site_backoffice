@@ -11,7 +11,7 @@ import { format } from "date-fns/esm";
 
 const initState = {
   academy: "all",
-  active: "all",
+  active: "yes",
 }
 
 const Jobs = () => {
