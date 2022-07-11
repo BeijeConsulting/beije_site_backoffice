@@ -24,6 +24,7 @@ import Message from "../../components/Message";
 
 // style
 import styles from "./styles.module.css";
+import useBack from "../../hooks/useBack";
 
 const emptyState = {
   title_it: "",
@@ -58,7 +59,7 @@ const Job = ({ isNew }) => {
     method: "delete"
   })
 
-
+const [isSaved, getBack] = useBack((saveJobResult?.response ? true : false), shouldShowModal, saveJob)
 
   useEffect(() => {
     if (!isNew) getJob()
@@ -98,7 +99,7 @@ const Job = ({ isNew }) => {
         onSubmit={handleSubmitJob}
       >
         <div className={styles["title-row"]}>
-          <Link
+          {/* <Link
             to="/jobs"
             style={{
               fontSize: "200%",
@@ -107,7 +108,17 @@ const Job = ({ isNew }) => {
             }}
           >
             &larr;
-          </Link>
+          </Link> */}
+          <div
+            style={{
+              fontSize: "200%",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+            onClick={getBack}
+          >
+            &larr;
+          </div>
           <h2>
             {isNew
               ? "Nuova offerta di lavoro"
