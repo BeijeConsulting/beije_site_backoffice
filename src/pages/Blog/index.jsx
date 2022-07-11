@@ -85,7 +85,7 @@ const Blog = ({ isNew }) => {
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    saveBlog({ ...state, create_datetime: format(isNew ? todayWithTime() : state.create_datetime, "yyyy-MM-dd HH:mm") });
+    saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd HH:mm"), permalink: state.title });
   }
 
   return (
@@ -154,42 +154,45 @@ const Blog = ({ isNew }) => {
                     }}
                   />
                 </div>
-              <Input
-                style={{ width: "40%" }}
-                placeholder="Titolo"
-                name="title"
-                value={state.title}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, title: e.target.value }))
+
+
+              </div>
+              <div className={styles["text-row"]}>
+
+                <Input
+                  style={{ width: "40%" }}
+                  placeholder="Titolo"
+                  name="title"
+                  value={state.title}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, title: e.target.value }))
+                  }
+                />
+                <Input
+                  style={{ width: "40%" }}
+                  placeholder="Autore"
+                  name="title"
+                  value={state.author}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, author: e.target.value }))
+                  }
+                />
+
+                {
+                  !isNew &&
+                  <Checkbox
+                    checked={state.disable_date}
+                    onChange={(e) => {
+                      setState((p) => ({ ...p, disable_date: e.target.checked }));
+                    }}
+                    label="Visibile: "
+                  />
                 }
-              />
-              <Input
-                style={{ width: "40%" }}
-                placeholder="Autore"
-                name="title"
-                value={state.author}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, author: e.target.value }))
-                }
-              />
 
               </div>
             </div>
 
-            <div className={styles["text-row"]}>
 
-              {
-                !isNew &&
-                <Checkbox
-                  checked={state.disable_date}
-                  onChange={(e) => {
-                    setState((p) => ({ ...p, disable_date: e.target.checked }));
-                  }}
-                  label="Visibile: "
-                />
-              }
-
-            </div>
             <MDEditor
               value={state.description}
               onChange={(e) =>
