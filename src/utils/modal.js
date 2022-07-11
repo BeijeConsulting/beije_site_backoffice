@@ -1,4 +1,4 @@
-export const handleRequestsModal = (type, onYes,  setStateForModal) => () => {
+export const handleRequestsModal = (type, onYes, setStateForModal) => () => {
   switch (type) {
     case "yes":
       onYes();

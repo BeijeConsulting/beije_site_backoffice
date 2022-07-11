@@ -24,7 +24,6 @@ import Message from "../../components/Message";
 
 // style
 import styles from "./styles.module.css";
-import useBack from "../../hooks/useBack";
 
 const emptyState = {
   title_it: "",
@@ -38,6 +37,8 @@ const emptyState = {
   disable_date: null,
   permalink: "",
 };
+
+let goBack = false;
 
 const Job = ({ isNew }) => {
 
@@ -58,8 +59,6 @@ const Job = ({ isNew }) => {
   const [deleteJobResult, deleteJob] = useService(`/admin/job_application/delete/${id}`, {
     method: "delete"
   })
-
-const [isSaved, getBack] = useBack((saveJobResult?.response ? true : false), shouldShowModal, saveJob)
 
   useEffect(() => {
     if (!isNew) getJob()
@@ -82,17 +81,36 @@ const [isSaved, getBack] = useBack((saveJobResult?.response ? true : false), sho
     if (save.error) notify('error', toastId);
 
     const hasDeleted = deleteJobResult ?? { response: null };
-    hasDeleted.error ? notify("error", toastId) : notify("success", toastId);
+
+    if (hasDeleted.response) {
+      navigate('/jobs', {
+        state: {
+          toast: true
+        }
+      })
+    }
+    if (hasDeleted.error) notify('error', toastId);
 
   }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, deleteJobResult?.response]);
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+    goBack = true;
   }
 
   function onClickYes() {
-    state.disable_date ? reActiveJob() : deleteJob();
+    if (!goBack) state.disable_date ? reActiveJob() : deleteJob();
+    saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+  }
+
+  function handleBack() {
+    if (getJobResult?.response !== state) {
+      goBack = true;
+      setShouldShowModal(true)
+      return 
+    }
+    navigate("/jobs")
   }
 
   return (
@@ -101,23 +119,15 @@ const [isSaved, getBack] = useBack((saveJobResult?.response ? true : false), sho
         onSubmit={handleSubmitJob}
       >
         <div className={styles["title-row"]}>
-          {/* <Link
-            to="/jobs"
-            style={{
-              fontSize: "200%",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            &larr;
-          </Link> */}
+
           <div
             style={{
               fontSize: "200%",
               textDecoration: "none",
               color: "inherit",
+              cursor: "pointer"
             }}
-            onClick={getBack}
+            onClick={handleBack}
           >
             &larr;
           </div>
@@ -194,7 +204,7 @@ const [isSaved, getBack] = useBack((saveJobResult?.response ? true : false), sho
         onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
-        <Message message={"Sicur* di Procedere?"} />
+        <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
         saveJobResult?.error && <ToastContainer />
