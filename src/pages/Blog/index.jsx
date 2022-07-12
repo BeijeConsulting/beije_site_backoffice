@@ -100,7 +100,6 @@ const Blog = ({ isNew }) => {
       {
         ...state,
         create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
-        permalink: state.permalink,
         cover_img: null,
         translate_blog_permalink: isNew ? state.permalink : state.translate_blog_permalink
       });
