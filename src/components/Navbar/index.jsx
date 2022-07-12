@@ -6,7 +6,7 @@ const Navbar = () => {
   return (
     <nav className={styles["nav"]}>
       <NavLink className={styles["logo"]} to="/">
-        <img src={logoWhite} />
+        <img src={logoWhite} alt="logo white" />
       </NavLink>
       <ul role="list" className={styles["menu"]}>
         <li>
@@ -28,7 +28,7 @@ const Navbar = () => {
         <li>
           <NavLink
             className={({ isActive }) => (isActive ? styles["active"] : "")}
-            to="/case-study"
+            to="/case-studies"
           >
             Case study
           </NavLink>

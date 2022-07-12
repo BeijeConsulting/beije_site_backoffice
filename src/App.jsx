@@ -46,15 +46,15 @@ function App() {
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogs/:id" element={<Blog />} />
             <Route path="/blogs/new" element={<Blog isNew />} />
-            <Route path="/casestudy" element={<CaseStudies />} />
-            <Route path="/casestudy/:id" element={<CaseStudy />} />
-            <Route path="/casestudy/new" element={<CaseStudy isNew />} />
+            <Route path="/case-studies" element={<CaseStudies />} />
+            <Route path="/case-studies/:id" element={<CaseStudy />} />
+            <Route path="/case-studies/new" element={<CaseStudy isNew />} />
             <Route path="/community" element={<Users />} />
             <Route path="/community/:id" element={<User />} />
             <Route path="/community/new" element={<User isNew />} />
-            <Route path="/events" element={<Events />} />
+            {/* <Route path="/events" element={<Events />} />
             <Route path="/event/:id" element={<Event />} />
-            <Route path="/event/new" element={<Event isNew />} />
+            <Route path="/event/new" element={<Event isNew />} /> */}
           </Route>
         </Route>
       </Routes>
