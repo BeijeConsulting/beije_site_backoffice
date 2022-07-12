@@ -15,9 +15,6 @@ function handleSuccess(response) {
     window.localStorage.setItem("tk", response.data.token);
     instance.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
   }
-  if (response.config.headers.Authorization === "") {
-    response.config.headers.Authorization = `Bearer ${response.data.token}`
-  }
 
   return response;
 }
@@ -47,6 +44,16 @@ function handleError(error) {
   });
 }
 
+function handleRequest(config) {
+  const token = localStorage.getItem('tk');
+  if (token && config.headers.Authorization === "") {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('tk')}`;
+  }
+  return config;
+}
+
 instance.interceptors.response.use(handleSuccess, handleError);
+
+instance.interceptors.request.use(handleRequest);
 
 export default instance;
