@@ -36,12 +36,13 @@ const Blogs = () => {
     if (location.state !== null) {
       notify("success", toastId);
     }
-  }, []);
+  }, [state.lang]);
+
+
 
   return (
     response ?
       <div className={styles["container"]}>
-        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
 
@@ -54,9 +55,9 @@ const Blogs = () => {
                 { value: "it", label: "Italiano" },
                 { value: "eng", label: "Inglese" },
               ]}
-              onChange={(active) => {
-                console.log(active);
-                setState((p) => ({ ...p, active }))}}
+              onChange={(lang) => {
+                console.log(lang);
+                setState((p) => ({ ...p, lang }))}}
             />
 
             <Link to="new" className="primary-button">
