@@ -11,7 +11,7 @@ import useStorage from "../../hooks/useStorage";
 import { notify, ToastContainer } from "../../utils/toast";
 
 const initState = {
-  archive_date: "all",
+  picImage: "all",
   picOnSite: "all",
 }
 
@@ -21,7 +21,7 @@ const Users = () => {
   const navigate = useNavigate();
 
   const url =
-    `/team/admin/users/LastName/${state.archive_date}/${state.picOnSite}`
+    `/team/admin/users/LastName/${state.picImage}/${state.picOnSite}`
   const toastId = useId();
 
   const [{ response, error, loading }, getUsers] = useService(url);
@@ -31,7 +31,7 @@ const Users = () => {
     if (location.state !== null) {
       notify("success", toastId)
     }
-  }, [state.archive_date, state.picOnSite])
+  }, [state.picImage, state.picOnSite])
 
   return (
     response ?
@@ -43,17 +43,17 @@ const Users = () => {
             <h1>Community</h1>
             <div className={styles["selectContainer"]}>
               <Select
-                value={state.archive_date}
-                label={"Utenti visibili"}
+                value={state.picImage}
+                label={"Immagine presente"}
                 options={[
                   { value: "all", label: "Tutti" },
                   { value: "yes", label: "visibili" },
                   { value: "no", label: "Non visibili" },
                 ]}
-                onChange={(archive_date) => setState((p) => ({ ...p, archive_date }))} />
+                onChange={(picImage) => setState((p) => ({ ...p, picImage }))} />
               <Select
                 value={state.picOnSite}
-                label={"Immagine onsite"}
+                label={"Visibile onsite"}
                 options={[
                   { value: "all", label: "Tutti" },
                   { value: "yes", label: "Si" },
@@ -72,12 +72,12 @@ const Users = () => {
                 "Nome",
                 "Cognome",
                 "Data di assunzione",
-                "Immagini",
+                "Immagine",
                 "Visibile"
               ]}
               records={response.team.map(
                 (
-                  { firstName, lastName, hireDate, picImage, picOnSite, id, archive_date }
+                  { firstName, lastName, hireDate, picImage, picOnSite, id }
 
                 ) => ({
                   id: id,
@@ -86,8 +86,8 @@ const Users = () => {
                   hireDate: hireDate
                     ? format(hireDate, "dd MMMM yyyy", { locale })
                     : "Non pervenuta",
-                  picOnSite,
-                  archive_date: archive_date ? false : true
+                  picImage: picImage ? true : false,
+                  picOnSite
 
                 })
               )}
