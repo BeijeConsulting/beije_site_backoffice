@@ -18,6 +18,8 @@ import Blogs from "./pages/Blogs";
 import Blog from "./pages/Blog";
 import CaseStudies from "./pages/CaseStudies";
 import CaseStudy from "./pages/CaseStudy";
+import Events from './pages/Events'
+import Event from './pages/Event'
 
 function RequireAuth() {
   const location = useLocation();
