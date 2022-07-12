@@ -21,6 +21,7 @@ import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
+import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 
 // style
 import styles from "./styles.module.css";
@@ -56,8 +57,9 @@ const Job = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
-  const [deleteJobResult, deleteJob] = useService(`/admin/job_application/delete/${id}`, {
-    method: "delete"
+  const [disableOrActiveResult, disableOrActiveJob] = useService(state.disable_date ?
+    `/admin/job_application/re_activate/${id}` : `/admin/job_application/delete/${id}`, {
+    method: state.disable_date ? "put" : "delete"
   })
 
   useEffect(() => {
@@ -80,35 +82,38 @@ const Job = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
-    const hasDeleted = deleteJobResult ?? { response: null };
+    const disableOrActive = disableOrActiveResult ?? { response: null };
 
-    if (hasDeleted.response) {
+    if (disableOrActive.response) {
       navigate('/jobs', {
         state: {
           toast: true
         }
       })
     }
-    if (hasDeleted.error) notify('error', toastId);
+    if (disableOrActive.error) notify('error', toastId);
 
-  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, deleteJobResult?.response]);
+  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error]);
 
   const handleSubmitJob = (e) => {
     e.preventDefault();
     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
-    goBack = true;
   }
 
   function onClickYes() {
-    if (!goBack) state.disable_date ? reActiveJob() : deleteJob();
-    saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+    if (goBack) {
+      saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+      goBack = false;
+    }
+
+    disableOrActiveJob();
   }
 
-  function handleBack() {
+  const handleBack = () => {
     if (getJobResult?.response !== state) {
       goBack = true;
       setShouldShowModal(true)
-      return 
+      return
     }
     navigate("/jobs")
   }
@@ -120,17 +125,8 @@ const Job = ({ isNew }) => {
       >
         <div className={styles["title-row"]}>
 
-          <div
-            style={{
-              fontSize: "200%",
-              textDecoration: "none",
-              color: "inherit",
-              cursor: "pointer"
-            }}
-            onClick={handleBack}
-          >
-            &larr;
-          </div>
+          <GoBackArrow handleBack={handleBack} />
+
           <h2>
             {isNew
               ? "Nuova offerta di lavoro"
@@ -211,7 +207,7 @@ const Job = ({ isNew }) => {
       }
 
       {
-        deleteJobResult?.response && <ToastContainer />
+        disableOrActiveResult?.response && <ToastContainer />
       }
     </div>
   );

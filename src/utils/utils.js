@@ -1,3 +1,3 @@
 export function permalink(string) {
-  return string.replace(" ", "-")
+  return string.replace(" ", "-").replace("_", "-")
 }

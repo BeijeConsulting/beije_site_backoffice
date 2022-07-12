@@ -58,9 +58,11 @@ const Blog = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
-  const [saveImageResult, saveImage] = useService("/site_image", {
+  const [saveImageResult, saveImage] = useService("/fileupload", {
     method: "post"
   })
+
+  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.permalink}`)
 
   useEffect(() => {
     if (!isNew) getBlog()
@@ -89,6 +91,10 @@ const Blog = ({ isNew }) => {
     e.preventDefault();
     console.log(state);
     saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"), permalink: isNew ? `${state.title}-${toastId}` : state.permalink, cover_img: null });
+  }
+
+  const handleSetLanguage = (language) => {
+    setState((p) => ({ ...p, language }))
   }
 
   return (
@@ -198,7 +204,7 @@ const Blog = ({ isNew }) => {
                       { value: "it", label: "italiano" },
                       { value: "eng", label: "Inglese" },
                     ]}
-                    onChange={(language) => setState((p) => ({ ...p, language }))}
+                    onChange={handleSetLanguage}
                   />
                   <Input
                     style={{ width: "100%" }}

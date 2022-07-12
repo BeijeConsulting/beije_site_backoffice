@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export default function GoBackArrow({ handleBack }) {
     return (
@@ -15,5 +15,3 @@ export default function GoBackArrow({ handleBack }) {
         </div>
     )
 }
-
-

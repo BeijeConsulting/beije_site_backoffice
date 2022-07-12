@@ -22,7 +22,7 @@ const Jobs = () => {
   const toastId = useId();
 
   const [{ response }, getJobs] =
-    useService((state.academy === "all" && state.active === "all") ? "/job_applications" : `/admin/job_applications/${state.academy}/${state.active}`);
+    useService((state.academy === "all" && state.active === "all") ? "admin/job_applications" : `/admin/job_applications/${state.academy}/${state.active}`);
 
   const navigate = useNavigate();
 
