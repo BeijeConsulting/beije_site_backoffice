@@ -18,6 +18,7 @@ import styles from "./styles.module.css";
 import SingleImageInput from "../../components/SingleImageInput";
 import { todayWithTime } from "../../utils/date";
 import Select from "../../components/Select";
+import { permalink } from "../../utils/utils";
 
 const emptyState = {
   title: "",
@@ -155,9 +156,9 @@ const Blog = ({ isNew }) => {
                   }}
                 />
               </div>
-              <div className={styles["inputs-row"]}>
-                <div className={styles["container"]}>
+              <div className={styles["container"]}>
 
+                <div className={styles["inputs-row"]}>
                   <Input
                     style={{ width: "100%" }}
                     placeholder="Titolo"
@@ -177,13 +178,10 @@ const Blog = ({ isNew }) => {
                       setState((p) => ({ ...p, subtitle: e.target.value }))
                     }
                   />
-
                 </div>
-
-                <div className={styles["container"]}>
+                <div className={styles["inputs-row"]}>
 
                   <Input
-
                     style={{ width: "100%" }}
                     placeholder="Autore"
                     name="title"
@@ -202,22 +200,33 @@ const Blog = ({ isNew }) => {
                     ]}
                     onChange={(language) => setState((p) => ({ ...p, language }))}
                   />
-
-
-                </div>
-                {
-                  !isNew &&
-                  <Checkbox
-                    checked={state.disable_date}
-                    onChange={(e) => {
-                      setState((p) => ({ ...p, disable_date: e.target.checked }));
-                    }}
-                    label="Visibile: "
+                  <Input
+                    style={{ width: "100%" }}
+                    placeholder="Permalink"
+                    name="permalink"
+                    value={state.permalink}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
+                    }
                   />
-                }
+                </div>
+
+
+                <div className={styles["inputs-row"]}>
+                  {
+                    !isNew &&
+                    <Checkbox
+                      checked={state.disable_date}
+                      onChange={(e) => {
+                        setState((p) => ({ ...p, disable_date: e.target.checked }));
+                      }}
+                      label="Visibile: "
+                    />
+                  }
+                </div>
+
               </div>
             </div>
-
 
             <MDEditor
               value={state.description}
