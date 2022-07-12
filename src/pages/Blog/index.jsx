@@ -119,88 +119,92 @@ const Blog = ({ isNew }) => {
         </div>
         {(isNew || getBlogResult.response) && (
           <>
-            <div className={styles["inputs-row"]}>
-              <div className={styles["images"]}>
+            <div className={styles["images"]}>
+              <SingleImageInput
+                aspectRatio="1"
+                style={{ maxWidth: "300px" }}
+                label="Cover_img"
+                value={state.cover_img}
+                onChange={(cover_img) => {
+                  setState((p) => ({ ...p, cover_img }));
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+
                 <SingleImageInput
                   aspectRatio="1"
-                  style={{ maxWidth: "300px" }}
-                  label="Cover_img"
-                  value={state.cover_img}
-                  onChange={(cover_img) => {
-                    setState((p) => ({ ...p, cover_img }));
+                  style={{ maxWidth: "200px" }}
+                  label="Images"
+                  value={state.images}
+                  onChange={(images) => {
+                    saveImage({
+                      blog_id: id,
+                      description: "prova",
+                      desktop: images,
+                      mobile: images,
+                      original: images,
+                      tablet: images,
+                      thumbnail: images
+                    })
+                    setState((p) => ({ ...p, images }));
                   }}
                 />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
+              </div>
+              <div className={styles["inputs-row"]}>
+                <div className={styles["container"]}>
 
-                  <SingleImageInput
-                    aspectRatio="1"
-                    style={{ maxWidth: "200px" }}
-                    label="Images"
-                    value={state.images}
-                    onChange={(images) => {
-                      saveImage({
-                        blog_id: id,
-                        description: "prova",
-                        desktop: images,
-                        mobile: images,
-                        original: images,
-                        tablet: images,
-                        thumbnail: images
-                      })
-                      setState((p) => ({ ...p, images }));
-                    }}
+                  <Input
+                    style={{ width: "100%" }}
+                    placeholder="Titolo"
+                    name="title"
+                    value={state.title}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, title: e.target.value }))
+                    }
                   />
+
+                  <Input
+                    style={{ width: "100%" }}
+                    placeholder="Sottotitolo"
+                    name="subtitle"
+                    value={state.subtitle}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, subtitle: e.target.value }))
+                    }
+                  />
+
                 </div>
 
+                <div className={styles["container"]}>
 
-              </div>
-              <div className={styles["text-row"]}>
+                  <Input
 
-                <Input
-                  style={{ width: "40%" }}
-                  placeholder="Titolo"
-                  name="title"
-                  value={state.title}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, title: e.target.value }))
-                  }
-                />
+                    style={{ width: "100%" }}
+                    placeholder="Autore"
+                    name="title"
+                    value={state.author}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, author: e.target.value }))
+                    }
+                  />
 
-                <Input
-                  style={{ width: "40%" }}
-                  placeholder="Sottotitolo"
-                  name="subtitle"
-                  value={state.subtitle}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, subtitle: e.target.value }))
-                  }
-                />
+                  <Select
+                    value={state.language}
+                    label="Lingua"
+                    options={[
+                      { value: "it", label: "italiano" },
+                      { value: "eng", label: "Inglese" },
+                    ]}
+                    onChange={(language) => setState((p) => ({ ...p, language }))}
+                  />
 
-                <Input
-                  style={{ width: "40%" }}
-                  placeholder="Autore"
-                  name="title"
-                  value={state.author}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, author: e.target.value }))
-                  }
-                />
 
-                <Select
-                  value={state.language}
-                  label="Lingua"
-                  options={[
-                    { value: "it", label: "italiano" },
-                    { value: "eng", label: "Inglese" },
-                  ]}
-                  onChange={(language) => setState((p) => ({ ...p, language }))}
-                />
-
+                </div>
                 {
                   !isNew &&
                   <Checkbox
@@ -211,7 +215,6 @@ const Blog = ({ isNew }) => {
                     label="Visibile: "
                   />
                 }
-
               </div>
             </div>
 
