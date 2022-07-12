@@ -30,6 +30,7 @@ const emptyState = {
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
   cover_img: null,
   permalink: "",
+  translate_blog_permalink: null
 };
 
 const imageState = {
@@ -41,10 +42,10 @@ const imageState = {
   tablet: "",
   thumbnail: ""
 }
-
+let id = null;
 const Blog = ({ isNew }) => {
 
-  const { id } = useParams();
+  const params = useParams();
   const toastId = useId();
 
   const [state, setState] = useState(emptyState);
@@ -52,7 +53,7 @@ const Blog = ({ isNew }) => {
   const navigate = useNavigate();
 
   // api
-  const [getBlogResult, getBlog] = useService(`/blog/id/${id}`);
+  const [getBlogResult, getBlog] = useService(`/blog/id/${id ? id : params.id}`);
 
   const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${id}`, {
     method: isNew ? "post" : "put",
@@ -62,17 +63,23 @@ const Blog = ({ isNew }) => {
     method: "post"
   })
 
-  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.permalink}`)
+  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`)
 
   useEffect(() => {
     if (!isNew) getBlog()
+    id = params.id;
   }, []);
 
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
-      // console.log(response);
       setState(response);
+    }
+
+    const responsePermalink = getBlogWithPermalinkRes ?? { response: null };
+    if (responsePermalink.response) {
+      id = responsePermalink.response.id
+      setState(responsePermalink.response);
     }
 
     const save = saveBlogResult ?? { response: null };
@@ -85,15 +92,22 @@ const Blog = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
-  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error]);
+  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    console.log(state);
-    saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"), permalink: isNew ? `${state.title}-${toastId}` : state.permalink, cover_img: null });
+    saveBlog(
+      {
+        ...state,
+        create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
+        permalink: state.permalink,
+        cover_img: null,
+        translate_blog_permalink: isNew ? state.permalink + "-eng" : state.translate_blog_permalink
+      });
   }
 
   const handleSetLanguage = (language) => {
+    !isNew && getBlogPermalink();
     setState((p) => ({ ...p, language }))
   }
 
@@ -117,7 +131,7 @@ const Blog = ({ isNew }) => {
             {isNew
               ? "Nuovo post"
               : getBlogResult.response
-                ? `Modifica ${getBlogResult.response.title}`
+                ? `Modifica ${state.title}`
                 : ""}
           </h2>
           <button type="submit" className="primary-button">
@@ -136,6 +150,7 @@ const Blog = ({ isNew }) => {
                   setState((p) => ({ ...p, cover_img }));
                 }}
               />
+
               <div
                 style={{
                   display: "flex",
