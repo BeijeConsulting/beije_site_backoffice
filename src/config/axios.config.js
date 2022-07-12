@@ -48,6 +48,7 @@ function handleRequest(config) {
   const token = localStorage.getItem('tk');
   if (token && config.headers.Authorization === "") {
     config.headers.Authorization = `Bearer ${localStorage.getItem('tk')}`;
+    instance.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem('tk')}`;
   }
   return config;
 }
