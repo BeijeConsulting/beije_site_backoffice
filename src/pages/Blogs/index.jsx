@@ -1,4 +1,6 @@
 import { useEffect, useId, useState } from "react";
+import locale from "date-fns/locale/it";
+import { format } from "date-fns/esm";
 
 // router
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -8,12 +10,10 @@ import useService from "../../hooks/useService";
 import Table from "../../components/Table";
 import { notify, ToastContainer } from "../../utils/toast";
 import Loader from "../../components/Loader";
-import locale from "date-fns/locale/it";
-import { format } from "date-fns/esm";
+import Select from "../../components/Select";
 
 // style
 import styles from "./styles.module.css";
-import Select from "../../components/Select";
 
 const initState = {
   lang: "it",
