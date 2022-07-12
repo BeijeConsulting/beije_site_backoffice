@@ -14,24 +14,23 @@ import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
 import { handleRequestsModal } from "../../utils/modal";
-
-
+import { todayWithTime } from "../../utils/date";
+import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 const emptyState = {
   firstName: "",
   lastName: "",
   role: "",
   hireDate: "",
-  picImage: "",
-  picImageThumbnail: "",
+  picImage: null,
+  picImageThumbnail: null,
   picOnSite: false,
 };
-
+let goBack = false;
 const User = ({ isNew }) => {
 
   const { id } = useParams();
   const toastId = useId();
   const navigate = useNavigate();
-
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
@@ -43,6 +42,9 @@ const User = ({ isNew }) => {
     method: isNew ? "post" : "put",
   }
   )
+
+
+  console.log(goBack)
   useEffect(() => {
     if (!isNew) getUser();
   }, []);
@@ -63,9 +65,26 @@ const User = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
-  
+
   function onClickYes() {
-    disableUser();
+    console.log('onYes')
+    if (!goBack) {
+      disableUser();
+    }
+    saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
+    navigate("/community")
+  }
+
+  function handleBack() {
+
+    if (!isNew && getUserResult?.response !== state) {
+      console.log('handleBack if')
+      goBack = true;
+      console.log(goBack)
+      setShouldShowModal(true)
+      return
+    }
+
   }
 
   return (
@@ -74,21 +93,14 @@ const User = ({ isNew }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          saveUser({ ...state, hireDate: format(isNew ? Date.now() : state.hireDate, "yyyy-MM-dd'T'HH:mm") })
+          saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
+          goBack = true;
         }}
       >
 
         <div className={styles["title-row"]}>
-          <Link
-            to="/community"
-            style={{
-              fontSize: "200%",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            &larr;
-          </Link>
+          <GoBackArrow
+            handleBack={handleBack}></GoBackArrow>
           <h2>
             {isNew
               ? "Nuovo utente"
@@ -195,7 +207,7 @@ const User = ({ isNew }) => {
         onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
-        <Message message={"Sicur* di Procedere?"} />
+        <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
         saveUserResult?.error && <ToastContainer />
