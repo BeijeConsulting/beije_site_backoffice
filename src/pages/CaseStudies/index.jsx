@@ -24,7 +24,7 @@ function CaseStudies() {
   const [state, setState] = useState(initState);
   
   const [{ response }, getCaseStudies] =
-    useService(`/casestudies/${state.lang}`);
+    useService(`/admin/casestudies/${state.lang}`);
 
   const toastId = useId();
 
@@ -68,19 +68,23 @@ function CaseStudies() {
               "ID",
               "Titolo",
               "Sottotitolo",
-              // "Descrizione",
+              // "Visibile",
             ]}
             records={response.map(
               ({
                 id,
                 title,
                 subtitle,
-                // description,
+                // disableDate,
               }) => ({
                 id,
                 title,
                 subtitle,
-                // description,
+                // disableDate: state.disableDate ? (
+                //   <span>&#x2713;</span>
+                // ) : (
+                //   <span>&times;</span>
+                // )
               })
             )}
             actionLabel="Modifica"
