@@ -85,7 +85,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     if (!isNew) {
       getBlog()
-      getHashtags()
+      // getHashtags()
     }
     id = params.id;
   }, []);
@@ -116,7 +116,7 @@ const Blog = ({ isNew }) => {
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
-      navigate('/jobs', {
+      navigate('/blogs', {
         state: {
           toast: true
         }
@@ -265,6 +265,7 @@ const Blog = ({ isNew }) => {
                     ]}
                     onChange={handleSetLanguage}
                   />
+                </div>
                   <Input
                     style={{ width: "100%" }}
                     placeholder="Permalink"
@@ -274,8 +275,8 @@ const Blog = ({ isNew }) => {
                       setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
                     }
                   />
-                </div>
 
+                  
 
                 <div className={styles["inputs-row"]}>
                   {
