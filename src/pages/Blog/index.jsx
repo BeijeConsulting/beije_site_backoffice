@@ -60,7 +60,7 @@ const Blog = ({ isNew }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(()=>{navigate("/blogs")},[])
+  const navigateModal = useCallback(() => { navigate("/blogs") }, [])
 
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
@@ -83,7 +83,7 @@ const Blog = ({ isNew }) => {
   })
 
   useEffect(() => {
-    if (!isNew){ 
+    if (!isNew) {
       getBlog()
       getHashtags()
     }
@@ -175,7 +175,8 @@ const Blog = ({ isNew }) => {
               ? "Nuovo post"
               : getBlogResult.response
                 ? `Modifica ${state.title}`
-                : ""}
+                : ""
+            }
           </h2>
           <button type="submit" className="primary-button">
             Salva
@@ -301,7 +302,7 @@ const Blog = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
