@@ -1,7 +1,7 @@
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useCallback } from "react";
 
 // router & format
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 
 
@@ -13,16 +13,16 @@ import { todayWithTime } from "../../utils/date";
 
 // components
 import Input from "../../components/Input";
-import Checkbox from "../../components/Checkbox";
 import MDEditor from "../../components/MDEditor";
 import SingleImageInput from "../../components/SingleImageInput";
 import Select from "../../components/Select";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
+import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 
 // styles
 import styles from "./styles.module.css";
 import { handleRequestsModal } from "../../utils/modal";
-import Modal from "../../components/Modal/Modal";
-import Message from "../../components/Message";
 
 const emptyState = {
   title: "",
@@ -51,7 +51,7 @@ let id = null;
 
 
 const CaseStudy = ({ isNew }) => {
-  
+
   const params = useParams();
   const toastId = useId();
 
@@ -60,6 +60,7 @@ const CaseStudy = ({ isNew }) => {
 
 
   const navigate = useNavigate();
+  const navigateModal = useCallback(()=>{navigate("/case-studies")},[])
 
   // api
   const [getCaseStudyResult, getCaseStudy] = useService(`/casestudy/${id ? id : params.id}`);
@@ -80,7 +81,7 @@ const CaseStudy = ({ isNew }) => {
   })
 
   useEffect(() => {
-    if (!isNew){ getCaseStudy()}
+    if (!isNew) { getCaseStudy() }
     id = params.id;
   }, []);
 
@@ -116,8 +117,8 @@ const CaseStudy = ({ isNew }) => {
       })
     }
     if (disableOrActive.error) notify('error', toastId);
-  
-    return () => id = null;
+
+    return () => (id = null, goBack = false);
 
   }, [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error, getCaseStudyLinkRes.response]);
 
@@ -137,7 +138,7 @@ const CaseStudy = ({ isNew }) => {
     setState((p) => ({ ...p, language }))
   }
 
-  
+
   function onClickYes() {
     if (goBack) {
       saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
@@ -147,22 +148,23 @@ const CaseStudy = ({ isNew }) => {
     disableOrActiveCaseStudy();
   }
 
+  const handleBack = () => {
+    if (getCaseStudyResult?.response !== state) {
+      goBack = true;
+      setShouldShowModal(true)
+      return
+    }
+    navigate("/case-studies")
+  }
+
   return (
     <div className={styles["container"]}>
       <form
         onSubmit={handleSubmitPost}
       >
         <div className={styles["title-row"]}>
-          <Link
-            to="/case-studies"
-            style={{
-              fontSize: "200%",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            &larr;
-          </Link>
+          <GoBackArrow handleBack={handleBack} />
+
           <h2>
             {isNew
               ? "Nuovo case study"
@@ -261,7 +263,7 @@ const CaseStudy = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
