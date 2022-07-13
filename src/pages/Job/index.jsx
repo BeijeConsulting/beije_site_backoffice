@@ -1,7 +1,7 @@
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useCallback } from "react";
 
 // navigation
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // date format
 import { format } from "date-fns";
@@ -50,6 +50,8 @@ const Job = ({ isNew }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
+  const navigateModal = useCallback(()=>{navigate("/jobs")},[])
+
 
   const [getJobResult, getJob] = useService(`admin/job_application/${id}`);
 
@@ -92,6 +94,8 @@ const Job = ({ isNew }) => {
       })
     }
     if (disableOrActive.error) notify('error', toastId);
+
+    return () => goBack = false;
 
   }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error]);
 
@@ -197,7 +201,7 @@ const Job = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />

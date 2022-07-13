@@ -1,27 +1,28 @@
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useCallback } from "react";
 
 // router & format
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 
 // hooks & utils
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
+import { todayWithTime } from "../../utils/date";
+import { permalink } from "../../utils/utils";
+import { handleRequestsModal } from "../../utils/modal";
 
 // components
 import Input from "../../components/Input";
-import Checkbox from "../../components/Checkbox";
 import MDEditor from "../../components/MDEditor";
+import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
+import SingleImageInput from "../../components/SingleImageInput";
+import Select from "../../components/Select";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
 
 // styles
 import styles from "./styles.module.css";
-import SingleImageInput from "../../components/SingleImageInput";
-import { todayWithTime } from "../../utils/date";
-import Select from "../../components/Select";
-import { permalink } from "../../utils/utils";
-import Modal from "../../components/Modal/Modal";
-import Message from "../../components/Message";
-import { handleRequestsModal } from "../../utils/modal";
+
 
 const emptyState = {
   title: "",
@@ -57,6 +58,8 @@ const Blog = ({ isNew }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
+  const navigateModal = useCallback(()=>{navigate("/blogs")},[])
+
 
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${id ? id : params.id}`);
@@ -114,7 +117,7 @@ const Blog = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-    return () => id = null;
+    return () => (id = null, goBack = false);
 
   }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
 
@@ -143,22 +146,23 @@ const Blog = ({ isNew }) => {
     disableOrActiveBlog();
   }
 
+  const handleBack = () => {
+    if (getBlogResult?.response !== state) {
+      goBack = true;
+      setShouldShowModal(true)
+      return
+    }
+    navigate("/jobs")
+  }
+
   return (
     <div className={styles["container"]}>
       <form
         onSubmit={handleSubmitPost}
       >
         <div className={styles["title-row"]}>
-          <Link
-            to="/blogs"
-            style={{
-              fontSize: "200%",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            &larr;
-          </Link>
+          <GoBackArrow handleBack={handleBack} />
+
           <h2>
             {isNew
               ? "Nuovo post"
@@ -290,7 +294,7 @@ const Blog = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
