@@ -8,21 +8,20 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { permalink } from "../../utils/utils";
 import { handleRequestsModal } from "../../utils/modal";
 
 // components
 import Input from "../../components/Input";
 import MDEditor from "../../components/MDEditor";
-import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 import SingleImageInput from "../../components/SingleImageInput";
 import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
+import DetailsHeader from "../../components/DetailsHeader";
+import PermalinkForm from "../../components/PermalinkForm";
 
 // styles
 import styles from "./styles.module.css";
-import DetailsHeader from "../../components/DetailsHeader";
 
 
 const emptyState = {
@@ -38,15 +37,15 @@ const emptyState = {
   translate_blog_permalink: null
 };
 
-const imageState = {
-  blog_id: null,
-  description: "",
-  desktop: "",
-  mobile: "",
-  original: "",
-  tablet: "",
-  thumbnail: ""
-}
+// const imageState = {
+//   blog_id: null,
+//   description: "",
+//   desktop: "",
+//   mobile: "",
+//   original: "",
+//   tablet: "",
+//   thumbnail: ""
+// }
 let id = null;
 let goBack = false;
 
@@ -256,26 +255,8 @@ const Blog = ({ isNew }) => {
                     onChange={handleSetLanguage}
                   />
                 </div>
-                <div className={styles["inputs-row"]}>
-                  <Input
-                    style={{ width: "50%" }}
-                    placeholder="Permalink"
-                    name="permalink"
-                    value={state.permalink}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
-                    }
-                  />
-
-                  {
-                    !isNew &&
-                    <button className="success-button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        putBlogPermalink(state);
-                      }}>Salva Permalink</button>
-                  }
-                </div>
+                
+                <PermalinkForm isNew={isNew} putPermalinkApi={putBlogPermalink} state={state} setState={setState} />
 
                 <div className={styles["inputs-row"]}>
                   {

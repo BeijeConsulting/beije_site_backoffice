@@ -8,7 +8,6 @@ import { format } from "date-fns";
 // hooks & utils
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
-import { permalink } from "../../utils/utils";
 import { todayWithTime } from "../../utils/date";
 
 // components
@@ -18,12 +17,12 @@ import SingleImageInput from "../../components/SingleImageInput";
 import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
-import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
+import DetailsHeader from "../../components/DetailsHeader";
+import PermalinkForm from "../../components/PermalinkForm";
 
 // styles
 import styles from "./styles.module.css";
 import { handleRequestsModal } from "../../utils/modal";
-import DetailsHeader from "../../components/DetailsHeader";
 
 const emptyState = {
   title: "",
@@ -221,24 +220,7 @@ const CaseStudy = ({ isNew }) => {
                       setState((p) => ({ ...p, backgroundColor: e.target.value }))
                     }
                   />
-                  <Input
-                    style={{ width: "35%" }}
-                    placeholder="Permalink"
-                    name="permalink"
-                    value={state.permalink}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
-                    }
-                  />
-
-                  {
-                    !isNew &&
-                    <button className="success-button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        putCasePermalink(state);
-                      }}>Salva Permalink</button>
-                  }
+                  <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
                 </div>
                 <div className={styles["inputs-row"]}>
                   {
