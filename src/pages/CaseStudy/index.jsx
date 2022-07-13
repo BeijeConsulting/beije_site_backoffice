@@ -23,6 +23,7 @@ import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 // styles
 import styles from "./styles.module.css";
 import { handleRequestsModal } from "../../utils/modal";
+import DetailsHeader from "../../components/DetailsHeader";
 
 const emptyState = {
   title: "",
@@ -33,7 +34,7 @@ const emptyState = {
   backgroundColor: "",
   permalink: "",
   translateCasePermalink: "",
-  createDateTime: null,
+  createDate: "",
   disableDate: null
 };
 
@@ -59,7 +60,6 @@ const CaseStudy = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
-
   const navigate = useNavigate();
   const navigateModal = useCallback(() => { navigate("/case-studies") }, [])
 
@@ -75,6 +75,8 @@ const CaseStudy = ({ isNew }) => {
   // })
 
   const [getCaseStudyLinkRes, getCaseStudyWithLink] = useService(`/admin/casestudy/permalink/${state.translateCasePermalink}`);
+
+  const [putCasePermalinkRes, putCasePermalink] = useService(`/admin/casestudy/permalink/${state.permalink}`, { method: "put" });
 
   const [disableOrActiveResult, disableOrActiveCaseStudy] = useService(state.disableDate ?
     `/admin/casestudy/re_activate/${id}` : `/admin/casestudy/delete/${idToUse}`, {
@@ -128,8 +130,7 @@ const CaseStudy = ({ isNew }) => {
     saveCaseStudy(
       {
         ...state,
-        // createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm"),
-        createDateTime: isNew ? todayWithTime() : state.createDateTime,
+        createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
         translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink
       });
   }
@@ -142,7 +143,7 @@ const CaseStudy = ({ isNew }) => {
 
   function onClickYes() {
     if (goBack) {
-      saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
+      saveCaseStudy({ ...state, createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm") });
       goBack = false;
     }
 
@@ -163,20 +164,8 @@ const CaseStudy = ({ isNew }) => {
       <form
         onSubmit={handleSubmitPost}
       >
-        <div className={styles["title-row"]}>
-          <GoBackArrow handleBack={handleBack} />
-
-          <h2>
-            {isNew
-              ? "Nuovo case study"
-              : getCaseStudyResult.response
-                ? `Modifica ${state.title}`
-                : ""}
-          </h2>
-          <button type="submit" className="primary-button">
-            Salva
-          </button>
-        </div>
+       <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+       
         {(isNew || getCaseStudyResult.response) && (
           <>
             <div className={styles["images"]}>
@@ -210,17 +199,6 @@ const CaseStudy = ({ isNew }) => {
                       setState((p) => ({ ...p, subtitle: e.target.value }))
                     }
                   />
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="BackgroundColor"
-                    name="backgroundColor"
-                    value={state.backgroundColor}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, backgroundColor: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className={styles["inputs-row"]}>
 
                   <Select
                     value={state.language}
@@ -231,8 +209,20 @@ const CaseStudy = ({ isNew }) => {
                     ]}
                     onChange={handleSetLanguage}
                   />
+                </div>
+                <div className={styles["inputs-row"]}>
+
                   <Input
-                    style={{ width: "30%" }}
+                    style={{ width: "35%" }}
+                    placeholder="BackgroundColor"
+                    name="backgroundColor"
+                    value={state.backgroundColor}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, backgroundColor: e.target.value }))
+                    }
+                  />
+                  <Input
+                    style={{ width: "35%" }}
                     placeholder="Permalink"
                     name="permalink"
                     value={state.permalink}
@@ -240,6 +230,15 @@ const CaseStudy = ({ isNew }) => {
                       setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
                     }
                   />
+
+                  {
+                    !isNew &&
+                    <button className="success-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        putCasePermalink(state);
+                      }}>Salva Permalink</button>
+                  }
                 </div>
                 <div className={styles["inputs-row"]}>
                   {
