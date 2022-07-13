@@ -1,6 +1,6 @@
 
 //react
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useCallback } from "react";
 
 //router_navigation
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -16,43 +16,48 @@ import GoBackArrow from '../../components/GoBackArrow/GoBackArrow'
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
 import MDEditor from "../../components/MDEditor";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
 
 // styles
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
 import { permalink } from "../../utils/utils";
+import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
     description: "",
     language: "it",
     permalink: "",
     title: "",
-    translate_community_permalink: null,
-    videoPath: null,
-    cover_img_id: "",
+    translate_community_permalink: "",
+    videoPath: "",
+    cover_img_id: null,
     disable_date: null
 
 }
-
+let goBack = false
 let id = null;
 const Event = ({ isNew }) => {
 
     const navigate = useNavigate();
+    const navigateModal = useCallback(() => { navigate("/events") }, [])
     const params = useParams();
     const toastId = useId();
-
+    id = params.id
     const [state, setState] = useState(emptyState);
+    const [shouldShowModal, setShouldShowModal] = useState(false);
 
     const [getCommunityResult, getCommunity] = useService(`/community/${id ? id : params.id}`);
 
-    const [saveCommunityResult, saveCommunity] = useService(isNew ? "/community" : `/community/${id}`, {
+    const [saveCommunityResult, saveCommunity] = useService(isNew ? "/community" : `/community/update/${id}`, {
         method: isNew ? "post" : "put",
     });
 
 
     useEffect(() => {
         if (!isNew) getCommunity()
-        id = params.id;
+        /* id = params.id; */
     }, []);
 
     useEffect(() => {
@@ -70,14 +75,14 @@ const Event = ({ isNew }) => {
          } */
         if (save.error) notify('error', toastId);
 
-        return () => id = null;
+        return () => (id = null, goBack = false);
     }, [getCommunityResult]
     )
 
     const handleSbmitCommunity = (e) => {
         e.preventDefault();
         saveCommunity({
-            ...state
+            ...state, cover_img_id: null
         })
     }
 
@@ -86,11 +91,24 @@ const Event = ({ isNew }) => {
         setState((p) => ({ ...p, language }))
     }
 
-    const handleBack = () => {
+    function onClickYes() {
+        if (goBack) {
+            saveCommunity({ ...state, cover_img_id: null });
+            goBack = false;
+        }
+    }
 
+    const handleBack = () => {
+        if (getCommunityResult?.response !== state) {
+            goBack = true;
+            setShouldShowModal(true)
+            return
+        }
+        navigate("/events")
     }
     return (
         <div className={styles["container"]}>
+            {console.log(state, id)}
             <form
                 onSubmit={handleSbmitCommunity}
             >
@@ -166,6 +184,13 @@ const Event = ({ isNew }) => {
                     </>
                 )}
             </form>
+            <Modal
+                shouldShow={shouldShowModal}
+                onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
+                onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+            >
+                <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
+            </Modal>
             {
                 saveCommunityResult?.error && <ToastContainer />
             }

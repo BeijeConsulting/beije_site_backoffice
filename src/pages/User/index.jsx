@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
@@ -26,11 +26,16 @@ const emptyState = {
   picOnSite: false,
 };
 let goBack = false;
+let id = null;
 const User = ({ isNew }) => {
 
-  const { id } = useParams();
-  const toastId = useId();
+
   const navigate = useNavigate();
+  const params = useParams();
+  const toastId = useId();
+  id = params.id
+
+  const navigateModal = useCallback(() => { navigate("/community") }, [])
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
@@ -89,7 +94,7 @@ const User = ({ isNew }) => {
 
   return (
     <div className={styles["container"]}>
-
+      {console.log(state)}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -204,7 +209,7 @@ const User = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
