@@ -37,15 +37,15 @@ const emptyState = {
   disableDate: null
 };
 
-const imageState = {
-  blog_id: null,
-  description: "",
-  desktop: "",
-  mobile: "",
-  original: "",
-  tablet: "",
-  thumbnail: ""
-}
+// const imageState = {
+//   blog_id: null,
+//   description: "",
+//   desktop: "",
+//   mobile: "",
+//   original: "",
+//   tablet: "",
+//   thumbnail: ""
+// }
 let goBack = false;
 let id = null;
 
@@ -54,29 +54,30 @@ const CaseStudy = ({ isNew }) => {
 
   const params = useParams();
   const toastId = useId();
+  const idToUse = id ? id : params.id;
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(()=>{navigate("/case-studies")},[])
+  const navigateModal = useCallback(() => { navigate("/case-studies") }, [])
 
   // api
-  const [getCaseStudyResult, getCaseStudy] = useService(`/casestudy/${id ? id : params.id}`);
+  const [getCaseStudyResult, getCaseStudy] = useService(`/admin/casestudy/${idToUse}`);
 
-  const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/casestudy" : `/casestudy/${id ? id : params.id}`, {
+  const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/admin/casestudy" : `/admin/casestudy/${idToUse}`, {
     method: isNew ? "post" : "put",
   });
 
-  const [saveImageResult, saveImage] = useService("/fileupload", {
-    method: "post"
-  })
+  // const [saveImageResult, saveImage] = useService("/fileupload", {
+  //   method: "post"
+  // })
 
-  const [getCaseStudyLinkRes, getCaseStudyWithLink] = useService(`/casestudy/permalink/${state.translateCasePermalink}`);
+  const [getCaseStudyLinkRes, getCaseStudyWithLink] = useService(`/admin/casestudy/permalink/${state.translateCasePermalink}`);
 
   const [disableOrActiveResult, disableOrActiveCaseStudy] = useService(state.disableDate ?
-    `/casestudy/re_activate/${id}` : `/casestudy/delete/${id ? id : params.id}`, {
+    `/admin/casestudy/re_activate/${id}` : `/admin/casestudy/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
 
@@ -263,7 +264,7 @@ const CaseStudy = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />

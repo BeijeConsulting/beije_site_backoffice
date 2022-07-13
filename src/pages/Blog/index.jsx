@@ -54,39 +54,46 @@ const Blog = ({ isNew }) => {
   const params = useParams();
   const toastId = useId();
 
+  const idToUse = id ? id : params.id;
+
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
   const navigateModal = useCallback(()=>{navigate("/blogs")},[])
 
-
   // api
-  const [getBlogResult, getBlog] = useService(`/blog/id/${id ? id : params.id}`);
+  const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
 
-  const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${id ? id : params.id}`, {
+  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`)
+
+  const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${idToUse}`, {
     method: isNew ? "post" : "put",
   });
 
-  const [saveImageResult, saveImage] = useService("/fileupload", {
+  const [saveImageResult, saveImage] = useService("/site_image", {
     method: "post"
   });
 
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`);
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
-    `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${id ? id : params.id}`, {
+    `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
 
   useEffect(() => {
-    if (!isNew) getBlog()
+    if (!isNew){ 
+      getBlog()
+      getHashtags()
+    }
     id = params.id;
   }, []);
 
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
+      console.log(hashtagsResult.response);
       setState(response);
     }
 
