@@ -36,7 +36,6 @@ const emptyState = {
     disable_date: null
 
 }
-let goBack = false
 let id = null;
 const Event = ({ isNew }) => {
 
@@ -47,6 +46,8 @@ const Event = ({ isNew }) => {
     id = params.id
     const [state, setState] = useState(emptyState);
     const [shouldShowModal, setShouldShowModal] = useState(false);
+
+    const [goBack, setGoBack] = useState(false)
 
     const [getCommunityResult, getCommunity] = useService(`/community/${id ? id : params.id}`);
 
@@ -75,7 +76,7 @@ const Event = ({ isNew }) => {
          } */
         if (save.error) notify('error', toastId);
 
-        return () => (id = null, goBack = false);
+        return () => (id = null);
     }, [getCommunityResult]
     )
 
@@ -91,16 +92,17 @@ const Event = ({ isNew }) => {
         setState((p) => ({ ...p, language }))
     }
 
-    function onClickYes() {
-        if (goBack) {
-            saveCommunity({ ...state, cover_img_id: null });
-            goBack = false;
-        }
-    }
+    /*    function onClickYes() {
+           if (goBack) {
+               saveCommunity({ ...state, cover_img_id: null });
+               goBack = false;
+           }
+       } */
 
     const handleBack = () => {
+
         if (getCommunityResult?.response !== state) {
-            goBack = true;
+            setGoBack(true);
             setShouldShowModal(true)
             return
         }
@@ -184,10 +186,26 @@ const Event = ({ isNew }) => {
                     </>
                 )}
             </form>
+            {/* 
             <Modal
                 shouldShow={shouldShowModal}
                 onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
                 onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+            >
+                <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
+            </Modal> */}
+
+            <Modal
+                shouldShow={shouldShowModal}
+                goBack={goBack}
+                path={"/events"}
+                actions={{
+                    save: () => { saveCommunity({ ...state, cover_img_id: null }) },
+                    disable: () => { return }
+                }}
+                setModal={setShouldShowModal}
+                setGoBack={setGoBack}
+
             >
                 <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
             </Modal>
