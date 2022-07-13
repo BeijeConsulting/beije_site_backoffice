@@ -186,15 +186,6 @@ const Event = ({ isNew }) => {
                     </>
                 )}
             </form>
-            {/* 
-            <Modal
-                shouldShow={shouldShowModal}
-                onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
-                onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
-            >
-                <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
-            </Modal> */}
-
             <Modal
                 shouldShow={shouldShowModal}
                 goBack={goBack}

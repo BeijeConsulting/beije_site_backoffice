@@ -29,12 +29,12 @@ const Modal = ({ children, goBack, path, shouldShow, setModal, actions, setGoBac
 
 	return shouldShow ? (
 		<ReactPortal>
-			<div className="modalBackground" onClick={onRequestModal(goBack ? "goback" : "no")}>
+			<div className="modalBackground" onClick={() => { onRequestModal(goBack ? "goback" : "no") }}>
 				<div className="modalBody" onClick={e => e.stopPropagation()}>
 					{children}
 					<div className='btnContainer'>
-						<button className="secondary-button btnMargin" onClick={onRequestModal(goBack ? "goback" : "no")}>No</button>
-						<button className="primary-button" onClick={onRequestModal("yes")}>Si</button>
+						<button className="secondary-button btnMargin" onClick={() => { onRequestModal(goBack ? "goback" : "no") }}>No</button>
+						<button className="primary-button" onClick={() => { onRequestModal("yes") }}>Si</button>
 					</div>
 				</div>
 			</div>
