@@ -22,6 +22,7 @@ import Message from "../../components/Message";
 
 // styles
 import styles from "./styles.module.css";
+import DetailsHeader from "../../components/DetailsHeader";
 
 
 const emptyState = {
@@ -75,7 +76,9 @@ const Blog = ({ isNew }) => {
     method: "post"
   });
 
-  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`);
+  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
+
+  const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`,{method: "put"});
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
     `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${idToUse}`, {
@@ -93,7 +96,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
-      console.log(hashtagsResult.response);
+      // console.log(hashtagsResult.response);
       setState(response);
     }
 
@@ -159,7 +162,7 @@ const Blog = ({ isNew }) => {
       setShouldShowModal(true)
       return
     }
-    navigate("/jobs")
+    navigate("/blogs")
   }
 
   return (
@@ -167,21 +170,8 @@ const Blog = ({ isNew }) => {
       <form
         onSubmit={handleSubmitPost}
       >
-        <div className={styles["title-row"]}>
-          <GoBackArrow handleBack={handleBack} />
-
-          <h2>
-            {isNew
-              ? "Nuovo post"
-              : getBlogResult.response
-                ? `Modifica ${state.title}`
-                : ""
-            }
-          </h2>
-          <button type="submit" className="primary-button">
-            Salva
-          </button>
-        </div>
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+        
         {(isNew || getBlogResult.response) && (
           <>
             <div className={styles["images"]}>
@@ -266,8 +256,9 @@ const Blog = ({ isNew }) => {
                     onChange={handleSetLanguage}
                   />
                 </div>
+                <div className={styles["inputs-row"]}>
                   <Input
-                    style={{ width: "100%" }}
+                    style={{ width: "50%" }}
                     placeholder="Permalink"
                     name="permalink"
                     value={state.permalink}
@@ -276,7 +267,15 @@ const Blog = ({ isNew }) => {
                     }
                   />
 
-                  
+                  {
+                    !isNew &&
+                    <button className="success-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        putBlogPermalink(state);
+                      }}>Salva Permalink</button>
+                  }
+                </div>
 
                 <div className={styles["inputs-row"]}>
                   {

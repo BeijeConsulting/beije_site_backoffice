@@ -6,6 +6,8 @@
 
 :root {
   --beije: #262E36;
+  --success: #5CB85C;
+  --success-700: #408140;
   --grey-700: hsl(207, 18%, 25%);
   --grey-500: hsl(207, 18%, 50%);
   --grey-300: hsl(207, 18%, 75%);
@@ -91,6 +93,11 @@ select {
   clip: rect(1px, 1px, 1px, 1px);
 }
 
+.alignSelf {
+  align-self: flex-end;
+  margin: 0 auto;
+}
+
 .primary-button {
   padding-inline: 10px;
   padding-block: 8px;
@@ -111,11 +118,17 @@ select {
   cursor: pointer;
 }
 
-a.primary-button {
-  text-decoration: none;
+.success-button {
+  padding-inline: 10px;
+  padding-block: 8px;
+  border-radius: 4px;
+  background-color: var(--success);
+  color: var(--white);
+  border: 1px solid var(--success);
+  cursor: pointer;
 }
 
-a.secondary-button {
+a.primary-button, a.secondary-button , a.success-button  {
   text-decoration: none;
 }
 
@@ -127,6 +140,11 @@ a.secondary-button {
 .secondary-button:hover {
   background-color: var(--grey-700);
   border-color: var(--grey-700);
+}
+
+.success-button:hover {
+  background-color: var(--success-700);
+  border-color: var(--success-700);
 }
 
 /* Remove all animations, transitions and smooth scroll for people that prefer not to see them */

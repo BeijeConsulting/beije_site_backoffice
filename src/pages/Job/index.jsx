@@ -25,6 +25,7 @@ import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 
 // style
 import styles from "./styles.module.css";
+import DetailsHeader from "../../components/DetailsHeader";
 
 const emptyState = {
   title_it: "",
@@ -50,7 +51,7 @@ const Job = ({ isNew }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(()=>{navigate("/jobs")},[])
+  const navigateModal = useCallback(() => { navigate("/jobs") }, [])
 
 
   const [getJobResult, getJob] = useService(`admin/job_application/${id}`);
@@ -127,68 +128,58 @@ const Job = ({ isNew }) => {
       <form
         onSubmit={handleSubmitJob}
       >
-        <div className={styles["title-row"]}>
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title_it} />
 
-          <GoBackArrow handleBack={handleBack} />
-
-          <h2>
-            {isNew
-              ? "Nuova offerta di lavoro"
-              : getJobResult.response
-                ? `Modifica ${getJobResult.response.title_it}`
-                : ""}
-          </h2>
-          <button type="submit" className="primary-button">
-            Salva
-          </button>
-        </div>
         {(isNew || getJobResult.response) && (
           <>
-            <div className={styles["inputs-row"]}>
-              <Input
-                style={{ width: "40%" }}
-                placeholder="Titolo"
-                name="title"
-                value={state.title_it}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, title_it: e.target.value }))
-                }
-              />
-              <Input
-                placeholder="Posizione"
-                name="type"
-                value={state.type}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, type: e.target.value }))
-                }
-              />
-              <Select
-                value={state.mode}
-                label="Sede"
-                options={[
-                  { value: "-", label: "vuoto" },
-                  { value: "remote", label: "Da remoto" },
-                  { value: "milan", label: "Milano" },
-                  { value: "hybrid", label: "Ibrido" },
-                ]}
-                onChange={(mode) => setState((p) => ({ ...p, mode }))}
-              />
-              <Checkbox
-                checked={state.academy}
-                onChange={(e) => {
-                  setState((p) => ({ ...p, academy: e.target.checked }));
-                }}
-                label="Academy: "
-              />
+            <div className={styles["input-container"]}>
 
-              {
-                !isNew &&
-                <button className="primary-button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShouldShowModal(true)
-                  }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
-              }
+              {/* <div className={styles["inputs-row"]}> */}
+                <Input
+                  style={{ width: "40%" }}
+                  placeholder="Titolo"
+                  name="title"
+                  value={state.title_it}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, title_it: e.target.value }))
+                  }
+                />
+                <Input
+                  placeholder="Posizione"
+                  name="type"
+                  value={state.type}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, type: e.target.value }))
+                  }
+                />
+                <Select
+                  value={state.mode}
+                  label="Sede"
+                  options={[
+                    { value: "-", label: "vuoto" },
+                    { value: "remote", label: "Da remoto" },
+                    { value: "milan", label: "Milano" },
+                    { value: "hybrid", label: "Ibrido" },
+                  ]}
+                  onChange={(mode) => setState((p) => ({ ...p, mode }))}
+                />
+                <Checkbox
+                  checked={state.academy}
+                  onChange={(e) => {
+                    setState((p) => ({ ...p, academy: e.target.checked }));
+                  }}
+                  label="Academy: "
+                />
+
+                {
+                  !isNew &&
+                  <button className="primary-button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShouldShowModal(true)
+                    }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
+                }
+              {/* </div> */}
             </div>
             <MDEditor
               value={state.description_it}
@@ -201,7 +192,7 @@ const Job = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
