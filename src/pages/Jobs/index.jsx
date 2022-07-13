@@ -73,26 +73,20 @@ const Jobs = () => {
               "Tipologia",
               "Data di creazione",
               "Sede",
-              // "Visibile",
-              "Academy",
             ]}
             records={response.map(
               ({
                 id,
                 title_it,
-                academy,
                 type,
                 date_creation,
                 mode,
-                // disable_date,
               }) => ({
                 id,
                 title_it,
                 type,
                 date_creation: format(date_creation, "dd MMMM yyyy", { locale }),
                 mode: mode.charAt(0).toUpperCase() + mode.slice(1),
-                // visible: format(disable_date, "dd MMMM yyyy", { locale }),
-                academy,
               })
             )}
             actionLabel="Modifica"
