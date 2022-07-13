@@ -65,7 +65,7 @@ const Blog = ({ isNew }) => {
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
 
-  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`)
+  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`);
 
   const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${idToUse}`, {
     method: isNew ? "post" : "put",
