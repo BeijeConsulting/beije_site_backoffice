@@ -52,9 +52,9 @@ function App() {
             <Route path="/community" element={<Users />} />
             <Route path="/community/:id" element={<User />} />
             <Route path="/community/new" element={<User isNew />} />
-            {/* <Route path="/events" element={<Events />} />
-            <Route path="/event/:id" element={<Event />} />
-            <Route path="/event/new" element={<Event isNew />} /> */}
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<Event />} />
+            <Route path="/events/new" element={<Event isNew />} />
           </Route>
         </Route>
       </Routes>

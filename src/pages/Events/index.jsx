@@ -16,7 +16,7 @@ const initState = {
     lang: "it",
 }
 
-export default function index() {
+const Events = () => {
 
     const [state, setState] = useState(initState);
 
@@ -76,7 +76,7 @@ export default function index() {
                             })
                         )}
                         actionLabel="Modifica"
-
+                        onAction={(record) => navigate(record.id.toString())}
                         formatDimension={300}
                     />
                 </div>
@@ -85,3 +85,5 @@ export default function index() {
             <Loader />
     )
 }
+
+export default Events
