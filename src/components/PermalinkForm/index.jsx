@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import { permalink } from '../../utils/utils';
 import Input from '../Input';
 
 import styles from './styles.module.css';
@@ -12,7 +13,7 @@ function PermalinkForm({ isNew, state, setState, putPermalinkApi }) {
   }, [state.permalink]);
 
   const handleChange = (e) => {
-    setState({ ...state, permalink: e.target.value })
+    setState({ ...state, permalink: permalink(e.target.value) })
   }
 
   return (
