@@ -33,7 +33,7 @@ const emptyState = {
   backgroundColor: "",
   permalink: "",
   translateCasePermalink: "",
-  createDateTime: null,
+  createDate: "",
   disableDate: null
 };
 
@@ -128,8 +128,7 @@ const CaseStudy = ({ isNew }) => {
     saveCaseStudy(
       {
         ...state,
-        // createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm"),
-        createDateTime: isNew ? todayWithTime() : state.createDateTime,
+        createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
         translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink
       });
   }
@@ -142,7 +141,7 @@ const CaseStudy = ({ isNew }) => {
 
   function onClickYes() {
     if (goBack) {
-      saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
+      saveCaseStudy({ ...state, createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm") });
       goBack = false;
     }
 
