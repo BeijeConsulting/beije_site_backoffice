@@ -92,6 +92,8 @@ const Blog = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
+    return () => id = null;
+
   }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
 
   const handleSubmitPost = (e) => {

@@ -46,12 +46,12 @@ const imageState = {
   tablet: "",
   thumbnail: ""
 }
-let id = null;
 let goBack = false;
+let id = null;
 
 
 const CaseStudy = ({ isNew }) => {
-
+  
   const params = useParams();
   const toastId = useId();
 
@@ -62,6 +62,7 @@ const CaseStudy = ({ isNew }) => {
   const navigate = useNavigate();
 
   // api
+  console.log('id', id, 'params', params.id);
   const [getCaseStudyResult, getCaseStudy] = useService(`/casestudy/${id ? id : params.id}`);
 
   const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/casestudy" : `/casestudy/${id}`, {
@@ -80,7 +81,7 @@ const CaseStudy = ({ isNew }) => {
   })
 
   useEffect(() => {
-    if (!isNew) getCaseStudy()
+    if (!isNew){ getCaseStudy()}
     id = params.id;
   }, []);
 
@@ -106,6 +107,9 @@ const CaseStudy = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
+
+    
+    return () => id = null;
 
   }, [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error, getCaseStudyLinkRes.response]);
 
