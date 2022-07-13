@@ -19,6 +19,9 @@ import SingleImageInput from "../../components/SingleImageInput";
 import { todayWithTime } from "../../utils/date";
 import Select from "../../components/Select";
 import { permalink } from "../../utils/utils";
+import Modal from "../../components/Modal/Modal";
+import Message from "../../components/Message";
+import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
   title: "",
@@ -43,27 +46,35 @@ const imageState = {
   thumbnail: ""
 }
 let id = null;
+let goBack = false;
+
 const Blog = ({ isNew }) => {
 
   const params = useParams();
   const toastId = useId();
 
   const [state, setState] = useState(emptyState);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
 
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${id ? id : params.id}`);
 
-  const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${id}`, {
+  const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${id ? id : params.id}`, {
     method: isNew ? "post" : "put",
   });
 
   const [saveImageResult, saveImage] = useService("/fileupload", {
     method: "post"
-  })
+  });
 
-  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`)
+  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`);
+
+  const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
+    `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${id ? id : params.id}`, {
+    method: state.disableDate ? "put" : "delete"
+  })
 
   useEffect(() => {
     if (!isNew) getBlog()
@@ -92,6 +103,17 @@ const Blog = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
+    const disableOrActive = disableOrActiveResult ?? { response: null };
+
+    if (disableOrActive.response) {
+      navigate('/jobs', {
+        state: {
+          toast: true
+        }
+      })
+    }
+    if (disableOrActive.error) notify('error', toastId);
+
     return () => id = null;
 
   }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
@@ -110,6 +132,15 @@ const Blog = ({ isNew }) => {
   const handleSetLanguage = (language) => {
     !isNew && getBlogPermalink();
     setState((p) => ({ ...p, language }))
+  }
+
+  function onClickYes() {
+    if (goBack) {
+      saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
+      goBack = false;
+    }
+
+    disableOrActiveBlog();
   }
 
   return (
@@ -237,13 +268,11 @@ const Blog = ({ isNew }) => {
                 <div className={styles["inputs-row"]}>
                   {
                     !isNew &&
-                    <Checkbox
-                      checked={state.disable_date}
-                      onChange={(e) => {
-                        setState((p) => ({ ...p, disable_date: e.target.checked }));
-                      }}
-                      label="Visibile: "
-                    />
+                    <button className="primary-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShouldShowModal(true)
+                      }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
                   }
                 </div>
 
@@ -259,6 +288,13 @@ const Blog = ({ isNew }) => {
           </>
         )}
       </form>
+      <Modal
+        shouldShow={shouldShowModal}
+        onRequestClose={handleRequestsModal("no", onClickYes, setShouldShowModal)}
+        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+      >
+        <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
+      </Modal>
       {
         saveBlogResult?.error && <ToastContainer />
       }

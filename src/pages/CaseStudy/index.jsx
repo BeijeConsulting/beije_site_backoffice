@@ -62,10 +62,9 @@ const CaseStudy = ({ isNew }) => {
   const navigate = useNavigate();
 
   // api
-  console.log('id', id, 'params', params.id);
   const [getCaseStudyResult, getCaseStudy] = useService(`/casestudy/${id ? id : params.id}`);
 
-  const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/casestudy" : `/casestudy/${id}`, {
+  const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/casestudy" : `/casestudy/${id ? id : params.id}`, {
     method: isNew ? "post" : "put",
   });
 
@@ -76,7 +75,7 @@ const CaseStudy = ({ isNew }) => {
   const [getCaseStudyLinkRes, getCaseStudyWithLink] = useService(`/casestudy/permalink/${state.translateCasePermalink}`);
 
   const [disableOrActiveResult, disableOrActiveCaseStudy] = useService(state.disableDate ?
-    `/casestudy/re_activate/${id}` : `/casestudy/delete/${id}`, {
+    `/casestudy/re_activate/${id}` : `/casestudy/delete/${id ? id : params.id}`, {
     method: state.disableDate ? "put" : "delete"
   })
 
@@ -93,7 +92,6 @@ const CaseStudy = ({ isNew }) => {
 
     const responsePermalink = getCaseStudyLinkRes ?? { response: null };
     if (responsePermalink.response) {
-      console.log(responsePermalink.response);
       id = responsePermalink.response.id
       setState(responsePermalink.response);
     }
@@ -108,7 +106,17 @@ const CaseStudy = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
-    
+    const disableOrActive = disableOrActiveResult ?? { response: null };
+
+    if (disableOrActive.response) {
+      navigate('/jobs', {
+        state: {
+          toast: true
+        }
+      })
+    }
+    if (disableOrActive.error) notify('error', toastId);
+  
     return () => id = null;
 
   }, [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error, getCaseStudyLinkRes.response]);
