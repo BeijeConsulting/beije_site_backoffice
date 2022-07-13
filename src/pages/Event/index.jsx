@@ -92,13 +92,6 @@ const Event = ({ isNew }) => {
         setState((p) => ({ ...p, language }))
     }
 
-    /*    function onClickYes() {
-           if (goBack) {
-               saveCommunity({ ...state, cover_img_id: null });
-               goBack = false;
-           }
-       } */
-
     const handleBack = () => {
 
         if (getCommunityResult?.response !== state) {

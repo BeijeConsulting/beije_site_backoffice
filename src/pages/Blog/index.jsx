@@ -47,7 +47,6 @@ const emptyState = {
 //   thumbnail: ""
 // }
 let id = null;
-let goBack = false;
 
 const Blog = ({ isNew }) => {
 
@@ -58,6 +57,7 @@ const Blog = ({ isNew }) => {
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
   const navigateModal = useCallback(() => { navigate("/blogs") }, [])
@@ -77,7 +77,7 @@ const Blog = ({ isNew }) => {
 
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
 
-  const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`,{method: "put"});
+  const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`, { method: "put" });
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
     `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${idToUse}`, {
@@ -126,7 +126,7 @@ const Blog = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-    return () => (id = null, goBack = false);
+    return () => (id = null);
 
   }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
 
@@ -146,18 +146,18 @@ const Blog = ({ isNew }) => {
     setState((p) => ({ ...p, language }))
   }
 
-  function onClickYes() {
+  /* function onClickYes() {
     if (goBack) {
       saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
       goBack = false;
     }
 
     disableOrActiveBlog();
-  }
+  } */
 
   const handleBack = () => {
     if (getBlogResult?.response !== state) {
-      goBack = true;
+      setGoBack(true);
       setShouldShowModal(true)
       return
     }
@@ -170,7 +170,7 @@ const Blog = ({ isNew }) => {
         onSubmit={handleSubmitPost}
       >
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
-        
+
         {(isNew || getBlogResult.response) && (
           <>
             <div className={styles["images"]}>
@@ -255,7 +255,7 @@ const Blog = ({ isNew }) => {
                     onChange={handleSetLanguage}
                   />
                 </div>
-                
+
                 <PermalinkForm isNew={isNew} putPermalinkApi={putBlogPermalink} state={state} setState={setState} />
 
                 <div className={styles["inputs-row"]}>
@@ -283,8 +283,15 @@ const Blog = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
-        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+        goBack={goBack}
+        path={"/blogs"}
+        actions={{
+          save: () => { saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") }) },
+          disable: () => { disableOrActiveBlog(); }
+        }}
+        setModal={setShouldShowModal}
+        setGoBack={setGoBack}
+
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>

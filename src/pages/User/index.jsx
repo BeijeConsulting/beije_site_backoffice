@@ -25,7 +25,7 @@ const emptyState = {
   picImageThumbnail: null,
   picOnSite: false,
 };
-let goBack = false;
+
 let id = null;
 const User = ({ isNew }) => {
 
@@ -38,6 +38,7 @@ const User = ({ isNew }) => {
   const navigateModal = useCallback(() => { navigate("/community") }, [])
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [goBack, setGoBack] = useState(false)
 
   const [getUserResult, getUser] = useService(`team/user/${id}`);
   const [disableUserResult, disableUser] = useService(`/user/${id}`, {
@@ -71,25 +72,16 @@ const User = ({ isNew }) => {
     if (save.error) notify('error', toastId);
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
 
-  function onClickYes() {
-    console.log('onYes')
-    if (!goBack) {
-      disableUser();
-    }
-    saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
-    navigate("/community")
-  }
+
 
   function handleBack() {
 
     if (!isNew && getUserResult?.response !== state) {
-      console.log('handleBack if')
-      goBack = true;
-      console.log(goBack)
+      setGoBack(true);
       setShouldShowModal(true)
       return
     }
-
+    navigate("/community")
   }
 
   return (
@@ -99,7 +91,7 @@ const User = ({ isNew }) => {
         onSubmit={(e) => {
           e.preventDefault();
           saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
-          goBack = true;
+          setGoBack(true);
         }}
       >
 
@@ -209,8 +201,15 @@ const User = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
-        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+        goBack={goBack}
+        path={"/community"}
+        actions={{
+          save: () => { saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
+          disable: () => { disableUser() }
+        }}
+        setModal={setShouldShowModal}
+        setGoBack={setGoBack}
+
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>

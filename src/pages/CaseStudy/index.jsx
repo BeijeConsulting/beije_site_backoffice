@@ -46,9 +46,7 @@ const emptyState = {
 //   tablet: "",
 //   thumbnail: ""
 // }
-let goBack = false;
 let id = null;
-
 
 const CaseStudy = ({ isNew }) => {
 
@@ -58,6 +56,7 @@ const CaseStudy = ({ isNew }) => {
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
   const navigateModal = useCallback(() => { navigate("/case-studies") }, [])
@@ -120,7 +119,7 @@ const CaseStudy = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-    return () => (id = null, goBack = false);
+    return () => (id = null);
 
   }, [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error, getCaseStudyLinkRes.response]);
 
@@ -140,18 +139,9 @@ const CaseStudy = ({ isNew }) => {
   }
 
 
-  function onClickYes() {
-    if (goBack) {
-      saveCaseStudy({ ...state, createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm") });
-      goBack = false;
-    }
-
-    disableOrActiveCaseStudy();
-  }
-
   const handleBack = () => {
     if (getCaseStudyResult?.response !== state) {
-      goBack = true;
+      setGoBack(true)
       setShouldShowModal(true)
       return
     }
@@ -163,8 +153,8 @@ const CaseStudy = ({ isNew }) => {
       <form
         onSubmit={handleSubmitPost}
       >
-       <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
-       
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+
         {(isNew || getCaseStudyResult.response) && (
           <>
             <div className={styles["images"]}>
@@ -245,8 +235,15 @@ const CaseStudy = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
-        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+        goBack={goBack}
+        path={"/case-studies"}
+        actions={{
+          save: () => { saveCaseStudy({ ...state, createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm") }) },
+          disable: () => { disableOrActiveCaseStudy() }
+        }}
+        setModal={setShouldShowModal}
+        setGoBack={setGoBack}
+
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
