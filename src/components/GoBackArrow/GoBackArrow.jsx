@@ -7,7 +7,8 @@ export default function GoBackArrow({ handleBack }) {
                 fontSize: "200%",
                 textDecoration: "none",
                 color: "inherit",
-                cursor: "pointer"
+                cursor: "pointer",
+                marginRight: "2rem"
             }}
             onClick={handleBack}
         >

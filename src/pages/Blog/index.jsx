@@ -22,6 +22,7 @@ import Message from "../../components/Message";
 
 // styles
 import styles from "./styles.module.css";
+import DetailsHeader from "../../components/DetailsHeader";
 
 
 const emptyState = {
@@ -60,12 +61,12 @@ const Blog = ({ isNew }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(()=>{navigate("/blogs")},[])
+  const navigateModal = useCallback(() => { navigate("/blogs") }, [])
 
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
 
-  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`)
+  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`);
 
   const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${idToUse}`, {
     method: isNew ? "post" : "put",
@@ -75,7 +76,9 @@ const Blog = ({ isNew }) => {
     method: "post"
   });
 
-  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`/blog/${state.translate_blog_permalink}`);
+  const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
+
+  const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`,{method: "put"});
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
     `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${idToUse}`, {
@@ -83,9 +86,9 @@ const Blog = ({ isNew }) => {
   })
 
   useEffect(() => {
-    if (!isNew){ 
+    if (!isNew) {
       getBlog()
-      getHashtags()
+      // getHashtags()
     }
     id = params.id;
   }, []);
@@ -93,7 +96,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
-      console.log(hashtagsResult.response);
+      // console.log(hashtagsResult.response);
       setState(response);
     }
 
@@ -116,7 +119,7 @@ const Blog = ({ isNew }) => {
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
-      navigate('/jobs', {
+      navigate('/blogs', {
         state: {
           toast: true
         }
@@ -159,7 +162,7 @@ const Blog = ({ isNew }) => {
       setShouldShowModal(true)
       return
     }
-    navigate("/jobs")
+    navigate("/blogs")
   }
 
   return (
@@ -167,20 +170,8 @@ const Blog = ({ isNew }) => {
       <form
         onSubmit={handleSubmitPost}
       >
-        <div className={styles["title-row"]}>
-          <GoBackArrow handleBack={handleBack} />
-
-          <h2>
-            {isNew
-              ? "Nuovo post"
-              : getBlogResult.response
-                ? `Modifica ${state.title}`
-                : ""}
-          </h2>
-          <button type="submit" className="primary-button">
-            Salva
-          </button>
-        </div>
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+        
         {(isNew || getBlogResult.response) && (
           <>
             <div className={styles["images"]}>
@@ -264,8 +255,10 @@ const Blog = ({ isNew }) => {
                     ]}
                     onChange={handleSetLanguage}
                   />
+                </div>
+                <div className={styles["inputs-row"]}>
                   <Input
-                    style={{ width: "100%" }}
+                    style={{ width: "50%" }}
                     placeholder="Permalink"
                     name="permalink"
                     value={state.permalink}
@@ -273,8 +266,16 @@ const Blog = ({ isNew }) => {
                       setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
                     }
                   />
-                </div>
 
+                  {
+                    !isNew &&
+                    <button className="success-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        putBlogPermalink(state);
+                      }}>Salva Permalink</button>
+                  }
+                </div>
 
                 <div className={styles["inputs-row"]}>
                   {
@@ -301,7 +302,7 @@ const Blog = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback": "no", onClickYes, setShouldShowModal, navigateModal)}
+        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
         onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
