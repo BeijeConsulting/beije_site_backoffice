@@ -4,9 +4,9 @@ const MultipleImageInput = ({ state }) => {
 
   const imageList = (img, key) => {
     return (
-      <div style={{padding: "1rem"}}>
+
+      <div key={key + img} style={{ padding: "1rem" }}>
         <SingleImageInput
-          key={key + img}
           aspectRatio="1"
           style={{ maxWidth: "200px" }}
           label={"image" + (key + 1)}
