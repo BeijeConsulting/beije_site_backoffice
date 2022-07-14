@@ -1,6 +1,5 @@
 import ReactPortal from '../ReactPortal';
 import './styles.css';
-import { handleRequestsModal } from '../../utils/modal';
 import { useNavigate } from 'react-router-dom';
 
 const Modal = ({ children, goBack, path, shouldShow, setModal, actions, setGoBack }) => {

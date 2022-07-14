@@ -1,4 +1,4 @@
-import { useState, useEffect, useId, useCallback } from "react";
+import { useState, useEffect, useId } from "react";
 
 // router & format
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { handleRequestsModal } from "../../utils/modal";
 
 // components
 import Input from "../../components/Input";
@@ -60,7 +59,6 @@ const Blog = ({ isNew }) => {
   const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(() => { navigate("/blogs") }, [])
 
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);

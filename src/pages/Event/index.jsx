@@ -3,7 +3,7 @@
 import { useState, useEffect, useId, useCallback } from "react";
 
 //router_navigation
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 //api
 import useService from "../../hooks/useService";
@@ -23,7 +23,6 @@ import Message from "../../components/Message";
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
 import { permalink } from "../../utils/utils";
-import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
     description: "",
@@ -40,7 +39,6 @@ let id = null;
 const Event = ({ isNew }) => {
 
     const navigate = useNavigate();
-    const navigateModal = useCallback(() => { navigate("/events") }, [])
     const params = useParams();
     const toastId = useId();
     id = params.id

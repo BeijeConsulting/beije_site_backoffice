@@ -1,4 +1,4 @@
-import { useState, useEffect, useId, useCallback } from "react";
+import { useState, useEffect, useId } from "react";
 
 // router & format
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,7 +22,6 @@ import PermalinkForm from "../../components/PermalinkForm";
 
 // styles
 import styles from "./styles.module.css";
-import { handleRequestsModal } from "../../utils/modal";
 
 const emptyState = {
   title: "",
@@ -59,7 +58,6 @@ const CaseStudy = ({ isNew }) => {
   const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(() => { navigate("/case-studies") }, [])
 
   // api
   const [getCaseStudyResult, getCaseStudy] = useService(`/admin/casestudy/${idToUse}`);

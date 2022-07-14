@@ -1,4 +1,4 @@
-import { useState, useEffect, useId, useCallback } from "react";
+import { useState, useEffect, useId } from "react";
 
 // navigation
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,7 +12,6 @@ import useService from "../../hooks/useService";
 
 // utils
 import { notify, ToastContainer } from '../../utils/toast';
-import { handleRequestsModal } from "../../utils/modal";
 
 // components
 import Input from "../../components/Input";
@@ -21,7 +20,6 @@ import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
-import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 
 // style
 import styles from "./styles.module.css";
@@ -50,8 +48,6 @@ const Job = ({ isNew }) => {
   const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
-  const navigateModal = useCallback(() => { navigate("/jobs") }, [])
-
 
   const [getJobResult, getJob] = useService(`admin/job_application/${id}`);
 

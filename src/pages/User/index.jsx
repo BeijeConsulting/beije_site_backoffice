@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import useService from "../../hooks/useService";
 
@@ -13,8 +13,6 @@ import Message from "../../components/Message";
 import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
-import { handleRequestsModal } from "../../utils/modal";
-import { todayWithTime } from "../../utils/date";
 import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 const emptyState = {
   firstName: "",
@@ -35,7 +33,6 @@ const User = ({ isNew }) => {
   const toastId = useId();
   id = params.id
 
-  const navigateModal = useCallback(() => { navigate("/community") }, [])
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false)
