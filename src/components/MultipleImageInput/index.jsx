@@ -1,84 +1,30 @@
-import { useId } from "react";
-import styles from "./styles.module.css";
+import SingleImageInput from "../SingleImageInput";
 
-function readFile(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => {
-      resolve({ content: e.target.result });
-    });
-    reader.addEventListener("error", () => {
-      reject({ error: e.target.result });
-    });
-    reader.readAsDataURL(file);
-  });
-}
+const MultipleImageInput = ({ state }) => {
 
-const MultipleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
-  const id = useId();
-  return (
-    <div
-      style={{ aspectRatio, ...style }}
-      className={`${styles["container"]} ${value ? styles["with-value"] : ""}`}
-      onDragOver={(e) => {
-        e.preventDefault();
-        e.dataTransfer.effectAllowed = "copy";
-        e.target.classList.add(styles["dragging"]);
-      }}
-      onDragLeave={(e) => {
-        e.preventDefault();
-        e.target.classList.remove(styles["dragging"]);
-      }}
-      onDrop={async (e) => {
-        e.preventDefault();
-        console.log(e.dataTransfer.files);
-        const { content, error } = await readFile(e.dataTransfer.files[0]);
-        if (!error) {
-          onChange(content);
-        } else {
-          onChange("");
-        }
-        e.target.classList.remove(styles["dragging"]);
-      }}
-    >
-      {value && <img className={styles["result"]} src={value} alt="" />}
-      <span className={styles["label"]}>{label}</span>
-      <p className={styles["info-text"]}>
-        Carica un'immagine con il pulsante qui sotto o trascinandola nell'area
-        tratteggiata.
-      </p>
-      <div className={styles["actions-container"]}>
-        <input
-          className="hidden"
-          id={id}
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            console.log(e.target.files);
-            const { content, error } = await readFile(e.target.files[0]);
-            if (!error) {
-              onChange(content);
-            } else {
-              onChange("");
-            }
-            e.target.value = "";
+  const imageList = (img, key) => {
+    return (
+      <div style={{padding: "1rem"}}>
+        <SingleImageInput
+          key={key + img}
+          aspectRatio="1"
+          style={{ maxWidth: "300px" }}
+          label={"image" + (key + 1)}
+          value={img}
+          onChange={(image) => {
+            const newState = Object.assign({}, state)
+            newState.images.splice(key, 1, image)
+            state[1]((p) => ({ ...p, images: newState.images }));
           }}
         />
-        <label className={styles["upload-btn"]} htmlFor={id}>
-          <span>{value ? "Modifica" : "Carica"}</span>
-        </label>
-        {value && (
-          <button
-            className={styles["delete-btn"]}
-            onClick={() => {
-              onChange("");
-            }}
-          >
-            Elimina
-          </button>
-        )}
       </div>
-    </div>
+    )
+
+  }
+  return (
+    // <></>
+    state[0]?.images?.length > 0 && state[0]?.images?.map(imageList)
+
   );
 };
 

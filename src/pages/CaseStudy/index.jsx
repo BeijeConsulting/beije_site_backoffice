@@ -214,7 +214,7 @@ const CaseStudy = ({ isNew }) => {
                       onClick={(e) => {
                         e.preventDefault();
                         setShouldShowModal(true)
-                      }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
+                      }}>{state.disableDate ? "Riattiva" : "disabilita"}</button>
                   }
                 </div>
              

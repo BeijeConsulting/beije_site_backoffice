@@ -17,8 +17,9 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
-import Hashtags from "../../components/Hashtags";
+// import Hashtags from "../../components/Hashtags";
 import Permalink from "../../components/Permalink";
+import MultipleImageInput from "../../components/MultipleImageInput";
 
 // styles
 import styles from "./styles.module.css";
@@ -64,7 +65,7 @@ const Blog = ({ isNew }) => {
   // api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
 
-  const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`);
+  // const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`); Hashtag logic has been suspended  14/07/22
 
   const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${idToUse}`, {
     method: isNew ? "post" : "put",
@@ -86,7 +87,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     if (!isNew) {
       getBlog()
-      getHashtags()
+      // getHashtags()
     }
     id = params.id;
   }, []);
@@ -94,7 +95,6 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
     if (response) {
-      // console.log(hashtagsResult.response);
       setState(response);
     }
 
@@ -135,7 +135,7 @@ const Blog = ({ isNew }) => {
       {
         ...state,
         create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
-        cover_img: null,
+        // cover_img: null,
         translate_blog_permalink: isNew ? state.permalink : state.translate_blog_permalink
       });
   }
@@ -144,15 +144,6 @@ const Blog = ({ isNew }) => {
     !isNew && getBlogPermalink();
     setState((p) => ({ ...p, language }))
   }
-
-  /* function onClickYes() {
-    if (goBack) {
-      saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") });
-      goBack = false;
-    }
-
-    disableOrActiveBlog();
-  } */
 
   const handleBack = () => {
     if (getBlogResult?.response !== state) {
@@ -173,7 +164,7 @@ const Blog = ({ isNew }) => {
             <div className={styles["images"]}>
               <SingleImageInput
                 aspectRatio="1"
-                style={{ maxWidth: "300px" }}
+                style={{ maxWidth: "30%" }}
                 label="Cover_img"
                 value={state.cover_img}
                 onChange={(cover_img) => {
@@ -181,93 +172,70 @@ const Blog = ({ isNew }) => {
                 }}
               />
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
+              <div style={{ display: "flex" }}
               >
 
-                <SingleImageInput
-                  aspectRatio="1"
-                  style={{ maxWidth: "200px" }}
-                  label="Images"
-                  value={state.images}
-                  onChange={(images) => {
-                    saveImage({
-                      blog_id: id,
-                      description: "prova",
-                      desktop: images,
-                      mobile: images,
-                      original: images,
-                      tablet: images,
-                      thumbnail: images
-                    })
-                    setState((p) => ({ ...p, images }));
-                  }}
-                />
+                <MultipleImageInput state={[state, setState]} />
               </div>
-              <div className={styles["container"]}>
 
-                <div className={styles["inputs-row"]}>
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="Titolo"
-                    name="title"
-                    value={state.title}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, title: e.target.value }))
-                    }
-                  />
+            </div>
+            <div className={styles["container"]}>
 
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="Sottotitolo"
-                    name="subtitle"
-                    value={state.subtitle}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, subtitle: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className={styles["inputs-row"]}>
-
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="Autore"
-                    name="title"
-                    value={state.author}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, author: e.target.value }))
-                    }
-                  />
-
-                  <Select
-                    value={state.language}
-                    label="Lingua"
-                    options={[
-                      { value: "it", label: "italiano" },
-                      { value: "eng", label: "Inglese" },
-                    ]}
-                    onChange={handleSetLanguage}
-                  />
-                </div>
-
-                <Permalink state={state} setState={setState} />
-
-                <div className={styles["inputs-row"]}>
-                  {
-                    !isNew &&
-                    <button className="primary-button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShouldShowModal(true)
-                      }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
+              <div className={styles["inputs-row"]}>
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Titolo"
+                  name="title"
+                  value={state.title}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, title: e.target.value }))
                   }
-                </div>
+                />
 
-                <Hashtags hashtagList={hashtagsResult} />
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Sottotitolo"
+                  name="subtitle"
+                  value={state.subtitle}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, subtitle: e.target.value }))
+                  }
+                />
+
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Autore"
+                  name="title"
+                  value={state.author}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, author: e.target.value }))
+                  }
+                />
+
+                <Select
+                  value={state.language}
+                  label="Lingua"
+                  options={[
+                    { value: "it", label: "italiano" },
+                    { value: "eng", label: "Inglese" },
+                  ]}
+                  onChange={handleSetLanguage}
+                />
+                <Permalink state={state} setState={setState} />
               </div>
+
+              <div className={styles["inputs-row"]}>
+                {
+                  !isNew &&
+                  <button className="primary-button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShouldShowModal(true)
+                    }}>{state.disable_date ? "Riattiva" : "Disabilita"}</button>
+                }
+              </div>
+
+              {/* <Hashtags hashtagList={hashtagsResult} /> */}
             </div>
 
             <MDEditor
