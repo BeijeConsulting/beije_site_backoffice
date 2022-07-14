@@ -102,8 +102,8 @@ const User = ({ isNew }) => {
                 ? `Modifica ${getUserResult.response.firstName} ${getUserResult.response.lastName}`
                 : ""}
           </h2>
-          <button type="submit" className="primary-button">
-            Salva
+          <button type="submit" className="success-button">
+            Salva Modifiche
           </button>
         </div>
         {(isNew || getUserResult.response) && (
@@ -117,7 +117,8 @@ const User = ({ isNew }) => {
                 onChange={(picImage) => {
                   setState((p) => {
                     let newState = { ...p, picImage };
-                    if (picImage) newState.picImageThumbnail = picImage;
+                    /*  if (picImage) newState.picImageThumbnail = picImage; */
+                    //Rimossa clonazione su thumbnail in data 14/07/2022
                     return newState;
                   });
                 }}
@@ -128,7 +129,7 @@ const User = ({ isNew }) => {
                   flexDirection: "column",
                 }}
               >
-                <SingleImageInput
+                {/*  <SingleImageInput
                   aspectRatio="1"
                   style={{ maxWidth: "200px" }}
                   label="Thumbnail"
@@ -136,16 +137,8 @@ const User = ({ isNew }) => {
                   onChange={(picImageThumbnail) => {
                     setState((p) => ({ ...p, picImageThumbnail }));
                   }}
-                />
-                <div style={{ marginTop: "auto" }}>
-                  <Checkbox
-                    checked={state.picOnSite}
-                    onChange={(e) => {
-                      setState((p) => ({ ...p, picOnSite: e.target.checked }));
-                    }}
-                    label="Mostra sul sito: "
-                  />
-                </div>
+                /> */}
+
               </div>
             </div>
             <div>
@@ -186,12 +179,22 @@ const User = ({ isNew }) => {
                   ]}
                   onChange={(role) => setState((p) => ({ ...p, role }))}
                 />
-                {isNew ? "" : <button className="primary-button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShouldShowModal(true)
-                  }}>Disabilita</button>}
+                <div style={{ marginTop: "auto" }}>
+                  <Checkbox
+                    checked={state.picOnSite}
+                    onChange={(e) => {
+                      setState((p) => ({ ...p, picOnSite: e.target.checked }));
+                    }}
+                    label="Mostra sul sito: "
+                  />
+                </div>
+
               </div>
+              {isNew ? "" : <button className="primary-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShouldShowModal(true)
+                }}>Disabilita</button>}
             </div>
           </div>
         )}
