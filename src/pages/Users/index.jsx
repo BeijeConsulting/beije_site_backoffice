@@ -93,7 +93,7 @@ const Users = () => {
               )}
               actionLabel="Modifica"
               onAction={(record) => navigate(record.id.toString())}
-              formatDimension={200}
+              formatDimension={100}
             />
           )}
         </div>
