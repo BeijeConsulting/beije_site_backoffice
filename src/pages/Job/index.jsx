@@ -40,8 +40,6 @@ const emptyState = {
   permalink: "",
 };
 
-let goBack = false;
-
 const Job = ({ isNew }) => {
 
   const { id } = useParams();
@@ -49,6 +47,7 @@ const Job = ({ isNew }) => {
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [goBack, setGoBack] = useState(false)
 
   const navigate = useNavigate();
   const navigateModal = useCallback(() => { navigate("/jobs") }, [])
@@ -96,8 +95,6 @@ const Job = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-    return () => goBack = false;
-
   }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error]);
 
   const handleSubmitJob = (e) => {
@@ -105,18 +102,18 @@ const Job = ({ isNew }) => {
     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
 
-  function onClickYes() {
-    if (goBack) {
-      saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
-      goBack = false;
-    }
+  // function onClickYes() {
+  //   if (goBack) {
+  //     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+  //     goBack = false;
+  //   }
 
-    disableOrActiveJob();
-  }
+  //   disableOrActiveJob();
+  // }
 
   const handleBack = () => {
     if (getJobResult?.response !== state) {
-      goBack = true;
+      setGoBack(true)
       setShouldShowModal(true)
       return
     }
@@ -192,8 +189,15 @@ const Job = ({ isNew }) => {
       </form>
       <Modal
         shouldShow={shouldShowModal}
-        onRequestClose={handleRequestsModal(goBack ? "goback" : "no", onClickYes, setShouldShowModal, navigateModal)}
-        onRequestYes={handleRequestsModal("yes", onClickYes, setShouldShowModal)}
+        goBack={goBack}
+        path={"/jobs"}
+        actions={{
+          save: () => { saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") })},
+          disable: () => { disableOrActiveJob(); }
+        }}
+        setModal={setShouldShowModal}
+        setGoBack={setGoBack}
+
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>

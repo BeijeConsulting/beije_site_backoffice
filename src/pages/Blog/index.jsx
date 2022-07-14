@@ -286,7 +286,7 @@ const Blog = ({ isNew }) => {
         goBack={goBack}
         path={"/blogs"}
         actions={{
-          save: () => { saveCaseStudy({ ...state, createDateTime: isNew ? todayWithTime() : format(state.createDateTime, "yyyy-MM-dd'T'HH:mm") }) },
+          save: () => { saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm") }) },
           disable: () => { disableOrActiveBlog(); }
         }}
         setModal={setShouldShowModal}
