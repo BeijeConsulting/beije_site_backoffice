@@ -17,12 +17,11 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
-import PermalinkForm from "../../components/PermalinkForm";
+import Hashtags from "../../components/Hashtags";
+import Permalink from "../../components/Permalink";
 
 // styles
 import styles from "./styles.module.css";
-import el from "date-fns/esm/locale/el/index.js";
-import Hashtags from "../../components/Hashtags";
 
 
 const emptyState = {
@@ -254,7 +253,7 @@ const Blog = ({ isNew }) => {
                   />
                 </div>
 
-                <PermalinkForm isNew={isNew} putPermalinkApi={putBlogPermalink} state={state} setState={setState} />
+                <Permalink state={state} setState={setState} />
 
                 <div className={styles["inputs-row"]}>
                   {

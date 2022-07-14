@@ -18,7 +18,7 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
-import PermalinkForm from "../../components/PermalinkForm";
+import Permalink from "../../components/Permalink";
 
 // styles
 import styles from "./styles.module.css";
@@ -217,7 +217,8 @@ const CaseStudy = ({ isNew }) => {
                       }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
                   }
                 </div>
-                <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
+             
+                <Permalink state={state} setState={setState} />
               </div>
             </div>
             <MDEditor
