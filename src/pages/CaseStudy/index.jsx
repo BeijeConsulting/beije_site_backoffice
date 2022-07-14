@@ -198,26 +198,26 @@ const CaseStudy = ({ isNew }) => {
               </div>
               <div className={styles["container"]}>
 
-                  <div>
-                    <Input
-                      style={{ width: "50%" }}
-                      placeholder="BackgroundColor"
-                      name="backgroundColor"
-                      value={state.backgroundColor}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, backgroundColor: e.target.value }))
-                      }
-                    />
-                    {
-                      !isNew &&
-                      <button className="primary-button ps"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShouldShowModal(true)
-                        }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
+                <div>
+                  <Input
+                    style={{ width: "50%" }}
+                    placeholder="BackgroundColor"
+                    name="backgroundColor"
+                    value={state.backgroundColor}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, backgroundColor: e.target.value }))
                     }
-                  </div>
-                  <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
+                  />
+                  {
+                    !isNew &&
+                    <button className="primary-button ps"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShouldShowModal(true)
+                      }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
+                  }
+                </div>
+                <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
               </div>
             </div>
             <MDEditor
