@@ -21,6 +21,8 @@ import PermalinkForm from "../../components/PermalinkForm";
 
 // styles
 import styles from "./styles.module.css";
+import el from "date-fns/esm/locale/el/index.js";
+import Hashtags from "../../components/Hashtags";
 
 
 const emptyState = {
@@ -85,7 +87,7 @@ const Blog = ({ isNew }) => {
   useEffect(() => {
     if (!isNew) {
       getBlog()
-      // getHashtags()
+      getHashtags()
     }
     id = params.id;
   }, []);
@@ -164,10 +166,8 @@ const Blog = ({ isNew }) => {
 
   return (
     <div className={styles["container"]}>
-      <form
-        onSubmit={handleSubmitPost}
-      >
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+      <form>
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} handleSubmit={handleSubmitPost} />
 
         {(isNew || getBlogResult.response) && (
           <>
@@ -267,6 +267,7 @@ const Blog = ({ isNew }) => {
                   }
                 </div>
 
+                <Hashtags hashtagList={hashtagsResult} />
               </div>
             </div>
 

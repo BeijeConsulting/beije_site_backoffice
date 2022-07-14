@@ -1,0 +1,11 @@
+.inputs-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.inputs-container{
+  gap: 2rem;
+  display: flex;
+}

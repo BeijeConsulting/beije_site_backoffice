@@ -8,6 +8,8 @@
   --beije: #262E36;
   --success: #5CB85C;
   --success-700: #408140;
+  --warning: #ffbb01;
+  --warning-700: #FF9E01;
   --grey-700: hsl(207, 18%, 25%);
   --grey-500: hsl(207, 18%, 50%);
   --grey-300: hsl(207, 18%, 75%);
@@ -127,7 +129,19 @@ select {
   cursor: pointer;
 }
 
-a.primary-button, a.secondary-button , a.success-button  {
+.warning-button {
+  /* padding-inline: 10px; */
+  /* padding-block: 8px; */
+  border-radius: 4px;
+  background-color: var(--warning);
+  color: var(--white);
+  border: 1px solid var(--warning);
+  cursor: pointer;
+  width: 50%;
+  padding: .7rem;
+}
+
+a.primary-button, a.secondary-button , a.success-button, a.warning-button  {
   text-decoration: none;
 }
 
@@ -144,6 +158,11 @@ a.primary-button, a.secondary-button , a.success-button  {
 .success-button:hover {
   background-color: var(--success-700);
   border-color: var(--success-700);
+}
+
+.warning-button:hover {
+  background-color: var(--warning-700);
+  border-color: var(--warning-700);
 }
 
 /* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
