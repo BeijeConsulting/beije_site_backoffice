@@ -102,8 +102,8 @@ const User = ({ isNew }) => {
                 ? `Modifica ${getUserResult.response.firstName} ${getUserResult.response.lastName}`
                 : ""}
           </h2>
-          <button type="submit" className="primary-button">
-            Salva
+          <button type="submit" className="success-button">
+            Salva Modifiche
           </button>
         </div>
         {(isNew || getUserResult.response) && (

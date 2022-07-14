@@ -18,6 +18,7 @@ import Checkbox from "../../components/Checkbox";
 import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
+import SingleImageInput from "../../components/SingleImageInput";
 
 // styles
 import styles from "./styles.module.css";
@@ -105,7 +106,6 @@ const Event = ({ isNew }) => {
             <form
                 onSubmit={handleSbmitCommunity}
             >
-
                 <div className={styles["title-row"]}>
                     <GoBackArrow
                         handleBack={handleBack} />
@@ -116,44 +116,58 @@ const Event = ({ isNew }) => {
                                 ? `Modifica ${state.title}`
                                 : ""}
                     </h2>
-                    <button type="submit" className="primary-button">
-                        Salva
+                    <button type="submit" className="success-button">
+                        Salva Modifiche
                     </button>
                 </div>
                 {(isNew || getCommunityResult.response) && (
                     <>
-                        <div className={styles["images"]}>
-                            {/* SingleImageInput */}
-                        </div>
-                        <div className={styles["container"]}>
-                            <div className={styles["inputs-row"]}>
-                                <Input
-                                    style={{ width: "100%" }}
-                                    placeholder="Titolo"
-                                    name="title"
-                                    value={state.title}
-                                    onChange={(e) =>
-                                        setState((p) => ({ ...p, title: e.target.value }))
-                                    }
+                        <div className={styles["inputs-container"]}>
+                            <div className={styles["images"]}>
+                                <SingleImageInput
+                                    aspectRatio="1"
+                                    style={{ maxWidth: "400px" }}
+                                    label="Immagine profilo"
+                                    value={state.cover_img_id}
+                                    onChange={(cover_img_id) => {
+                                        setState((p) => {
+                                            let newState = { ...p, cover_img_id };
+                                            return newState;
+                                        });
+                                    }}
                                 />
-                                <Select
-                                    value={state.language}
-                                    label="Lingua"
-                                    options={[
-                                        { value: "it", label: "italiano" },
-                                        { value: "eng", label: "Inglese" },
-                                    ]}
-                                    onChange={handleSetLanguage}
-                                />
-                                <Input
-                                    style={{ width: "100%" }}
-                                    placeholder="Permalink"
-                                    name="permalink"
-                                    value={state.permalink}
-                                    onChange={(e) =>
-                                        setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
-                                    }
-                                />
+                            </div>
+
+                            <div className={styles["text-row"]}>
+                                <div className={styles["inputs-row"]}>
+                                    <Input
+                                        style={{ width: "100%" }}
+                                        placeholder="Titolo"
+                                        name="title"
+                                        value={state.title}
+                                        onChange={(e) =>
+                                            setState((p) => ({ ...p, title: e.target.value }))
+                                        }
+                                    />
+                                    <Select
+                                        value={state.language}
+                                        label="Lingua"
+                                        options={[
+                                            { value: "it", label: "italiano" },
+                                            { value: "eng", label: "Inglese" },
+                                        ]}
+                                        onChange={handleSetLanguage}
+                                    />
+                                    <Input
+                                        style={{ width: "100%" }}
+                                        placeholder="Permalink"
+                                        name="permalink"
+                                        value={state.permalink}
+                                        onChange={(e) =>
+                                            setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
+                                        }
+                                    />
+                                </div>
                             </div>
                             <div className={styles["inputs-row"]}>
                                 {
