@@ -8,7 +8,7 @@ const MultipleImageInput = ({ state }) => {
         <SingleImageInput
           key={key + img}
           aspectRatio="1"
-          style={{ maxWidth: "300px" }}
+          style={{ maxWidth: "200px" }}
           label={"image" + (key + 1)}
           value={img}
           onChange={(image) => {
