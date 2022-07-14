@@ -91,7 +91,7 @@ const Jobs = () => {
             )}
             actionLabel="Modifica"
             onAction={(record) => navigate(record.id.toString())}
-            formatDimension={150}
+            formatDimension={200}
           />
         </div>
         <ToastContainer />

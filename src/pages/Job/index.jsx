@@ -170,7 +170,7 @@ const Job = ({ isNew }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       setShouldShowModal(true)
-                    }}>{state.disable_date ? "Riattiva" : "Disabilità"}</button>
+                    }}>{state.disable_date ? "Riattiva" : "disabilita"}</button>
                 }
               {/* </div> */}
             </div>
