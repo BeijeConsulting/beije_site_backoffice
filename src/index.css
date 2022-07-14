@@ -93,9 +93,8 @@ select {
   clip: rect(1px, 1px, 1px, 1px);
 }
 
-.alignSelf {
-  align-self: flex-end;
-  margin: 0 auto;
+.ps {
+  margin-left: 2rem;
 }
 
 .primary-button {

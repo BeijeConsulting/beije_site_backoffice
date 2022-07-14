@@ -166,60 +166,58 @@ const CaseStudy = ({ isNew }) => {
                 }}
               />
               <div className={styles["container"]}>
-                <div className={styles["inputs-row"]}>
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="Titolo"
-                    name="title"
-                    value={state.title}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, title: e.target.value }))
-                    }
-                  />
-
-                  <Input
-                    style={{ width: "100%" }}
-                    placeholder="Sottotitolo"
-                    name="subtitle"
-                    value={state.subtitle}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, subtitle: e.target.value }))
-                    }
-                  />
-
-                  <Select
-                    value={state.language}
-                    label="Lingua"
-                    options={[
-                      { value: "it", label: "italiano" },
-                      { value: "en", label: "Inglese" },
-                    ]}
-                    onChange={handleSetLanguage}
-                  />
-                </div>
-                <div className={styles["inputs-row"]}>
-
-                  <Input
-                    style={{ width: "35%" }}
-                    placeholder="BackgroundColor"
-                    name="backgroundColor"
-                    value={state.backgroundColor}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, backgroundColor: e.target.value }))
-                    }
-                  />
-                  <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
-                </div>
-                <div className={styles["inputs-row"]}>
-                  {
-                    !isNew &&
-                    <button className="primary-button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShouldShowModal(true)
-                      }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Titolo"
+                  name="title"
+                  value={state.title}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, title: e.target.value }))
                   }
-                </div>
+                />
+
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Sottotitolo"
+                  name="subtitle"
+                  value={state.subtitle}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, subtitle: e.target.value }))
+                  }
+                />
+
+                <Select
+                  value={state.language}
+                  label="Lingua"
+                  options={[
+                    { value: "it", label: "italiano" },
+                    { value: "en", label: "Inglese" },
+                  ]}
+                  onChange={handleSetLanguage}
+                />
+              </div>
+              <div className={styles["container"]}>
+
+                  <div>
+                    <Input
+                      style={{ width: "50%" }}
+                      placeholder="BackgroundColor"
+                      name="backgroundColor"
+                      value={state.backgroundColor}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, backgroundColor: e.target.value }))
+                      }
+                    />
+                    {
+                      !isNew &&
+                      <button className="primary-button ps"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShouldShowModal(true)
+                        }}>{state.disableDate ? "Riattiva" : "Disabilità"}</button>
+                    }
+                  </div>
+                  <PermalinkForm isNew={isNew} putPermalinkApi={putCasePermalink} state={state} setState={setState} />
               </div>
             </div>
             <MDEditor
