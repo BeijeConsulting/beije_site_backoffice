@@ -1,5 +1,7 @@
+import Loader from "../../components/Loader";
+
 const Home = () => {
-  return <h2>Beije</h2>;
+  return <Loader />
 };
 
 export default Home;
