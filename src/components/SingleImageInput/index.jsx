@@ -32,7 +32,6 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
       onDrop={async (e) => {
         e.preventDefault();
         const { content, error } = await readFile(e.dataTransfer.files[0]);
-        console.log('content drop', content)
         if (!error) {
           onChange(content);
         } else {
@@ -54,11 +53,9 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
           type="file"
           accept="image/*"
           onChange={async (e) => {
-            console.log('evento', e)
 
             if (e.target.files[0].size > 499999) return
             const { content, error } = await readFile(e.target.files[0]);
-            console.log('content interno button', content)
             if (!error) {
               onChange(content);
             } else {
