@@ -25,7 +25,6 @@ import MultipleImageInput from "../../components/MultipleImageInput";
 import styles from "./styles.module.css";
 import ActiveOrDisable from "../../components/ActiveOrDisable";
 
-
 const emptyState = {
   title: "",
   subtitle: "",
@@ -40,16 +39,15 @@ const emptyState = {
   video_path: null
 };
 
-// const imageState = {
-//   blog_id: null,
-//   description: "",
-//   desktop: "",
-//   mobile: "",
-//   original: "",
-//   tablet: "",
-//   thumbnail: ""
-// }
+const imageState = {
+  description: "",
+  file_base64: "",
+  name: "",
+  type: "",
+
+}
 let id = null;
+let timeout;
 
 const Blog = ({ isNew }) => {
 
@@ -75,12 +73,14 @@ const Blog = ({ isNew }) => {
 
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
 
-  // const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`, { method: "put" });
-
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
     `/admin/blog/re_activate/${idToUse}` : `/admin/blog/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
+
+  const [uploadImgRes, postImg] = useService("/upload/img", {
+    method: "post"
+  });
 
   useEffect(() => {
     if (!isNew) {
@@ -104,11 +104,15 @@ const Blog = ({ isNew }) => {
 
     const save = saveBlogResult ?? { response: null };
     if (save.response) {
-      navigate('/blogs', {
-        state: {
-          toast: true
-        }
-      })
+      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId: idToUse }));
+
+      timeout = setTimeout(() => {
+        navigate('/blogs', {
+          state: {
+            toast: true
+          }
+        })
+      }, 1000);
     }
     if (save.error) notify('error', toastId);
 
@@ -123,37 +127,25 @@ const Blog = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-    return () => (id = null);
+    return () => {
+      id = null;
+      clearTimeout(timeout)
+    };
 
   }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    // saveBlog(
-    //   {
-    //     ...state,
-    //     create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
-    //     cover_img: null,
-    //     translate_blog_permalink: isNew ? null : state.translate_blog_permalink
-    //   });
-    saveBlog({
-      title: "blog PUT fs",
-      subtitle: "fs",
-      language: "it",
-      description: "Spero non vada in 500ds",
-      images: [
-        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png"
-      ],
-      author: "mt",
-      create_datetime: null,
-      cover_img: null,
-      permalink: "machebelloprovarestecose",
-      translate_blog_permalink: null
-    })
+
+    saveBlog(
+      {
+        ...state,
+        create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
+        cover_img: null,
+        images: [],
+        translate_blog_permalink: isNew ? null : state.translate_blog_permalink
+      });
+
   }
 
   const handleSetLanguage = (language) => {
@@ -181,7 +173,7 @@ const Blog = ({ isNew }) => {
               <SingleImageInput
                 aspectRatio="1"
                 style={{ maxWidth: "30%" }}
-                label="Cover_img"
+                label="images"
                 value={state.cover_img}
                 onChange={(cover_img) => {
                   setState((p) => ({ ...p, cover_img }));
@@ -191,7 +183,7 @@ const Blog = ({ isNew }) => {
               <div style={{ display: "flex" }}
               >
 
-                <MultipleImageInput states={[state, setState]} />
+                <MultipleImageInput states={[state, setState]} isNew={isNew} />
               </div>
 
             </div>
