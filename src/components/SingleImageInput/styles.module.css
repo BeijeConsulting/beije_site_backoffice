@@ -6,6 +6,7 @@
   justify-content: center;
   gap: 2rem;
   max-width: 550px;
+  /* max-height: 300px; */
   padding: 2rem;
   border: 2px dashed var(--grey-500);
 }
