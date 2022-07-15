@@ -24,7 +24,7 @@ import Permalink from "../../components/Permalink";
 import './styles.module.css';
 import styles from "./styles.module.css";
 import ActiveOrDisable from "../../components/ActiveOrDisable";
-import { HexColorInput, HexColorPicker } from "react-colorful";
+import { HexColorPicker } from "react-colorful";
 
 const emptyState = {
   title: "",
@@ -205,11 +205,11 @@ const CaseStudy = ({ isNew }) => {
                 </div>
                 {
                   isColor &&
-                 <section>
-                   <HexColorPicker color={state.backgroundColor} onChange={(e) => {
-                     setState({ ...state, backgroundColor: e })
-                   }} />
-                 </section>
+                  <section>
+                    <HexColorPicker color={state.backgroundColor} onChange={(e) => {
+                      setState({ ...state, backgroundColor: e })
+                    }} />
+                  </section>
                 }
 
                 <Permalink state={state} setState={setState} />
