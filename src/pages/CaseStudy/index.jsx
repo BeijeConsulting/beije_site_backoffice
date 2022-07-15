@@ -36,15 +36,6 @@ const emptyState = {
   disableDate: null
 };
 
-// const imageState = {
-//   blog_id: null,
-//   description: "",
-//   desktop: "",
-//   mobile: "",
-//   original: "",
-//   tablet: "",
-//   thumbnail: ""
-// }
 let id = null;
 
 const CaseStudy = ({ isNew }) => {
@@ -75,7 +66,7 @@ const CaseStudy = ({ isNew }) => {
   const [putCasePermalinkRes, putCasePermalink] = useService(`/admin/casestudy/permalink/${state.permalink}`, { method: "put" });
 
   const [disableOrActiveResult, disableOrActiveCaseStudy] = useService(state.disableDate ?
-    `/admin/casestudy/re_activate/${id}` : `/admin/casestudy/delete/${idToUse}`, {
+    `/admin/casestudy/re_activate/${idToUse}` : `/admin/casestudy/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
 
