@@ -36,7 +36,8 @@ const emptyState = {
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
   cover_img: null,
   permalink: "",
-  translate_blog_permalink: null
+  translate_blog_permalink: null,
+  video_path: null
 };
 
 // const imageState = {
@@ -70,10 +71,6 @@ const Blog = ({ isNew }) => {
 
   const [saveBlogResult, saveBlog] = useService(isNew ? "/admin/blog" : `/admin/blog/id/${idToUse}`, {
     method: isNew ? "post" : "put",
-  });
-
-  const [saveImageResult, saveImage] = useService("/site_image", {
-    method: "post"
   });
 
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
@@ -132,53 +129,31 @@ const Blog = ({ isNew }) => {
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
-    saveBlog(
-      {
-        ...state,
-        create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
-        // cover_img: {
-        //   thumbnail: "",
-        //   desktop: "",
-        //   tablet: "",
-        //   mobile: "",
-        //   description: null,
-        //   original: "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-        //   blog_id: idToUse,
-        //   community_id: null
-        // },
-        cover_img: null,
-        translate_blog_permalink: isNew ? state.permalink : state.translate_blog_permalink
-      });
-    // saveBlog({
-    //   author: "Nardo è abbastanza felice",
-    //   cover_img: {
-    //     thumbnail: "",
-    //     desktop: "",
-    //     tablet: "",
-    //     mobile: "",
-    //     description: null,
-    //     original: "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     blog_id: idToUse,
-    //     community_id: null
-    //   },
-    //   create_datetime: "2012-12-12T00:00",
-    //   description: "string",
-    //   disable_date: "2012-12-12T00:00",
-    //   images: [
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
-    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png"
-    //   ],
-    //   language: null,
-    //   permalink: null,
-    //   subtitle: null,
-    //   title: "Nardo testa put per la seconda volta",
-    //   translate_blog_permalink: null,
-    //   video_path: null
-    // })
+    // saveBlog(
+    //   {
+    //     ...state,
+    //     create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
+    //     cover_img: null,
+    //     translate_blog_permalink: isNew ? null : state.translate_blog_permalink
+    //   });
+    saveBlog({
+      title: "blog PUT fs",
+      subtitle: "fs",
+      language: "it",
+      description: "Spero non vada in 500ds",
+      images: [
+        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+        "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png"
+      ],
+      author: "mt",
+      create_datetime: null,
+      cover_img: null,
+      permalink: "machebelloprovarestecose",
+      translate_blog_permalink: null
+    })
   }
 
   const handleSetLanguage = (language) => {
@@ -266,7 +241,7 @@ const Blog = ({ isNew }) => {
               </div>
 
               <div className={styles["inputs-row"]}>
-    
+
                 <ActiveOrDisable disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
               </div>
 
