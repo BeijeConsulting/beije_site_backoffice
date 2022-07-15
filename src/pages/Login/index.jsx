@@ -18,7 +18,10 @@ const Login = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (error) alert("Credenziali errate");
+    if (error) {
+      setLoading(false)
+      alert("Credenziali errate");
+    }
     if (response) {
       navigate(location.state?.from || "/");
     }
@@ -30,8 +33,9 @@ const Login = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            setLoading(true)
             login(state);
+            setLoading(true)
+
           }}
         >
           <fieldset style={{ border: "1px solid var(--grey-700)" }}>
