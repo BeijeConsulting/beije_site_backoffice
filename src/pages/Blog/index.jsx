@@ -23,6 +23,7 @@ import MultipleImageInput from "../../components/MultipleImageInput";
 
 // styles
 import styles from "./styles.module.css";
+import ActiveOrDisable from "../../components/ActiveOrDisable";
 
 
 const emptyState = {
@@ -77,10 +78,10 @@ const Blog = ({ isNew }) => {
 
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
 
-  const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`, { method: "put" });
+  // const [putBlogPermalinkRes, putBlogPermalink] = useService(`admin/blog/${state.permalink}`, { method: "put" });
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
-    `/admin/blog/re_activate/${id}` : `/admin/blog/delete/${idToUse}`, {
+    `/admin/blog/re_activate/${idToUse}` : `/admin/blog/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
 
@@ -135,8 +136,49 @@ const Blog = ({ isNew }) => {
       {
         ...state,
         create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
+        // cover_img: {
+        //   thumbnail: "",
+        //   desktop: "",
+        //   tablet: "",
+        //   mobile: "",
+        //   description: null,
+        //   original: "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+        //   blog_id: idToUse,
+        //   community_id: null
+        // },
+        cover_img: null,
         translate_blog_permalink: isNew ? state.permalink : state.translate_blog_permalink
       });
+    // saveBlog({
+    //   author: "Nardo è abbastanza felice",
+    //   cover_img: {
+    //     thumbnail: "",
+    //     desktop: "",
+    //     tablet: "",
+    //     mobile: "",
+    //     description: null,
+    //     original: "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     blog_id: idToUse,
+    //     community_id: null
+    //   },
+    //   create_datetime: "2012-12-12T00:00",
+    //   description: "string",
+    //   disable_date: "2012-12-12T00:00",
+    //   images: [
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png",
+    //     "https://beije-dev.s3.eu-south-1.amazonaws.com/mgmt/upload/original/marconardo_m_118_thumbnail.png"
+    //   ],
+    //   language: null,
+    //   permalink: null,
+    //   subtitle: null,
+    //   title: "Nardo testa put per la seconda volta",
+    //   translate_blog_permalink: null,
+    //   video_path: null
+    // })
   }
 
   const handleSetLanguage = (language) => {
@@ -174,7 +216,7 @@ const Blog = ({ isNew }) => {
               <div style={{ display: "flex" }}
               >
 
-                <MultipleImageInput state={[state, setState]} />
+                <MultipleImageInput states={[state, setState]} />
               </div>
 
             </div>
@@ -224,14 +266,8 @@ const Blog = ({ isNew }) => {
               </div>
 
               <div className={styles["inputs-row"]}>
-                {
-                  !isNew &&
-                  <button className="primary-button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShouldShowModal(true)
-                    }}>{state.disable_date ? "Riattiva" : "Disabilita"}</button>
-                }
+    
+                <ActiveOrDisable disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
               </div>
 
               {/* <Hashtags hashtagList={hashtagsResult} /> */}
