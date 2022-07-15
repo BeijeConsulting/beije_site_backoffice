@@ -21,12 +21,8 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+  margin-left: 0 !important;
 }
-
-/* .inputs-row {
-  margin-block-end: 4rem;
-  justify-content: space-between;
-} */
 
 .inputs-row:nth-child(1) {
   margin-left: auto;
@@ -37,10 +33,18 @@
   justify-content: center;
   gap: 4rem;
   margin-bottom: 5rem;
+  /* display: inline-block; */
 }
 
 .text-row {
   display: flex;
   gap: 4rem;
   margin-bottom: 4rem;
+}
+
+.square {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000
 }
