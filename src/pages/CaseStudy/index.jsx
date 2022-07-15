@@ -205,9 +205,11 @@ const CaseStudy = ({ isNew }) => {
                 </div>
                 {
                   isColor &&
-                  <HexColorPicker color={state.backgroundColor} onChange={(e) => {
-                    setState({ ...state, backgroundColor: e })
-                  }} />
+                 <section>
+                   <HexColorPicker color={state.backgroundColor} onChange={(e) => {
+                     setState({ ...state, backgroundColor: e })
+                   }} />
+                 </section>
                 }
 
                 <Permalink state={state} setState={setState} />

@@ -44,7 +44,7 @@ const imageState = {
   file_base64: "",
   name: "",
   type: "",
-
+  blogId: null,
 }
 let id = null;
 let timeout;
@@ -104,7 +104,7 @@ const Blog = ({ isNew }) => {
 
     const save = saveBlogResult ?? { response: null };
     if (save.response) {
-      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId: idToUse }));
+      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId:  isNew? save.response.id : idToUse }));
 
       timeout = setTimeout(() => {
         navigate('/blogs', {
@@ -112,7 +112,7 @@ const Blog = ({ isNew }) => {
             toast: true
           }
         })
-      }, 1000);
+      }, 2000);
     }
     if (save.error) notify('error', toastId);
 
@@ -234,7 +234,7 @@ const Blog = ({ isNew }) => {
 
               <div className={styles["inputs-row"]}>
 
-                <ActiveOrDisable disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
+                <ActiveOrDisable style={{width: "20%", alignSelf: "end"}} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
               </div>
 
               {/* <Hashtags hashtagList={hashtagsResult} /> */}

@@ -13,7 +13,7 @@ const MultipleImageInput = ({ states, isNew }) => {
           aspectRatio="1"
           style={{ maxWidth: "200px"}}
           label={"image" + (key + 1)}
-          value={!isNew ? img : state.images[key]}
+          value={state.images[key]}
           onChange={(image) => {
             const newState = Object.assign({}, state)
             newState.images.splice(key, 1, image)
@@ -25,7 +25,7 @@ const MultipleImageInput = ({ states, isNew }) => {
 
   }
 
-  return !isNew ? state?.images?.map(imageList) : Array.from(Array(5).keys()).map(imageList)
+  return Array.from(Array(5).keys()).map(imageList)
 };
 
 export default MultipleImageInput;

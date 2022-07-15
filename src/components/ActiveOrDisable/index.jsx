@@ -1,6 +1,6 @@
 import React from 'react'
 
-function ActiveOrDisable({ isNew, setModal, disableDate }) {
+function ActiveOrDisable({ isNew, setModal, disableDate, style }) {
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -11,7 +11,7 @@ function ActiveOrDisable({ isNew, setModal, disableDate }) {
 
     !isNew &&
     <button
-    style={{width: "50%"}}
+    style={{...style}}
       className="primary-button"
       onClick={handleClick}>
       {disableDate ? "Riattiva" : "Disabilita"}
