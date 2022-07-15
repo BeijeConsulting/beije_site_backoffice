@@ -19,20 +19,21 @@ import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import SingleImageInput from "../../components/SingleImageInput";
+import Permalink from "../../components/Permalink";
 
 // styles
 import styles from "./styles.module.css";
 import Select from "../../components/Select";
-import { permalink } from "../../utils/utils";
+
 
 const emptyState = {
     description: "",
-    language: "it",
+    language: "",
     permalink: "",
     title: "",
     translate_community_permalink: "",
     videoPath: "",
-    cover_img_id: null,
+    cover_img_id: "",
     disable_date: null
 
 }
@@ -42,52 +43,68 @@ const Event = ({ isNew }) => {
     const navigate = useNavigate();
     const params = useParams();
     const toastId = useId();
-    id = params.id
+
+    const idToUse = id ? id : params.id;
+
     const [state, setState] = useState(emptyState);
     const [shouldShowModal, setShouldShowModal] = useState(false);
 
     const [goBack, setGoBack] = useState(false)
 
-    const [getCommunityResult, getCommunity] = useService(`/community/${id ? id : params.id}`);
+    const [getCommunityResult, getCommunity] = useService(`/community/${idToUse}`);
 
-    const [saveCommunityResult, saveCommunity] = useService(isNew ? "/community" : `/community/update/${id}`, {
+    const [saveCommunityResult, saveCommunity] = useService(isNew ? "/community" : `/community/update/${idToUse}`, {
         method: isNew ? "post" : "put",
     });
 
+    const [getCommuniytPermalinkResult, getCommuniyPermalink] = useService(`/community_permalink/${state.translate_community_permalink}`)
 
     useEffect(() => {
         if (!isNew) getCommunity()
-        /* id = params.id; */
+        id = params.id;
     }, []);
 
     useEffect(() => {
         const { response } = getCommunityResult ?? { response: null };
         if (response) {
+            console.log('state', response)
             setState(response);
         }
-        const save = getCommunityResult ?? { response: null };
-        /*  if (save.response) {
-             navigate('/events', {
-                 state: {
-                     toast: true
-                 }
-             })
-         } */
+
+        const responsePermalink = getCommuniytPermalinkResult ?? { response: null };
+        if (responsePermalink.response) {
+            console.log('permalink', responsePermalink.response)
+            id = responsePermalink.response.id
+            setState(responsePermalink.response)
+        }
+
+        const save = saveCommunityResult ?? { response: null };
+        if (save.response) {
+            navigate('/events', {
+                state: {
+                    toast: true
+                }
+            })
+        }
         if (save.error) notify('error', toastId);
 
+
+
+
         return () => (id = null);
-    }, [getCommunityResult]
-    )
+    }, [getCommunityResult?.response, saveCommunityResult?.response, saveCommunityResult?.error, getCommuniytPermalinkResult.response]);
+
 
     const handleSbmitCommunity = (e) => {
+        console.log('submit')
         e.preventDefault();
         saveCommunity({
-            ...state, cover_img_id: null
+            ...state, translate_community_permalink: isNew ? null : state.translate_community_permalink
         })
     }
 
     const handleSetLanguage = (language) => {
-        !isNew && getCommunityPermalink();
+        !isNew && getCommuniyPermalink();
         setState((p) => ({ ...p, language }))
     }
 
@@ -130,10 +147,7 @@ const Event = ({ isNew }) => {
                                     label="Immagine profilo"
                                     value={state.cover_img_id}
                                     onChange={(cover_img_id) => {
-                                        setState((p) => {
-                                            let newState = { ...p, cover_img_id };
-                                            return newState;
-                                        });
+                                        setState((p) => ({ ...p, cover_img_id }));
                                     }}
                                 />
                             </div>
@@ -158,15 +172,7 @@ const Event = ({ isNew }) => {
                                         ]}
                                         onChange={handleSetLanguage}
                                     />
-                                    <Input
-                                        style={{ width: "100%" }}
-                                        placeholder="Permalink"
-                                        name="permalink"
-                                        value={state.permalink}
-                                        onChange={(e) =>
-                                            setState((p) => ({ ...p, permalink: permalink(e.target.value) }))
-                                        }
-                                    />
+                                    <Permalink state={state} setState={setState} />
                                 </div>
                             </div>
                             <div className={styles["inputs-row"]}>
