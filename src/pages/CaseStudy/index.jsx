@@ -21,7 +21,10 @@ import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
 
 // styles
+import './styles.module.css';
 import styles from "./styles.module.css";
+import ActiveOrDisable from "../../components/ActiveOrDisable";
+import { HexColorInput, HexColorPicker } from "react-colorful";
 
 const emptyState = {
   title: "",
@@ -47,6 +50,7 @@ const CaseStudy = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false)
+  const [isColor, setIsColor] = useState(false)
 
   const navigate = useNavigate();
 
@@ -149,7 +153,7 @@ const CaseStudy = ({ isNew }) => {
             <div className={styles["images"]}>
               <SingleImageInput
                 aspectRatio="1"
-                style={{ maxWidth: "200px" }}
+                style={{ maxWidth: "200px", maxHeight: "200px" }}
                 label="Logo"
                 value={state.logo}
                 onChange={(logo) => {
@@ -189,27 +193,25 @@ const CaseStudy = ({ isNew }) => {
               </div>
               <div className={styles["container"]}>
 
-                <div>
-                  <Input
-                    style={{ width: "50%" }}
-                    placeholder="BackgroundColor"
-                    name="backgroundColor"
-                    value={state.backgroundColor}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, backgroundColor: e.target.value }))
-                    }
-                  />
-                  {
-                    !isNew &&
-                    <button className="primary-button ps"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShouldShowModal(true)
-                      }}>{state.disableDate ? "Riattiva" : "disabilita"}</button>
-                  }
+                <div className={styles["inputs-row"]}>
+                  <button className="secondary-button mb" onClick={e => {
+                    e.preventDefault();
+                    setIsColor(!isColor)
+                  }}
+                  >
+                    {isColor ? "Chiudi" : "Scegli colore di sfondo"}
+                  </button>
+                  <div className={styles["square"]} style={{ backgroundColor: state.backgroundColor }}></div>
                 </div>
-             
+                {
+                  isColor &&
+                  <HexColorPicker color={state.backgroundColor} onChange={(e) => {
+                    setState({ ...state, backgroundColor: e })
+                  }} />
+                }
+
                 <Permalink state={state} setState={setState} />
+                <ActiveOrDisable disableDate={state.disableDate} isNew={isNew} setModal={setShouldShowModal} />
               </div>
             </div>
             <MDEditor

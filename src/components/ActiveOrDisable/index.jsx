@@ -11,6 +11,7 @@ function ActiveOrDisable({ isNew, setModal, disableDate }) {
 
     !isNew &&
     <button
+    style={{width: "50%"}}
       className="primary-button"
       onClick={handleClick}>
       {disableDate ? "Riattiva" : "Disabilita"}
