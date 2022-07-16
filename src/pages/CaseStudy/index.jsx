@@ -61,18 +61,16 @@ const CaseStudy = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
-  // const [saveImageResult, saveImage] = useService("/fileupload", {
-  //   method: "post"
-  // })
-
   const [getCaseStudyLinkRes, getCaseStudyWithLink] = useService(`/admin/casestudy/permalink/${state.translateCasePermalink}`);
-
-  const [putCasePermalinkRes, putCasePermalink] = useService(`/admin/casestudy/permalink/${state.permalink}`, { method: "put" });
 
   const [disableOrActiveResult, disableOrActiveCaseStudy] = useService(state.disableDate ?
     `/admin/casestudy/re_activate/${idToUse}` : `/admin/casestudy/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
+
+  function getResponse(apiCall) {
+    return apiCall ?? { response: null }
+  }
 
   useEffect(() => {
     if (!isNew) { getCaseStudy() }
@@ -80,18 +78,18 @@ const CaseStudy = ({ isNew }) => {
   }, []);
 
   useEffect(() => {
-    const { response } = getCaseStudyResult ?? { response: null };
+    const { response } = getResponse(getCaseStudyResult);
     if (response) {
       setState(response);
     }
 
-    const responsePermalink = getCaseStudyLinkRes ?? { response: null };
+    const responsePermalink = getResponse(getCaseStudyLinkRes);
     if (responsePermalink.response) {
       id = responsePermalink.response.id
       setState(responsePermalink.response);
     }
 
-    const save = saveCaseStudyResult ?? { response: null };
+    const save = getResponse(saveCaseStudyResult);
     if (save.response) {
       navigate('/case-studies', {
         state: {
@@ -101,10 +99,10 @@ const CaseStudy = ({ isNew }) => {
     }
     if (save.error) notify('error', toastId);
 
-    const disableOrActive = disableOrActiveResult ?? { response: null };
+    const disableOrActive = getResponse(disableOrActiveResult);
 
     if (disableOrActive.response) {
-      navigate('/jobs', {
+      navigate('/case-studies', {
         state: {
           toast: true
         }
@@ -114,7 +112,9 @@ const CaseStudy = ({ isNew }) => {
 
     return () => (id = null);
 
-  }, [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error, getCaseStudyLinkRes.response]);
+  },
+    [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error,
+    getCaseStudyLinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error]);
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
