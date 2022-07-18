@@ -29,8 +29,9 @@ import ActiveOrDisable from "../../components/ActiveOrDisable";
 const emptyState = {
   title: "",
   subtitle: "",
-  language: "",
+  language: "it",
   description: "",
+  type: "blog",
   images: [],
   author: "",
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
@@ -111,14 +112,14 @@ const Blog = ({ isNew }) => {
         navigateWithNotify(navigate, '/blogs');
       }, 2000);
     }
-    if (save.error) notify('error', toastId);
+    if (save.error) notify(`error`, toastId, save.error.message);
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
     }
-    if (disableOrActive.error) notify('error', toastId);
+    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.message);
 
     return () => {
       id = null;
@@ -136,7 +137,8 @@ const Blog = ({ isNew }) => {
         create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
         cover_img: null,
         images: [],
-        translate_blog_permalink: isNew ? null : state.translate_blog_permalink
+        translate_blog_permalink: isNew ? null : state.translate_blog_permalink,
+        type: isNew ? "blog" : state.type
       });
 
   }
@@ -158,7 +160,7 @@ const Blog = ({ isNew }) => {
   return (
     <div className={styles["container"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} handleSubmit={handleSubmitPost} />
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} handleSubmit={handleSubmitPost} />
 
         {(isNew || getBlogResult.response) && (
           <>
@@ -216,10 +218,14 @@ const Blog = ({ isNew }) => {
                 <Select
                   value={state.language}
                   label="Lingua"
-                  options={[
+                  options={isNew ? [
                     { value: "it", label: "italiano" },
                     { value: "eng", label: "Inglese" },
-                  ]}
+                  ] : [
+                    { value: "it", label: "italiano" },
+                    { value: "eng", label: "Crea versione Inglese" },
+                  ]
+                }
                   onChange={handleSetLanguage}
                 />
                 <Permalink state={state} setState={setState} />
@@ -227,7 +233,7 @@ const Blog = ({ isNew }) => {
 
               <div className={styles["inputs-row"]}>
 
-                <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
+                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
               </div>
 
               {/* <Hashtags hashtagList={hashtagsResult} /> */}
