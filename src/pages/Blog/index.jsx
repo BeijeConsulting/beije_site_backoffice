@@ -73,6 +73,10 @@ const Blog = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
+  const [engResult, createEngBlog] = useService("/admin/blog", {
+    method: "post",
+  });
+
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
@@ -112,14 +116,15 @@ const Blog = ({ isNew }) => {
         navigateWithNotify(navigate, '/blogs');
       }, 2000);
     }
-    if (save.error) notify(`error`, toastId, save.error.message);
+    console.log(save.error);
+    if (save.error) notify(`error`, toastId, save.error.data.message);
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
     }
-    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.message);
+    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.data.message);
 
     return () => {
       id = null;
@@ -138,13 +143,23 @@ const Blog = ({ isNew }) => {
         cover_img: null,
         images: [],
         translate_blog_permalink: isNew ? null : state.translate_blog_permalink,
-        type: isNew ? "blog" : state.type
+        type: isNew ? "blog" : null
       });
 
   }
 
   const handleSetLanguage = (language) => {
-    !isNew && getBlogPermalink();
+    (!isNew && language === "eng") && createEngBlog({
+      ...state,
+      id: null,
+      create_datetime: null,
+      cover_img: null,
+      images: [],
+      permalink: state.permalink,
+      translate_blog_permalink: state.permalink,
+      type: "blog",
+      language: "eng",
+    });
     setState((p) => ({ ...p, language }))
   }
 
@@ -220,12 +235,12 @@ const Blog = ({ isNew }) => {
                   label="Lingua"
                   options={isNew ? [
                     { value: "it", label: "italiano" },
-                    { value: "eng", label: "Inglese" },
+                    { value: "it", label: "Crea versione Inglese" },
                   ] : [
                     { value: "it", label: "italiano" },
                     { value: "eng", label: "Crea versione Inglese" },
                   ]
-                }
+                  }
                   onChange={handleSetLanguage}
                 />
                 <Permalink state={state} setState={setState} />
