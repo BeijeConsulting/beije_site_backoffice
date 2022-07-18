@@ -213,7 +213,7 @@ const CaseStudy = ({ isNew }) => {
                 }
 
                 <Permalink state={state} setState={setState} />
-                <ActiveOrDisable disableDate={state.disableDate} isNew={isNew} setModal={setShouldShowModal} />
+                {/* <ActiveOrDisable disableDate={state.disableDate} isNew={isNew} setModal={setShouldShowModal} /> */}
               </div>
             </div>
             <MDEditor
