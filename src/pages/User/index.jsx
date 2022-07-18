@@ -68,9 +68,11 @@ const User = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
+
     const disable = disableUserResult ?? { response: null }
+
     if (disable.response) {
-      navigate('/jobs', {
+      navigate('/community', {
         state: {
           toast: true
         }
