@@ -17,14 +17,15 @@ import styles from "./styles.module.css";
 
 const initState = {
   lang: "it",
+  active: "yes"
 }
 
 const Blogs = () => {
 
   const [state, setState] = useState(initState);
-  
+
   const [{ response }, getBlogs] =
-    useService(`/blogs/${state.lang}`);
+    useService(`/admin/blogs/${state.lang}/${state.active}`);
 
   const toastId = useId();
 
@@ -36,7 +37,7 @@ const Blogs = () => {
     if (location.state !== null) {
       notify("success", toastId);
     }
-  }, [state.lang]);
+  }, [state.lang, state.active]);
 
 
 
@@ -57,7 +58,22 @@ const Blogs = () => {
               ]}
               onChange={(lang) => {
                 console.log(lang);
-                setState((p) => ({ ...p, lang }))}}
+                setState((p) => ({ ...p, lang }))
+              }}
+            />
+
+            <Select
+              value={state.active}
+              label="Attivi"
+              options={[
+                { value: "all", label: "Tutti" },
+                { value: "yes", label: "Attivi" },
+                { value: "no", label: "Non attivi" }
+              ]}
+              onChange={(active) => {
+                console.log(active);
+                setState((p) => ({ ...p, active }))
+              }}
             />
 
             <Link to="new" className="primary-button">
