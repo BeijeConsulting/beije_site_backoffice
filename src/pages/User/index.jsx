@@ -59,7 +59,8 @@ const User = ({ isNew }) => {
       setState(response);
     }
 
-    if (disableUser.response) {
+    const save = saveUserResult ?? { response: null };
+    if (save.response) {
       navigate('/community', {
         state: {
           toast: true
@@ -67,6 +68,15 @@ const User = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
+    const disable = disableUserResult ?? { response: null }
+    if (disable.response) {
+      navigate('/jobs', {
+        state: {
+          toast: true
+        }
+      })
+    }
+    if (disable.error) notify('error', toastId);
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error, disableUserResult?.response, disableUserResult?.error]);
 
 
