@@ -12,8 +12,6 @@ import Table from '../../components/Table';
 
 // styles
 import styles from "./styles.module.css";
-import FiltersLanActive from '../../components/FiltersLanActive';
-
 
 const initState = {
   lang: "it",
