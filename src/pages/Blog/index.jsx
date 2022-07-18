@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
+import { navigateWithNotify } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -104,14 +105,10 @@ const Blog = ({ isNew }) => {
 
     const save = saveBlogResult ?? { response: null };
     if (save.response) {
-      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId:  isNew? save.response.id : idToUse }));
+      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId: isNew ? save.response.id : idToUse }));
 
       timeout = setTimeout(() => {
-        navigate('/blogs', {
-          state: {
-            toast: true
-          }
-        })
+        navigateWithNotify(navigate, '/blogs');
       }, 2000);
     }
     if (save.error) notify('error', toastId);
@@ -119,11 +116,7 @@ const Blog = ({ isNew }) => {
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
-      navigate('/blogs', {
-        state: {
-          toast: true
-        }
-      })
+      navigateWithNotify(navigate, '/blogs');
     }
     if (disableOrActive.error) notify('error', toastId);
 
@@ -132,7 +125,7 @@ const Blog = ({ isNew }) => {
       clearTimeout(timeout)
     };
 
-  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
+  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error]);
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
@@ -234,7 +227,7 @@ const Blog = ({ isNew }) => {
 
               <div className={styles["inputs-row"]}>
 
-                <ActiveOrDisable style={{width: "20%", alignSelf: "end"}} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
+                <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
               </div>
 
               {/* <Hashtags hashtagList={hashtagsResult} /> */}
