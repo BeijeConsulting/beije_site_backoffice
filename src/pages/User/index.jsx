@@ -41,7 +41,7 @@ const User = ({ isNew }) => {
   const [disableUserResult, disableUser] = useService(`/user/${id}`, {
     method: "delete"
   });
-  const [saveUserResult, saveUser] = useService(isNew ? "/team/create-new-team-user" : `/team/users/${id}`, {
+  const [saveUserResult, saveUser] = useService(isNew ? "/team/create-new-team-user" : `/team/user/${id}`, {
     method: isNew ? "post" : "put",
   }
   )

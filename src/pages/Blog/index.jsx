@@ -98,9 +98,8 @@ const Blog = ({ isNew }) => {
 
   useEffect(() => {
     const { response } = getBlogResult ?? { response: null };
-    if (response) {
-      setState(response);
-    }
+    if (response) setState(response);
+
 
     const responsePermalink = getBlogWithPermalinkRes ?? { response: null };
     if (responsePermalink.response) {
@@ -110,13 +109,14 @@ const Blog = ({ isNew }) => {
 
     const save = saveBlogResult ?? { response: null };
     if (save.response) {
+      console.log("sono qui");
       state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId: isNew ? save.response.id : idToUse }));
 
       timeout = setTimeout(() => {
         navigateWithNotify(navigate, '/blogs');
-      }, 2000);
+      }, 4000);
     }
-    console.log(save.error);
+
     if (save.error) notify(`error`, toastId, save.error.data.message);
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
@@ -126,12 +126,16 @@ const Blog = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId, disableOrActive.error.data.message);
 
+    const createEngBLog = engResult ?? { response: null };
+    console.log(createEngBLog);
+    if (createEngBLog.response) navigateWithNotify(navigate, `/blogs/${createEngBLog.response.id}`)
+
     return () => {
       id = null;
       clearTimeout(timeout)
     };
 
-  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error]);
+  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error, engResult.response]);
 
   const handleSubmitPost = (e) => {
     e.preventDefault();
@@ -160,6 +164,8 @@ const Blog = ({ isNew }) => {
       type: "blog",
       language: "eng",
     });
+
+    if(!isNew && state.translate_blog_permalink !== null) getBlogPermalink();
     setState((p) => ({ ...p, language }))
   }
 
@@ -237,8 +243,8 @@ const Blog = ({ isNew }) => {
                     { value: "it", label: "italiano" },
                     { value: "it", label: "Crea versione Inglese" },
                   ] : [
-                    { value: "it", label: "italiano" },
-                    { value: "eng", label: "Crea versione Inglese" },
+                    { value: "it", label: "Italiano" },
+                    { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
                   ]
                   }
                   onChange={handleSetLanguage}

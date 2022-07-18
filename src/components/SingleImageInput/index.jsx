@@ -1,4 +1,5 @@
 import { useId } from "react";
+import useService from "../../hooks/useService";
 import styles from "./styles.module.css";
 
 function readFile(file) {
@@ -15,6 +16,11 @@ function readFile(file) {
 }
 
 const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
+
+  const [deleteResult, deleteImg] = useService('/admin/site_image/blog/delete',{
+    method: "delete"
+  });
+
   const id = useId();
   return (
     <div
@@ -49,6 +55,7 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
       <div className={styles["actions-container"]}>
         <input
           className="hidden"
+          multiple
           id={id}
           type="file"
           accept="image/*"
@@ -71,6 +78,15 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
           <button
             className={styles["delete-btn"]}
             onClick={() => {
+              deleteImg({
+                blogId: 170,
+                // communityId: 0,
+                description: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T15:55:15.459/"
+                // eventId: 0,
+                // file_base64: "string",
+                // name: "string",
+                // type: "string"
+              })
               onChange("");
             }}
           >

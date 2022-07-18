@@ -148,7 +148,7 @@ const Job = ({ isNew }) => {
                   { value: "Insegnate academy", label: "Insegnante" },
                   { value: "mobile", label: "Mobile" },
                 ]}
-                onChange={(mode) => setState((p) => ({ ...p, mode }))}
+                onChange={(type) => setState((p) => ({ ...p, type }))}
               />
 
               <Select

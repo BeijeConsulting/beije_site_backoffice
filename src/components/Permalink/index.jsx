@@ -12,7 +12,7 @@ function Permalink({ state, setState }) {
       style={{ width: "50%" }}
       placeholder="Permalink"
       name="permalink"
-      value={state.permalink}
+      value={state.permalink === "" ? state.title : state.permalink}
       onChange={handleChange}
     />
   )
