@@ -11,14 +11,14 @@ function DetailsHeader({ handleBack, isNew, title, handleSubmit }) {
         <h2>
           {
             isNew ?
-              "Nuovo case study"
+              `nuovo ${title}`
               : `Modifica ${title}`
           }
         </h2>
       </div>
       <button type="submit" className="success-button"
       onClick={handleSubmit}>
-        Salva Modifiche
+        {isNew ? "Salva": "Salva modifiche"}
       </button>
     </div>
   )
