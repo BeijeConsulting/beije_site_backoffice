@@ -58,8 +58,8 @@ const User = ({ isNew }) => {
     if (response) {
       setState(response);
     }
-    const save = saveUserResult ?? { response: null };
-    if (save.response) {
+
+    if (disableUser.response) {
       navigate('/community', {
         state: {
           toast: true
@@ -67,7 +67,7 @@ const User = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
-  }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
+  }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error, disableUserResult?.response, disableUserResult?.error]);
 
 
 
@@ -215,6 +215,9 @@ const User = ({ isNew }) => {
       </Modal>
       {
         saveUserResult?.error && <ToastContainer />
+      }
+      {
+        disableUserResult?.response && <ToastContainer />
       }
     </div>
   );
