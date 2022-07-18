@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useId } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { format } from 'date-fns/esm';
-import locale from "date-fns/locale/it";
 
 // hooks
 import useService from '../../hooks/useService';
-import { notify , ToastContainer} from '../../utils/toast';
+import { notify, ToastContainer } from '../../utils/toast';
 
 // components
 import Loader from '../../components/Loader';
@@ -14,17 +12,19 @@ import Table from '../../components/Table';
 
 // styles
 import styles from "./styles.module.css";
+import FiltersLanActive from '../../components/FiltersLanActive';
 
 
 const initState = {
   lang: "it",
+  active: "yes"
 }
 
 function CaseStudies() {
   const [state, setState] = useState(initState);
-  
+
   const [{ response }, getCaseStudies] =
-    useService(`/admin/casestudies/${state.lang}`);
+    useService(`/admin/case_study/${state.lang}/${state.active}`);
 
   const toastId = useId();
 
@@ -36,9 +36,11 @@ function CaseStudies() {
     if (location.state !== null) {
       notify("success", toastId);
     }
-  }, [state.lang]);
+  }, [state.lang, state.active]);
 
-
+  const handleChange = (property) => {
+    setState({ ...state, property })
+  }
 
   return (
     response ?
@@ -48,6 +50,7 @@ function CaseStudies() {
 
             <h1>Case Studies</h1>
 
+            {/* <FiltersLanActive lang={state.lang} active={state.active} handleChange={handleChange} /> */}
             <Select
               value={state.lang}
               label="Lingua"
@@ -56,7 +59,22 @@ function CaseStudies() {
                 { value: "en", label: "Inglese" },
               ]}
               onChange={(lang) => {
-                setState((p) => ({ ...p, lang }))}}
+                setState((p) => ({ ...p, lang }))
+              }}
+            />
+
+            <Select
+              value={state.active}
+              label="Attivi"
+              options={[
+                { value: "all", label: "Tutti" },
+                { value: "yes", label: "Attivi" },
+                { value: "no", label: "Non attivi" }
+              ]}
+              onChange={(active) => {
+                console.log(active);
+                setState((p) => ({ ...p, active }))
+              }}
             />
 
             <Link to="new" className="primary-button">
