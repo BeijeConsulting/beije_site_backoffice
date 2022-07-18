@@ -97,6 +97,7 @@ const Users = () => {
             />
           )}
         </div>
+        <ToastContainer />
       </div>
       :
       <Loader />
