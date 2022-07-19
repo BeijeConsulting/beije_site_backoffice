@@ -30,8 +30,8 @@ const emptyState = {
   description_it: "",
   title_en: "-",
   description_en: "-",
-  type: "",
-  mode: "",
+  type: "full stack",
+  mode: "remote",
   date_creation: todayWithTime(),
   academy: false,
   disable_date: null,
@@ -128,50 +128,56 @@ const Job = ({ isNew }) => {
             <div className={styles["input-container"]}>
 
               {/* <div className={styles["inputs-row"]}> */}
-                <Input
-                  style={{ width: "40%" }}
-                  placeholder="Titolo"
-                  name="title"
-                  value={state.title_it}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, title_it: e.target.value }))
-                  }
-                />
-                <Input
-                  placeholder="Posizione"
-                  name="type"
-                  value={state.type}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, type: e.target.value }))
-                  }
-                />
-                <Select
-                  value={state.mode}
-                  label="Sede"
-                  options={[
-                    { value: "-", label: "vuoto" },
-                    { value: "remote", label: "Da remoto" },
-                    { value: "milan", label: "Milano" },
-                    { value: "hybrid", label: "Ibrido" },
-                  ]}
-                  onChange={(mode) => setState((p) => ({ ...p, mode }))}
-                />
-                <Checkbox
-                  checked={state.academy}
-                  onChange={(e) => {
-                    setState((p) => ({ ...p, academy: e.target.checked }));
-                  }}
-                  label="Academy: "
-                />
-
-                {
-                  !isNew &&
-                  <button className="primary-button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShouldShowModal(true)
-                    }}>{state.disable_date ? "Riattiva" : "disabilita"}</button>
+              <Input
+                style={{ width: "40%" }}
+                placeholder="Titolo"
+                name="title"
+                value={state.title_it}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, title_it: e.target.value }))
                 }
+              />
+
+              <Select
+                value={state.type}
+                label="Posizione"
+                options={[
+                  { value: "front end", label: "Front end" },
+                  { value: "back end", label: "Back end" },
+                  { value: "full stack", label: "Full stack" },
+                  { value: "Insegnate academy", label: "Insegnante" },
+                  { value: "mobile", label: "Mobile" },
+                ]}
+                onChange={(type) => setState((p) => ({ ...p, type }))}
+              />
+
+              <Select
+                value={state.mode}
+                label="Sede"
+                options={[
+                  { value: "-", label: "vuoto" },
+                  { value: "remote", label: "Da remoto" },
+                  { value: "milan", label: "Milano" },
+                  { value: "hybrid", label: "Ibrido" },
+                ]}
+                onChange={(mode) => setState((p) => ({ ...p, mode }))}
+              />
+              <Checkbox
+                checked={state.academy}
+                onChange={(e) => {
+                  setState((p) => ({ ...p, academy: e.target.checked }));
+                }}
+                label="Academy: "
+              />
+
+              {
+                !isNew &&
+                <button className="primary-button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShouldShowModal(true)
+                  }}>{state.disable_date ? "Riattiva" : "disabilita"}</button>
+              }
               {/* </div> */}
             </div>
             <MDEditor
@@ -188,7 +194,7 @@ const Job = ({ isNew }) => {
         goBack={goBack}
         path={"/jobs"}
         actions={{
-          save: () => { saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") })},
+          save: () => { saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") }) },
           disable: () => { disableOrActiveJob(); }
         }}
         setModal={setShouldShowModal}

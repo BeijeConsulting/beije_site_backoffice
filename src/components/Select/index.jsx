@@ -13,9 +13,9 @@ const Select = ({ value, onChange, label, options = [] }) => {
         <span className={styles["caret"]}></span>
       </div>
       <ul role="list" className={styles["options"]}>
-        {options.map((o) => (
+        {options.map((o, key) => (
           <li
-            key={o.value}
+            key={`${key}-${o.value}`}
             role="listitem"
             className={o.value === value ? styles["item-selected"] : undefined}
             onClick={(e) => {

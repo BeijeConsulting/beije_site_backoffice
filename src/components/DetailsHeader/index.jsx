@@ -2,7 +2,7 @@ import GoBackArrow from "../GoBackArrow/GoBackArrow";
 // import PropTypes from "prop-types";
 import styles from './styles.module.css';
 
-function DetailsHeader({ handleBack, isNew, title, handleSubmit }) {
+function DetailsHeader({ handleBack, isNew, title }) {
   return (
     <div className={styles["title-row"]}>
       <div style={{display: "flex", alignItems: "center"}}>
@@ -16,10 +16,6 @@ function DetailsHeader({ handleBack, isNew, title, handleSubmit }) {
           }
         </h2>
       </div>
-      <button type="submit" className="success-button"
-      onClick={handleSubmit}>
-        {isNew ? "Salva": "Salva modifiche"}
-      </button>
     </div>
   )
 }

@@ -123,6 +123,7 @@ select {
   padding-inline: 10px;
   padding-block: 8px;
   border-radius: 4px;
+  margin: 0 1rem;
   background-color: var(--success);
   color: var(--white);
   border: 1px solid var(--success);
