@@ -15,11 +15,7 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
-
-  const [deleteResult, deleteImg] = useService('/admin/site_image/blog/delete', {
-    method: "delete",
-  });
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, idProp }) => {
 
   const id = useId();
   return (
@@ -78,28 +74,21 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
           <button
             className={styles["delete-btn"]}
             onClick={(e) => {
-              e.preventDefault()
-              axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete',{
+              e.preventDefault();
+              axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
                 data: {
                   file_base64: null,
-                  name: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:47:35.723/",
+                  name: value,
                   type: null,
-                  description:"https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:47:35.723/",
-                  blogId: 170, 
+                  description: value,
+                  blogId: idProp,
                   eventId: null
-              },
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('tk')}`
-              }
+                },
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('tk')}`
+                }
               })
-              // deleteImg({
-              //   file_base64: null,
-              //   name: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:51:23.233/",
-              //   type: null,
-              //   description: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:51:23.233/",
-              //   blogId: 170,
-              //   eventId: null
-              // })
+      
               onChange("");
             }}
           >

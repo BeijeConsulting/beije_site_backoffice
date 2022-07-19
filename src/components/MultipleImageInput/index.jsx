@@ -1,6 +1,6 @@
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states, isNew }) => {
+const MultipleImageInput = ({ states, id }) => {
 
   const [state, setState] = states;
 
@@ -11,14 +11,16 @@ const MultipleImageInput = ({ states, isNew }) => {
       <div key={key + img} style={{ padding: "1rem" }}>
         <SingleImageInput
           aspectRatio="1"
-          style={{ maxWidth: "200px"}}
+          style={{ maxWidth: "200px" }}
           label={"image" + (key + 1)}
           value={state.images[key]}
           onChange={(image) => {
-            const newState = Object.assign({}, state)
-            newState.images.splice(key, 1, image)
+            const newState = Object.assign({}, state);
+            newState.images.splice(key, 1, image);
+
             setState({ ...state, images: newState.images });
           }}
+          idProp={id}
         />
       </div>
     )
