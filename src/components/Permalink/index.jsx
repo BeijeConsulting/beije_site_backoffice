@@ -14,7 +14,7 @@ function Permalink({ state, setState }) {
 
   return (
     <Input
-      style={{ width: "50%" }}
+      style={{ width: "100%", marginTop: 20 }}
       placeholder="Permalink"
       name="permalink"
       value={state.permalink === "" ? permalinkCallback(state.title) : permalinkCallback(state.permalink)}
