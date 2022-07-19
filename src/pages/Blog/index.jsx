@@ -18,11 +18,11 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
-// import Hashtags from "../../components/Hashtags";
 import Permalink from "../../components/Permalink";
 import MultipleImageInput from "../../components/MultipleImageInput";
 import logo from "../../assets/images/logo-colored.svg";
-import ActiveOrDisable from "../../components/ActiveOrDisable";
+// import Hashtags from "../../components/Hashtags";
+// import ActiveOrDisable from "../../components/ActiveOrDisable";
 import CardContainerMemo from "../../components/CardContainer";
 
 // styles
@@ -92,6 +92,14 @@ const Blog = ({ isNew }) => {
     method: "post"
   });
 
+  function checkImages(id) {
+    let newArray = state.images.filter((image) => !image.startsWith("https"))
+    newArray.map((img) => {
+      postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
+      // newState.images.shift();
+    })
+  }
+
   useEffect(() => {
     if (!isNew) {
       getBlog()
@@ -101,6 +109,7 @@ const Blog = ({ isNew }) => {
   }, []);
 
   useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
+
     const newState = Object.assign({}, state);
 
     const { response } = getBlogResult ?? { response: null };
@@ -118,10 +127,7 @@ const Blog = ({ isNew }) => {
     if (save.response) {
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
 
-      newState.images.map((img) => {
-        postImg({ ...imageState, file_base64: img, blogId: isNew ? save.response.id : idToUse });
-        newState.images.shift();
-      })
+      checkImages(save.response.id);
     };
 
     if (save.error) notify(`error`, toastId, save.error.data.message);
@@ -213,7 +219,7 @@ const Blog = ({ isNew }) => {
               </legend>
               <div className={styles["flex-container"]}>
 
-                <CardContainerMemo head={"Input"} style={{marginRight: "2rem"}}>
+                <CardContainerMemo head={"Input"} style={{ marginRight: "2rem" }}>
                   <Input
                     style={{ width: "100%", marginTop: 20 }}
                     placeholder="Titolo"
@@ -247,7 +253,7 @@ const Blog = ({ isNew }) => {
                   <Permalink state={state} setState={setState} />
 
                   <Select
-                  style={{maxWidth: "none", marginTop: "2rem"}}
+                    style={{ maxWidth: "none", marginTop: "2rem" }}
                     value={state.language}
                     label="Lingua"
                     options={isNew ? [
@@ -275,9 +281,9 @@ const Blog = ({ isNew }) => {
                 </CardContainerMemo>
 
                 {/* <CardContainerMemo head={"Actions"}> */}
-                  {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
+                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
 
-                  {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                {/* <Hashtags hashtagList={hashtagsResult} /> */}
                 {/* </CardContainerMemo>   */}
               </div>
 
@@ -293,7 +299,7 @@ const Blog = ({ isNew }) => {
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
 
-                  <MultipleImageInput states={[state, setState]} isNew={isNew} />
+                  <MultipleImageInput states={[state, setState]} isNew={isNew} id={idToUse} />
                 </div>
               </CardContainerMemo>
 
