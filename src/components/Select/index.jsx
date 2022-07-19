@@ -1,8 +1,8 @@
 import styles from "./styles.module.css";
 
-const Select = ({ value, onChange, label, options = [] }) => {
+const Select = ({ value, onChange, label, options = [], style}) => {
   return (
-    <div tabIndex={0} role="listbox" className={styles["wrapper"]}>
+    <div tabIndex={0} role="listbox" className={styles["wrapper"]} style={{...style}}>
       <div className={styles["select"]}>
         <span className={`${styles["label"]} ${value ? styles["up"] : ""}`}>
           {label}
