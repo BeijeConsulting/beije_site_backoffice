@@ -1,6 +1,6 @@
 import { useEffect, useId } from "react";
 import styles from "./styles.module.css";
-
+import axios from 'axios';
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,7 +14,7 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew }) => {
   const id = useId();
 
   useEffect(() => {
@@ -62,6 +62,7 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
       <div className={styles["actions-container"]}>
         <input
           className="hidden"
+          multiple
           id={id}
           type="file"
           accept="image/*"
@@ -83,8 +84,25 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
         {value && (
           <button
             className={styles["delete-btn"]}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+
+              !isNew && axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
+                data: {
+                  file_base64: null,
+                  name: value,
+                  type: null,
+                  description: value,
+                  blogId: idProp,
+                  eventId: null
+                },
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('tk')}`
+                }
+              });
+
               onChange("", true);
+
             }}
           >
             Elimina

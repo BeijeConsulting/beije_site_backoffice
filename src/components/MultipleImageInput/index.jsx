@@ -1,6 +1,6 @@
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states }) => {
+const MultipleImageInput = ({ states, id }) => {
 
   const [state, setState] = states;
   console.log('testa', state)
@@ -21,6 +21,7 @@ const MultipleImageInput = ({ states }) => {
             else newState.splice(key, 1, image)
             setState([...newState]);
           }}
+          idProp={id}
         />
       </div>
     )

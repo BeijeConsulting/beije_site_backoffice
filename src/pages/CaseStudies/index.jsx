@@ -36,10 +36,6 @@ function CaseStudies() {
     }
   }, [state.lang, state.active]);
 
-  const handleChange = (property) => {
-    setState({ ...state, property })
-  }
-
   return (
     response ?
       <div className={styles["container"]}>
@@ -48,7 +44,6 @@ function CaseStudies() {
 
             <h1>Case Studies</h1>
 
-            {/* <FiltersLanActive lang={state.lang} active={state.active} handleChange={handleChange} /> */}
             <Select
               value={state.lang}
               label="Lingua"

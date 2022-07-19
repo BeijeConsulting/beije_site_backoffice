@@ -1,3 +1,10 @@
+.container-bg {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 0 2rem;
+  background-color: #F6F6F9;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -43,4 +50,19 @@
   display: flex;
   gap: 4rem;
   margin-bottom: 4rem;
+}
+
+.fieldSet { 
+  /* border: 1px solid var(--grey-700); */
+  border-radius: 10px;
+  margin: 3rem;
+  padding: 3rem;
+  /* box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; */
+  
+}
+
+.flex-container{
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-between;
 }

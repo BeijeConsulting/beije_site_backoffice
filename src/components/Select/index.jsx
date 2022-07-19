@@ -1,8 +1,8 @@
 import styles from "./styles.module.css";
 
-const Select = ({ value, onChange, label, options = [] }) => {
+const Select = ({ value, onChange, label, options = [], style}) => {
   return (
-    <div tabIndex={0} role="listbox" className={styles["wrapper"]}>
+    <div tabIndex={0} role="listbox" className={styles["wrapper"]} style={{...style}}>
       <div className={styles["select"]}>
         <span className={`${styles["label"]} ${value ? styles["up"] : ""}`}>
           {label}
@@ -13,9 +13,9 @@ const Select = ({ value, onChange, label, options = [] }) => {
         <span className={styles["caret"]}></span>
       </div>
       <ul role="list" className={styles["options"]}>
-        {options.map((o) => (
+        {options.map((o, key) => (
           <li
-            key={o.value}
+            key={`${key}-${o.value}`}
             role="listitem"
             className={o.value === value ? styles["item-selected"] : undefined}
             onClick={(e) => {
