@@ -1,0 +1,34 @@
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 60%;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.actions-container input:focus ~ .upload-btn {
+  outline: 1px solid var(--grey-500);
+  outline-offset: 3px;
+}
+
+.upload-btn{
+  width: 120px;
+  padding-inline: max(30px, 3rem);
+  padding-block: max(8px, 0.8rem);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.upload-btn {
+  background-color: var(--red-500);
+  color: var(--white);
+}
+
+.upload-btn:hover {
+  border-color: var(--red-700);
+  background-color: var(--red-700);
+}
+

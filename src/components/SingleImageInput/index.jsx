@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import styles from "./styles.module.css";
 
 function readFile(file) {
@@ -14,8 +14,21 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive }) => {
   const id = useId();
+
+  useEffect(() => {
+    if (isBlogMassive) {
+      (async () => {
+        const { content, error } = await readFile(value);
+        if (!error) {
+          onChange(content);
+        } else {
+          onChange("");
+        }
+      })()
+    }
+  }, [])
   return (
     <div
       style={{ aspectRatio, ...style }}
@@ -53,8 +66,8 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
           type="file"
           accept="image/*"
           onChange={async (e) => {
-
             if (e.target.files[0].size > 499999) return
+
             const { content, error } = await readFile(e.target.files[0]);
             if (!error) {
               onChange(content);
@@ -71,7 +84,7 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
           <button
             className={styles["delete-btn"]}
             onClick={() => {
-              onChange("");
+              onChange("", true);
             }}
           >
             Elimina

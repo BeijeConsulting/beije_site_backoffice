@@ -14,6 +14,7 @@ import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
 import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
+import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImageLoader";
 const emptyState = {
   firstName: "",
   lastName: "",
@@ -36,6 +37,7 @@ const User = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false)
+  const [imgArray, setImgArray] = useState([])
 
   const [getUserResult, getUser] = useService(`team/user/${id}`);
   const [disableUserResult, disableUser] = useService(`/user/${id}`, {
@@ -210,6 +212,12 @@ const User = ({ isNew }) => {
             </div>
           </div>
         )}
+        <MassiveImageLoader
+          states={[imgArray, setImgArray]}
+          onChange={(images) => {
+            imgArray.length > 0 ? setImgArray([imgArray, ...images]) : setImgArray([...images])
+          }}
+        ></MassiveImageLoader>
       </form>
       <Modal
         shouldShow={shouldShowModal}
@@ -231,7 +239,7 @@ const User = ({ isNew }) => {
       {
         disableUserResult?.response && <ToastContainer />
       }
-    </div>
+    </div >
   );
 };
 
