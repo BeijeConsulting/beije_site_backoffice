@@ -1,7 +1,7 @@
 import { useId } from "react";
 import useService from "../../hooks/useService";
 import styles from "./styles.module.css";
-
+import axios from 'axios';
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -17,8 +17,8 @@ function readFile(file) {
 
 const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
 
-  const [deleteResult, deleteImg] = useService('/admin/site_image/blog/delete',{
-    method: "delete"
+  const [deleteResult, deleteImg] = useService('/admin/site_image/blog/delete', {
+    method: "delete",
   });
 
   const id = useId();
@@ -77,16 +77,29 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
         {value && (
           <button
             className={styles["delete-btn"]}
-            onClick={() => {
-              deleteImg({
-                blogId: 170,
-                // communityId: 0,
-                description: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T15:55:15.459/"
-                // eventId: 0,
-                // file_base64: "string",
-                // name: "string",
-                // type: "string"
+            onClick={(e) => {
+              e.preventDefault()
+              axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete',{
+                data: {
+                  file_base64: null,
+                  name: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:47:35.723/",
+                  type: null,
+                  description:"https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:47:35.723/",
+                  blogId: 170, 
+                  eventId: null
+              },
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('tk')}`
+              }
               })
+              // deleteImg({
+              //   file_base64: null,
+              //   name: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:51:23.233/",
+              //   type: null,
+              //   description: "https://beije-it.s3.eu-south-1.amazonaws.com/mgmt/upload/original/2022-07-18T17:51:23.233/",
+              //   blogId: 170,
+              //   eventId: null
+              // })
               onChange("");
             }}
           >
