@@ -23,7 +23,7 @@ import Permalink from "../../components/Permalink";
 import MultipleImageInput from "../../components/MultipleImageInput";
 import logo from "../../assets/images/logo-colored.svg";
 import ActiveOrDisable from "../../components/ActiveOrDisable";
-
+import CardContainerMemo from "../../components/CardContainer";
 
 // styles
 import styles from "./styles.module.css";
@@ -155,9 +155,9 @@ const Blog = ({ isNew }) => {
   const handleSubmitPost = useCallback((e) => {
     e.preventDefault();
 
-    if (e.target?.nextSibling?.name === "quickSave") {
+    if (e.target?.name === "quickSave") {
       isQuickSave = true;
-    }else{
+    } else {
       isQuickSave = false;
     }
 
@@ -203,7 +203,7 @@ const Blog = ({ isNew }) => {
   return (
     <div className={styles["container-bg"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} handleSubmit={handleSubmitPost} />
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
         {(isNew || getBlogResult.response) && (
           <>
@@ -211,77 +211,74 @@ const Blog = ({ isNew }) => {
               <legend>
                 <img className={styles["logo"]} src={logo} alt="Logo Beije" />
               </legend>
+              <div className={styles["flex-container"]}>
 
-              <div className={styles["container"]}>
+                <CardContainerMemo head={"Input"} style={{marginRight: "2rem"}}>
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Titolo"
+                    name="title"
+                    value={state.title}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, title: e.target.value }))
+                    }
+                  />
 
-                <div className={styles["flex-container"]}>
-                  <div className={styles["card"]}>
-                    <Input
-                      style={{ width: "100%", marginTop: 20 }}
-                      placeholder="Titolo"
-                      name="title"
-                      value={state.title}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, title: e.target.value }))
-                      }
-                    />
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Sottotitolo"
+                    name="subtitle"
+                    value={state.subtitle}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, subtitle: e.target.value }))
+                    }
+                  />
 
-                    <Input
-                      style={{ width: "100%", marginTop: 20 }}
-                      placeholder="Sottotitolo"
-                      name="subtitle"
-                      value={state.subtitle}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, subtitle: e.target.value }))
-                      }
-                    />
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Autore"
+                    name="title"
+                    value={state.author}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, author: e.target.value }))
+                    }
+                  />
 
-                    <Input
-                      style={{ width: "100%", marginTop: 20 }}
-                      placeholder="Autore"
-                      name="title"
-                      value={state.author}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, author: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className={styles["card"]}>
+                  <Permalink state={state} setState={setState} />
 
-                    <Select
-                      value={state.language}
-                      label="Lingua"
-                      options={isNew ? [
-                        { value: "it", label: "italiano" },
-                        { value: "it", label: "Crea versione Inglese" },
-                      ] : [
-                        { value: "it", label: "Italiano" },
-                        { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
-                      ]
-                      }
-                      onChange={handleSetLanguage}
-                    />
-                    <Permalink state={state} setState={setState} />
-                  </div>
-                </div>
-                <div className={styles["card"]}>
+                  <Select
+                  style={{maxWidth: "none", marginTop: "2rem"}}
+                    value={state.language}
+                    label="Lingua"
+                    options={isNew ? [
+                      { value: "it", label: "italiano" },
+                      { value: "it", label: "Crea versione Inglese" },
+                    ] : [
+                      { value: "it", label: "Italiano" },
+                      { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
+                    ]
+                    }
+                    onChange={handleSetLanguage}
+                  />
+                </CardContainerMemo>
+
+                <CardContainerMemo head={"Cover image"}>
                   <SingleImageInput
                     aspectRatio="1"
-                    style={{ maxWidth: "30%" }}
-                    label="images"
+                    style={{ maxWidth: "50%" }}
+                    label=""
                     value={state.cover_img}
                     onChange={(cover_img) => {
                       setState((p) => ({ ...p, cover_img }));
                     }}
                   />
-                </div>
+                </CardContainerMemo>
 
-                {/* <div className={styles["inputs-row"]}> */}
+                {/* <CardContainerMemo head={"Actions"}> */}
+                  {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
 
-                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
-                {/* </div> */}
-
-                {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                  {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                {/* </CardContainerMemo>   */}
               </div>
 
               <MDEditor
@@ -290,14 +287,16 @@ const Blog = ({ isNew }) => {
                   setState((p) => ({ ...p, description: e.target.value }))
                 }
               />
-              <div className={styles["card"]}>
 
-                <div style={{ display: "flex" }}
+              <CardContainerMemo head={"Images"}>
+
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
 
                   <MultipleImageInput states={[state, setState]} isNew={isNew} />
                 </div>
-              </div>
+              </CardContainerMemo>
+
               {/* <div className="save-container">
                 <button type="submit" className="success-button"
                   onClick={handleSubmitPost}>
