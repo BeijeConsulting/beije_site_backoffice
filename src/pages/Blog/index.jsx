@@ -21,10 +21,13 @@ import DetailsHeader from "../../components/DetailsHeader";
 // import Hashtags from "../../components/Hashtags";
 import Permalink from "../../components/Permalink";
 import MultipleImageInput from "../../components/MultipleImageInput";
+import logo from "../../assets/images/logo-colored.svg";
+import ActiveOrDisable from "../../components/ActiveOrDisable";
+import Loader from "../../components/Loader"
+
 
 // styles
 import styles from "./styles.module.css";
-import ActiveOrDisable from "../../components/ActiveOrDisable";
 
 const emptyState = {
   title: "",
@@ -50,6 +53,7 @@ const imageState = {
 }
 let id = null;
 let timeout;
+let isLoading = true;
 
 const Blog = ({ isNew }) => {
 
@@ -97,9 +101,10 @@ const Blog = ({ isNew }) => {
   }, []);
 
   useEffect(() => {
-    const { response } = getBlogResult ?? { response: null };
-    if (response) setState(response);
+    const newState = Object.assign({}, state);
 
+    const { response } = getBlogResult ?? { response: null };
+    if (response) { setState(response); isLoading = false };
 
     const responsePermalink = getBlogWithPermalinkRes ?? { response: null };
     if (responsePermalink.response) {
@@ -108,16 +113,23 @@ const Blog = ({ isNew }) => {
     }
 
     const save = saveBlogResult ?? { response: null };
-    if (save.response) {
-      console.log("sono qui");
-      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId: isNew ? save.response.id : idToUse }));
+    const uploadImg = uploadImgRes ?? { response: null };
 
-      timeout = setTimeout(() => {
-        navigateWithNotify(navigate, '/blogs');
-      }, 4000);
-    }
+    if (save.response) newState.images.map((img) => {
+      isLoading = true;
+      postImg({ ...imageState, file_base64: img, blogId: isNew ? save.response.id : idToUse });
+      newState.images.shift();
+    });
 
     if (save.error) notify(`error`, toastId, save.error.data.message);
+
+    if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
+
+    if(uploadImg.error){
+      isLoading = false; 
+      notify('error', toastId, uploadImg.error.data.message)
+    }
+
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
@@ -127,8 +139,10 @@ const Blog = ({ isNew }) => {
     if (disableOrActive.error) notify('error', toastId, disableOrActive.error.data.message);
 
     const createEngBLog = engResult ?? { response: null };
-    console.log(createEngBLog);
-    if (createEngBLog.response) navigateWithNotify(navigate, `/blogs/${createEngBLog.response.id}`)
+    if (createEngBLog.response) {
+      id = engResult.response.id;
+      setState(engResult.response);
+    }
 
     return () => {
       id = null;
@@ -165,7 +179,7 @@ const Blog = ({ isNew }) => {
       language: "eng",
     });
 
-    if(!isNew && state.translate_blog_permalink !== null) getBlogPermalink();
+    if (!isNew && state.translate_blog_permalink !== null) getBlogPermalink();
     setState((p) => ({ ...p, language }))
   }
 
@@ -179,114 +193,128 @@ const Blog = ({ isNew }) => {
   }
 
   return (
-    <div className={styles["container"]}>
-      <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} handleSubmit={handleSubmitPost} />
+    isLoading
+      ? <Loader />
+      : <div className={styles["container-bg"]}>
+        <form>
+          <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} handleSubmit={handleSubmitPost} />
 
-        {(isNew || getBlogResult.response) && (
-          <>
-            <div className={styles["images"]}>
-              <SingleImageInput
-                aspectRatio="1"
-                style={{ maxWidth: "30%" }}
-                label="images"
-                value={state.cover_img}
-                onChange={(cover_img) => {
-                  setState((p) => ({ ...p, cover_img }));
-                }}
-              />
+          {(isNew || getBlogResult.response) && (
+            <>
+              <fieldset className={styles['fieldSet']}>
+                <legend>
+                  <img className={styles["logo"]} src={logo} alt="Logo Beije" />
+                </legend>
 
-              <div style={{ display: "flex" }}
-              >
+                <div className={styles["container"]}>
 
-                <MultipleImageInput states={[state, setState]} isNew={isNew} />
-              </div>
+                  <div className={styles["flex-container"]}>
+                    <div className={styles["card"]}>
+                      <Input
+                        style={{ width: "100%", marginTop: 20 }}
+                        placeholder="Titolo"
+                        name="title"
+                        value={state.title}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, title: e.target.value }))
+                        }
+                      />
 
-            </div>
-            <div className={styles["container"]}>
+                      <Input
+                        style={{ width: "100%", marginTop: 20 }}
+                        placeholder="Sottotitolo"
+                        name="subtitle"
+                        value={state.subtitle}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, subtitle: e.target.value }))
+                        }
+                      />
 
-              <div className={styles["inputs-row"]}>
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Titolo"
-                  name="title"
-                  value={state.title}
+                      <Input
+                        style={{ width: "100%", marginTop: 20 }}
+                        placeholder="Autore"
+                        name="title"
+                        value={state.author}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, author: e.target.value }))
+                        }
+                      />
+                    </div>
+                    <div className={styles["card"]}>
+
+                      <Select
+                        value={state.language}
+                        label="Lingua"
+                        options={isNew ? [
+                          { value: "it", label: "italiano" },
+                          { value: "it", label: "Crea versione Inglese" },
+                        ] : [
+                          { value: "it", label: "Italiano" },
+                          { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
+                        ]
+                        }
+                        onChange={handleSetLanguage}
+                      />
+                      <Permalink state={state} setState={setState} />
+                    </div>
+                  </div>
+                  <div className={styles["card"]}>
+                    <SingleImageInput
+                      aspectRatio="1"
+                      style={{ maxWidth: "30%" }}
+                      label="images"
+                      value={state.cover_img}
+                      onChange={(cover_img) => {
+                        setState((p) => ({ ...p, cover_img }));
+                      }}
+                    />
+                  </div>
+
+                  {/* <div className={styles["inputs-row"]}> */}
+
+                  {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
+                  {/* </div> */}
+
+                  {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                </div>
+
+                <MDEditor
+                  value={state.description}
                   onChange={(e) =>
-                    setState((p) => ({ ...p, title: e.target.value }))
+                    setState((p) => ({ ...p, description: e.target.value }))
                   }
                 />
+                <div className={styles["card"]}>
 
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Sottotitolo"
-                  name="subtitle"
-                  value={state.subtitle}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, subtitle: e.target.value }))
-                  }
-                />
+                  <div style={{ display: "flex" }}
+                  >
 
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Autore"
-                  name="title"
-                  value={state.author}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, author: e.target.value }))
-                  }
-                />
+                    <MultipleImageInput states={[state, setState]} isNew={isNew} />
+                  </div>
 
-                <Select
-                  value={state.language}
-                  label="Lingua"
-                  options={isNew ? [
-                    { value: "it", label: "italiano" },
-                    { value: "it", label: "Crea versione Inglese" },
-                  ] : [
-                    { value: "it", label: "Italiano" },
-                    { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
-                  ]
-                  }
-                  onChange={handleSetLanguage}
-                />
-                <Permalink state={state} setState={setState} />
-              </div>
+                </div>
+              </fieldset>
+            </>
+          )}
+        </form>
+        <Modal
+          shouldShow={shouldShowModal}
+          goBack={goBack}
+          path={"/blogs"}
+          actions={{
+            save: () => { saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm") }) },
+            disable: () => { disableOrActiveBlog(); }
+          }}
+          setModal={setShouldShowModal}
+          setGoBack={setGoBack}
 
-              <div className={styles["inputs-row"]}>
-
-                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
-              </div>
-
-              {/* <Hashtags hashtagList={hashtagsResult} /> */}
-            </div>
-
-            <MDEditor
-              value={state.description}
-              onChange={(e) =>
-                setState((p) => ({ ...p, description: e.target.value }))
-              }
-            />
-          </>
-        )}
-      </form>
-      <Modal
-        shouldShow={shouldShowModal}
-        goBack={goBack}
-        path={"/blogs"}
-        actions={{
-          save: () => { saveBlog({ ...state, create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm") }) },
-          disable: () => { disableOrActiveBlog(); }
-        }}
-        setModal={setShouldShowModal}
-        setGoBack={setGoBack}
-
-      >
-        <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
-      </Modal>
-      {
-        saveBlogResult?.error && <ToastContainer />
-      }
-    </div>
+        >
+          <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
+        </Modal>
+        {
+          saveBlogResult?.error && <ToastContainer />
+        }
+      </div>
   );
 };
 
