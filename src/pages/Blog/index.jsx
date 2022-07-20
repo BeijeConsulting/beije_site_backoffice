@@ -138,17 +138,16 @@ const Blog = ({ isNew }) => {
         notify("success", toastId)
         setState(save.response);
       }
-
     };
-
-    if (save.error) notify(`error`, toastId, save.error.data.message);
+    console.log(save.error);
+    if (save.error) notify(`error`, toastId, save.error);
 
     const uploadImg = uploadImgRes ?? { response: null };
 
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
-
+  
     if (uploadImg.error) {
-      notify('error', toastId, uploadImg.error.data.message)
+      notify('error', toastId, uploadImg.error)
     }
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
@@ -156,7 +155,7 @@ const Blog = ({ isNew }) => {
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
     }
-    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.data.message);
+    if (disableOrActive.error) notify('error', toastId, disableOrActive.error);
 
     const createEngBLog = engResult ?? { response: null };
     if (createEngBLog.response) {
@@ -256,7 +255,7 @@ const Blog = ({ isNew }) => {
                     }
                   />
 
-                  <Permalink state={state} setState={setState} />
+                  <Permalink state={state} setState={setState} title={"title"} />
 
                   <Select
                     style={{ maxWidth: "none", marginTop: "2rem" }}

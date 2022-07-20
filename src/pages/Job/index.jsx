@@ -12,7 +12,7 @@ import useService from "../../hooks/useService";
 
 // utils
 import { notify, ToastContainer } from '../../utils/toast';
-import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
+import { checkIsQuickSave, navigateWithNotify, permalink } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -22,13 +22,14 @@ import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import FieldsetBeije from "../../components/FieldsetBeije";
-import CardContainer from "../../components/CardContainer";
+import CardContainerMemo from "../../components/CardContainer";
 import SaveContainerMemo from "../../components/SaveContainer";
 import ActiveOrDisable from "../../components/ActiveOrDisable";
 import DetailsHeader from "../../components/DetailsHeader";
 
 // style
 import styles from "./styles.module.css";
+import Permalink from "../../components/Permalink";
 
 const emptyState = {
   title_it: "",
@@ -99,7 +100,11 @@ const Job = ({ isNew }) => {
 
     isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
 
-    saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
+    saveJob({ 
+      ...state, 
+      date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") ,
+      permalink: state.permalink === "" ? permalink(state.title_it) : state.permalink,
+    });
   }
 
   const handleBack = () => {
@@ -120,7 +125,7 @@ const Job = ({ isNew }) => {
           <>
             <FieldsetBeije>
               <div className={styles["input-container"]}>
-                <CardContainer head="Input" style={{ width: "50%" }}>
+                <CardContainerMemo head="Input" style={{ width: "50%" }}>
 
                   <Input
                     style={{ width: "100%", marginTop: "2rem" }}
@@ -132,8 +137,10 @@ const Job = ({ isNew }) => {
                     }
                   />
 
+                  <Permalink state={state} setState={setState} title="title_it" />
+
                   <Select
-                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 5 }}
+                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 3 }}
                     value={state.type}
                     label="Posizione"
                     options={[
@@ -166,7 +173,7 @@ const Job = ({ isNew }) => {
                     }}
                     label="Academy: "
                   />
-                </CardContainer>
+                </CardContainerMemo>
               </div>
               <MDEditor
                 value={state.description_it}

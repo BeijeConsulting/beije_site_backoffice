@@ -179,7 +179,7 @@ const CaseStudy = ({ isNew }) => {
                     }
                   />
 
-                  <Permalink state={state} setState={setState} />
+                  <Permalink state={state} setState={setState} title="title" />
 
                   <Select
                     style={{ maxWidth: "none", marginTop: "2rem" }}
