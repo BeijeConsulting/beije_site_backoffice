@@ -122,16 +122,17 @@ const Blog = ({ isNew }) => {
     }
 
     const save = saveBlogResult ?? { response: null };
-    const uploadImg = uploadImgRes ?? { response: null };
-
+    
     if (save.response) {
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
-
+      
       checkImages(save.response.id);
     };
-
+    
     if (save.error) notify(`error`, toastId, save.error.data.message);
-
+    
+    const uploadImg = uploadImgRes ?? { response: null };
+    
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
 
     if (uploadImg.error) {
