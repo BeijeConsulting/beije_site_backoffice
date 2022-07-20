@@ -9,3 +9,12 @@ export const navigateWithNotify = (navigate, path) => {
     }
   });
 }
+
+export function checkIsQuickSave(isQuickSave, targetName) {
+  if (targetName === "quickSave") {
+    isQuickSave = true;
+  } else {
+    isQuickSave = false;
+  }
+  return isQuickSave;
+}
