@@ -12,6 +12,7 @@ import useService from "../../hooks/useService";
 
 // utils
 import { notify, ToastContainer } from '../../utils/toast';
+import { navigateWithNotify } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -20,10 +21,14 @@ import Select from "../../components/Select";
 import MDEditor from "../../components/MDEditor";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainer from "../../components/CardContainer";
+import SaveContainerMemo from "../../components/SaveContainer";
+import ActiveOrDisable from "../../components/ActiveOrDisable";
+import DetailsHeader from "../../components/DetailsHeader";
 
 // style
 import styles from "./styles.module.css";
-import DetailsHeader from "../../components/DetailsHeader";
 
 const emptyState = {
   title_it: "",
@@ -37,6 +42,8 @@ const emptyState = {
   disable_date: null,
   permalink: "",
 };
+
+let isQuickSave = false;
 
 const Job = ({ isNew }) => {
 
@@ -72,40 +79,31 @@ const Job = ({ isNew }) => {
 
     const save = saveJobResult ?? { response: null };
     if (save.response) {
-      navigate('/jobs', {
-        state: {
-          toast: true
-        }
-      })
+      if (!isQuickSave) navigateWithNotify(navigate, '/jobs');
+      if(isQuickSave) notify("success", toastId)
+      setState(save.response);
     }
-    if (save.error) notify('error', toastId);
+    if (save.error) notify('error', toastId, save.error.data.message);
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
-      navigate('/jobs', {
-        state: {
-          toast: true
-        }
-      })
+      navigateWithNotify(navigate, '/jobs');
     }
     if (disableOrActive.error) notify('error', toastId);
 
   }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error]);
 
-  const handleSubmitJob = (e) => {
+  const handleSubmitJob = (e) => {  // Controllo se è un salvataggio rapido o no e setto la variabile isQuickSave. Dopo di che faccio la chiamata api
     e.preventDefault();
+    console.log(e.target);
+    if (e.target?.name === "quickSave") {
+      isQuickSave = true;
+    } else {
+      isQuickSave = false;
+    }
     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
-
-  // function onClickYes() {
-  //   if (goBack) {
-  //     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
-  //     goBack = false;
-  //   }
-
-  //   disableOrActiveJob();
-  // }
 
   const handleBack = () => {
     if (getJobResult?.response !== state) {
@@ -118,74 +116,72 @@ const Job = ({ isNew }) => {
 
   return (
     <div className={styles["container"]}>
-      <form
-        onSubmit={handleSubmitJob}
-      >
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title_it} />
+      <form>
+        <DetailsHeader handleBack={handleBack} onSubmit={handleSubmitJob} isNew={isNew} title={state.title_it} />
 
         {(isNew || getJobResult.response) && (
           <>
-            <div className={styles["input-container"]}>
+            <FieldsetBeije>
+              <div className={styles["input-container"]}>
+                <CardContainer head="Input" style={{ width: "50%" }}>
 
-              {/* <div className={styles["inputs-row"]}> */}
-              <Input
-                style={{ width: "40%" }}
-                placeholder="Titolo"
-                name="title"
-                value={state.title_it}
+                  <Input
+                    style={{ width: "100%", marginTop: "2rem" }}
+                    placeholder="Titolo"
+                    name="title"
+                    value={state.title_it}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, title_it: e.target.value }))
+                    }
+                  />
+
+                  <Select
+                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 5 }}
+                    value={state.type}
+                    label="Posizione"
+                    options={[
+                      { value: "front end", label: "Front end" },
+                      { value: "back end", label: "Back end" },
+                      { value: "full stack", label: "Full stack" },
+                      { value: "Insegnate academy", label: "Insegnante" },
+                      { value: "mobile", label: "Mobile" },
+                    ]}
+                    onChange={(type) => setState((p) => ({ ...p, type }))}
+                  />
+
+                  <Select
+                    style={{ maxWidth: "none", marginTop: "2rem" }}
+                    value={state.mode}
+                    label="Sede"
+                    options={[
+                      { value: "-", label: "vuoto" },
+                      { value: "remote", label: "Da remoto" },
+                      { value: "milan", label: "Milano" },
+                      { value: "hybrid", label: "Ibrido" },
+                    ]}
+                    onChange={(mode) => setState((p) => ({ ...p, mode }))}
+                  />
+                  <Checkbox
+                    style={{ marginTop: "2rem" }}
+                    checked={state.academy}
+                    onChange={(e) => {
+                      setState((p) => ({ ...p, academy: e.target.checked }));
+                    }}
+                    label="Academy: "
+                  />
+                </CardContainer>
+              </div>
+              <MDEditor
+                value={state.description_it}
                 onChange={(e) =>
-                  setState((p) => ({ ...p, title_it: e.target.value }))
+                  setState((p) => ({ ...p, description_it: e.target.value }))
                 }
               />
-
-              <Select
-                value={state.type}
-                label="Posizione"
-                options={[
-                  { value: "front end", label: "Front end" },
-                  { value: "back end", label: "Back end" },
-                  { value: "full stack", label: "Full stack" },
-                  { value: "Insegnate academy", label: "Insegnante" },
-                  { value: "mobile", label: "Mobile" },
-                ]}
-                onChange={(type) => setState((p) => ({ ...p, type }))}
-              />
-
-              <Select
-                value={state.mode}
-                label="Sede"
-                options={[
-                  { value: "-", label: "vuoto" },
-                  { value: "remote", label: "Da remoto" },
-                  { value: "milan", label: "Milano" },
-                  { value: "hybrid", label: "Ibrido" },
-                ]}
-                onChange={(mode) => setState((p) => ({ ...p, mode }))}
-              />
-              <Checkbox
-                checked={state.academy}
-                onChange={(e) => {
-                  setState((p) => ({ ...p, academy: e.target.checked }));
-                }}
-                label="Academy: "
-              />
-
-              {
-                !isNew &&
-                <button className="primary-button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShouldShowModal(true)
-                  }}>{state.disable_date ? "Riattiva" : "disabilita"}</button>
-              }
-              {/* </div> */}
-            </div>
-            <MDEditor
-              value={state.description_it}
-              onChange={(e) =>
-                setState((p) => ({ ...p, description_it: e.target.value }))
-              }
-            />
+              <div className="fxc">
+                <ActiveOrDisable disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
+                <SaveContainerMemo onSubmit={handleSubmitJob} isNew={isNew} />
+              </div>
+            </FieldsetBeije>
           </>
         )}
       </form>
@@ -204,12 +200,9 @@ const Job = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveJobResult?.error && <ToastContainer />
+        saveJobResult?.error || saveJobResult.response && <ToastContainer />
       }
 
-      {
-        disableOrActiveResult?.response && <ToastContainer />
-      }
     </div>
   );
 };
