@@ -82,7 +82,7 @@ const Jobs = () => {
                 onChange={(academy) => setState((p) => ({ ...p, academy }))}
               />
 
-              <Select
+              {/* <Select
                 value={state.lang}
                 label="Lingua"
                 options={[
@@ -92,7 +92,7 @@ const Jobs = () => {
                 onChange={(lang) => {
                   setState((p) => ({ ...p, lang }))
                 }}
-              />
+              /> */}
             </CardContainerMemo>
             <Table
               headers={[

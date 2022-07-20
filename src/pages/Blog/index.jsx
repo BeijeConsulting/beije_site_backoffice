@@ -94,15 +94,21 @@ const Blog = ({ isNew }) => {
 
   function checkImages(id) {
     let newArray = state.images.filter((image) => !image.startsWith("https"));
+
     newArray.map((img) => {
       postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
       // newState.images.shift();
     })
-    if(state.cover_img !== null) postImg({ 
-      ...imageState, 
-      file_base64: state.cover_img, 
-      blogId: isNew ? id : idToUse, 
-      type: "cover_img" });
+
+    if (state.cover_img !== null) {
+      // if(!state.cover_img.startsWith("https")) return;
+      postImg({
+        ...imageState,
+        file_base64: state.cover_img,
+        blogId: isNew ? id : idToUse,
+        type: "cover_img"
+      });
+    }
   }
 
   useEffect(() => {
@@ -138,17 +144,16 @@ const Blog = ({ isNew }) => {
         notify("success", toastId)
         setState(save.response);
       }
-
     };
-
-    if (save.error) notify(`error`, toastId, save.error.data.message);
+    console.log(save.error);
+    if (save.error) notify(`error`, toastId, save.error.message);
 
     const uploadImg = uploadImgRes ?? { response: null };
 
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
 
     if (uploadImg.error) {
-      notify('error', toastId, uploadImg.error.data.message)
+      notify('error', toastId, uploadImg.error.message)
     }
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
@@ -156,7 +161,7 @@ const Blog = ({ isNew }) => {
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
     }
-    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.data.message);
+    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.message);
 
     const createEngBLog = engResult ?? { response: null };
     if (createEngBLog.response) {
@@ -196,7 +201,7 @@ const Blog = ({ isNew }) => {
       create_datetime: null,
       cover_img: null,
       images: [],
-      permalink: state.permalink,
+      // permalink: state.permalink,
       translate_blog_permalink: state.permalink,
       type: "blog",
       language: "eng",
@@ -256,7 +261,7 @@ const Blog = ({ isNew }) => {
                     }
                   />
 
-                  <Permalink state={state} setState={setState} />
+                  <Permalink state={state} setState={setState} title={"title"} />
 
                   <Select
                     style={{ maxWidth: "none", marginTop: "2rem" }}
@@ -309,12 +314,6 @@ const Blog = ({ isNew }) => {
                 </div>
               </CardContainerMemo>
 
-              {/* <div className="save-container">
-                <button type="submit" className="success-button"
-                  onClick={handleSubmitPost}>
-                  {isNew ? "Salva" : "Salva modifiche"}
-                </button>
-              </div> */}
               <SaveContainerMemo onSubmit={handleSubmitPost} isNew={isNew} />
             </FieldsetBeije>
           </>
@@ -335,7 +334,7 @@ const Blog = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveBlogResult?.error || saveBlogResult.response && <ToastContainer />
+        saveBlogResult?.error !== null || saveBlogResult.response && <ToastContainer />
       }
     </div>
   );

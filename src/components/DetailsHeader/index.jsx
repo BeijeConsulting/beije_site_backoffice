@@ -16,14 +16,17 @@ function DetailsHeader({ handleBack, isNew, title, onSubmit }) {
           }
         </h2>
       </div>
-      <button
-        name="quickSave"
-        type="submit"
-        className="success-button"
-        onClick={onSubmit}
-      >
-        Salvataggio rapido
-      </button>
+      {
+        !isNew &&
+        <button
+          name="quickSave"
+          type="submit"
+          className="success-button"
+          onClick={onSubmit}
+        >
+          Salvataggio rapido
+        </button>
+      }
     </div>
   )
 }

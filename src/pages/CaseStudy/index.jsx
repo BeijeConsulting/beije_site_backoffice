@@ -97,12 +97,12 @@ const CaseStudy = ({ isNew }) => {
 
     const save = getResponse(saveCaseStudyResult);
     if (save.response) {
-      if (!isQuickSave) navigateWithNotify(navigate, '/jobs');
+      if (!isQuickSave) navigateWithNotify(navigate, '/case-studies');
       if (isQuickSave) notify("success", toastId);
       setState(save.response);
     }
 
-    if (save.error) notify('error', toastId);
+    if (save.error) notify('error', toastId, save.error.data.message);
 
     const disableOrActive = getResponse(disableOrActiveResult);
 
@@ -118,7 +118,7 @@ const CaseStudy = ({ isNew }) => {
     return () => (id = null);
 
   },
-    [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error,
+    [getCaseStudyResult?.response, saveCaseStudyResult.response, saveCaseStudyResult.error,
     getCaseStudyLinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error]);
 
   const handleSubmit = (e) => {
@@ -130,7 +130,8 @@ const CaseStudy = ({ isNew }) => {
       {
         ...state,
         createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
-        translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink
+        translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink,
+        logo: null
       });
   }
 
@@ -179,7 +180,7 @@ const CaseStudy = ({ isNew }) => {
                     }
                   />
 
-                  <Permalink state={state} setState={setState} />
+                  <Permalink state={state} setState={setState} title="title" />
 
                   <Select
                     style={{ maxWidth: "none", marginTop: "2rem" }}
@@ -255,8 +256,9 @@ const CaseStudy = ({ isNew }) => {
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
-      {
-        saveCaseStudyResult?.error || saveCaseStudyResult.response && <ToastContainer />
+
+      { saveCaseStudy.error !== null || saveCaseStudyResult.response  &&
+        <ToastContainer />
       }
     </div>
   );
