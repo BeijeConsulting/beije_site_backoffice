@@ -1,8 +1,9 @@
-.container {
+.container-bg {
   display: flex;
   flex-direction: column;
   gap: 4rem;
-  padding: 2rem;
+  padding: 0 2rem;
+  background-color: var(--bg-container);
 }
 
 .title-row {
@@ -28,7 +29,7 @@
   margin-left: auto;
 }
 
-.images {
+.container {
   display: flex;
   justify-content: center;
   gap: 4rem;
