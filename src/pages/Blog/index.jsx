@@ -20,7 +20,6 @@ import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
 import MultipleImageInput from "../../components/MultipleImageInput";
-import logo from "../../assets/images/logo-colored.svg";
 // import Hashtags from "../../components/Hashtags";
 // import ActiveOrDisable from "../../components/ActiveOrDisable";
 import CardContainerMemo from "../../components/CardContainer";
@@ -28,6 +27,7 @@ import CardContainerMemo from "../../components/CardContainer";
 // styles
 import styles from "./styles.module.css";
 import SaveContainerMemo from "../../components/SaveContainer";
+import FieldsetBeije from "../../components/FieldsetBeije";
 
 const emptyState = {
   title: "",
@@ -122,17 +122,17 @@ const Blog = ({ isNew }) => {
     }
 
     const save = saveBlogResult ?? { response: null };
-    
+
     if (save.response) {
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
-      
+
       checkImages(save.response.id);
     };
-    
+
     if (save.error) notify(`error`, toastId, save.error.data.message);
-    
+
     const uploadImg = uploadImgRes ?? { response: null };
-    
+
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
 
     if (uploadImg.error) {
@@ -214,10 +214,7 @@ const Blog = ({ isNew }) => {
 
         {(isNew || getBlogResult.response) && (
           <>
-            <fieldset className={styles['fieldSet']}>
-              <legend>
-                <img className={styles["logo"]} src={logo} alt="Logo Beije" />
-              </legend>
+            <FieldsetBeije>
               <div className={styles["flex-container"]}>
 
                 <CardContainerMemo head={"Input"} style={{ marginRight: "2rem" }}>
@@ -272,7 +269,7 @@ const Blog = ({ isNew }) => {
                 <CardContainerMemo head={"Cover image"}>
                   <SingleImageInput
                     aspectRatio="1"
-                    style={{ maxWidth: "50%" }}
+                    style={{ maxWidth: "100%" }}
                     label=""
                     value={state.cover_img}
                     onChange={(cover_img) => {
@@ -311,7 +308,7 @@ const Blog = ({ isNew }) => {
                 </button>
               </div> */}
               <SaveContainerMemo onSubmit={handleSubmitPost} isNew={isNew} />
-            </fieldset>
+            </FieldsetBeije>
           </>
         )}
       </form>
