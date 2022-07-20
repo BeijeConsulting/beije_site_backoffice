@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
+import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
+
 
 // components
 import Input from "../../components/Input";
@@ -19,15 +21,15 @@ import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
-
-// styles
-import './styles.module.css';
-import styles from "./styles.module.css";
-// import ActiveOrDisable from "../../components/ActiveOrDisable";
 import { HexColorPicker } from "react-colorful";
 import FieldsetBeije from "../../components/FieldsetBeije";
 import CardContainerMemo from "../../components/CardContainer";
 import SaveContainerMemo from "../../components/SaveContainer";
+// import ActiveOrDisable from "../../components/ActiveOrDisable";
+
+// styles
+import './styles.module.css';
+import styles from "./styles.module.css";
 
 const emptyState = {
   title: "",
@@ -43,6 +45,7 @@ const emptyState = {
 };
 
 let id = null;
+let isQuickSave = false;
 
 const CaseStudy = ({ isNew }) => {
 
@@ -94,12 +97,11 @@ const CaseStudy = ({ isNew }) => {
 
     const save = getResponse(saveCaseStudyResult);
     if (save.response) {
-      navigate('/case-studies', {
-        state: {
-          toast: true
-        }
-      })
+      if (!isQuickSave) navigateWithNotify(navigate, '/jobs');
+      if (isQuickSave) notify("success", toastId);
+      setState(save.response);
     }
+
     if (save.error) notify('error', toastId);
 
     const disableOrActive = getResponse(disableOrActiveResult);
@@ -121,6 +123,9 @@ const CaseStudy = ({ isNew }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
+
     saveCaseStudy(
       {
         ...state,
@@ -147,7 +152,7 @@ const CaseStudy = ({ isNew }) => {
   return (
     <div className={styles["container-bg"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+        <DetailsHeader handleBack={handleBack} onSubmit={handleSubmit} isNew={isNew} title={state.title} />
 
         {(isNew || getCaseStudyResult.response) && (
           <>
@@ -251,7 +256,7 @@ const CaseStudy = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveCaseStudyResult?.error && <ToastContainer />
+        saveCaseStudyResult?.error || saveCaseStudyResult.response && <ToastContainer />
       }
     </div>
   );

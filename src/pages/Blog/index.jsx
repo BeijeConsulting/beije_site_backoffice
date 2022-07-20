@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { navigateWithNotify, permalink } from "../../utils/utils";
+import { checkIsQuickSave, navigateWithNotify, permalink } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -127,6 +127,13 @@ const Blog = ({ isNew }) => {
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
 
       checkImages(save.response.id);
+
+      if (!isQuickSave) navigateWithNotify(navigate, '/blogs');
+      if (isQuickSave) {
+        notify("success", toastId)
+        setState(save.response);
+      }
+
     };
 
     if (save.error) notify(`error`, toastId, save.error.data.message);
@@ -162,11 +169,7 @@ const Blog = ({ isNew }) => {
   const handleSubmitPost = useCallback((e) => {
     e.preventDefault();
 
-    if (e.target?.name === "quickSave") {
-      isQuickSave = true;
-    } else {
-      isQuickSave = false;
-    }
+    isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
 
     saveBlog(
       {
@@ -327,7 +330,7 @@ const Blog = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveBlogResult?.error && <ToastContainer />
+        saveBlogResult?.error || saveBlogResult.response && <ToastContainer />
       }
     </div>
   );

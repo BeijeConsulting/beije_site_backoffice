@@ -12,7 +12,7 @@ import useService from "../../hooks/useService";
 
 // utils
 import { notify, ToastContainer } from '../../utils/toast';
-import { navigateWithNotify } from "../../utils/utils";
+import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -80,7 +80,7 @@ const Job = ({ isNew }) => {
     const save = saveJobResult ?? { response: null };
     if (save.response) {
       if (!isQuickSave) navigateWithNotify(navigate, '/jobs');
-      if(isQuickSave) notify("success", toastId)
+      if (isQuickSave) notify("success", toastId);
       setState(save.response);
     }
     if (save.error) notify('error', toastId, save.error.data.message);
@@ -96,12 +96,9 @@ const Job = ({ isNew }) => {
 
   const handleSubmitJob = (e) => {  // Controllo se è un salvataggio rapido o no e setto la variabile isQuickSave. Dopo di che faccio la chiamata api
     e.preventDefault();
-    console.log(e.target);
-    if (e.target?.name === "quickSave") {
-      isQuickSave = true;
-    } else {
-      isQuickSave = false;
-    }
+
+    isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
+
     saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") });
   }
 
