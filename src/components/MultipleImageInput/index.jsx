@@ -1,9 +1,9 @@
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states, id }) => {
+const MultipleImageInput = ({ states, id, savedImage }) => {
 
   const [state, setState] = states;
-  console.log('testa', state)
+
   const imageList = (img, key) => {
 
     return (
@@ -17,7 +17,10 @@ const MultipleImageInput = ({ states, id }) => {
           value={state[key]}
           onChange={(image, isRemoved = false) => {
             const newState = state
-            if (isRemoved) newState.splice(key, 1)
+            if (isRemoved) {
+              newState.splice(key, 1)
+              savedImage.splice(key, 1)
+            }
             else newState.splice(key, 1, image)
             setState([...newState]);
           }}
