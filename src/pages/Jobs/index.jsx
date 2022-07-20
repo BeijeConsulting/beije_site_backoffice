@@ -1,17 +1,28 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useId, useState } from "react";
-import useService from "../../hooks/useService";
-import Table from "../../components/Table";
-import { notify, ToastContainer } from "../../utils/toast";
-import styles from "./styles.module.css";
-import Loader from "../../components/Loader";
-import Select from "../../components/Select";
 import locale from "date-fns/locale/it";
 import { format } from "date-fns/esm";
+
+// navigate
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+// hooks and utils
+import useService from "../../hooks/useService";
+import { notify, ToastContainer } from "../../utils/toast";
+
+// components
+import Table from "../../components/Table";
+import Loader from "../../components/Loader";
+import Select from "../../components/Select";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainerMemo from "../../components/CardContainer";
+
+// style
+import styles from "./styles.module.css";
 
 const initState = {
   academy: "all",
   active: "yes",
+  lang: "it",
 }
 
 const Jobs = () => {
@@ -31,7 +42,7 @@ const Jobs = () => {
     if (location.state !== null) {
       notify("success", toastId)
     }
-  }, [state.academy, state.active]);
+  }, [state.academy, state.active, state.language]);
 
   return (
     response ?
@@ -41,58 +52,76 @@ const Jobs = () => {
 
             <h1>Offerte di lavoro</h1>
 
-            <Select
-              value={state.active}
-              label="Attivi"
-              options={[
-                { value: "all", label: "Tutti" },
-                { value: "yes", label: "Attivi" },
-                { value: "no", label: "Non attivi" },
-              ]}
-              onChange={(active) => setState((p) => ({ ...p, active }))}
-            />
 
-            <Select
-              value={state.academy}
-              label="Academy"
-              options={[
-                { value: "all", label: "Tutti" },
-                { value: "yes", label: "Academy" },
-                { value: "no", label: "Non Academy" },
-              ]}
-              onChange={(academy) => setState((p) => ({ ...p, academy }))}
-            />
             <Link to="new" className="primary-button">
               + Nuova offerta di lavoro
             </Link>
           </div>
-          <Table
-            headers={[
-              "ID",
-              "Titolo",
-              "Tipologia",
-              "Data di creazione",
-              "Sede",
-            ]}
-            records={response.map(
-              ({
-                id,
-                title_it,
-                type,
-                date_creation,
-                mode,
-              }) => ({
-                id,
-                title_it,
-                type,
-                date_creation: format(date_creation, "dd MMMM yyyy", { locale }),
-                mode: mode.charAt(0).toUpperCase() + mode.slice(1),
-              })
-            )}
-            actionLabel="Modifica"
-            onAction={(record) => navigate(record.id.toString())}
-            formatDimension={200}
-          />
+
+          <FieldsetBeije>
+            <CardContainerMemo head="Filtri" style={{ flexDirection: "row", marginBottom: "6rem", alignItems: "end" }}>
+              <Select
+                value={state.active}
+                label="Attivi"
+                options={[
+                  { value: "all", label: "Tutti" },
+                  { value: "yes", label: "Attivi" },
+                  { value: "no", label: "Non attivi" },
+                ]}
+                onChange={(active) => setState((p) => ({ ...p, active }))}
+              />
+
+              <Select
+                value={state.academy}
+                label="Academy"
+                options={[
+                  { value: "all", label: "Tutti" },
+                  { value: "yes", label: "Academy" },
+                  { value: "no", label: "Non Academy" },
+                ]}
+                onChange={(academy) => setState((p) => ({ ...p, academy }))}
+              />
+
+              <Select
+                value={state.lang}
+                label="Lingua"
+                options={[
+                  { value: "it", label: "Italiano" },
+                  { value: "eng", label: "Inglese" },
+                ]}
+                onChange={(lang) => {
+                  setState((p) => ({ ...p, lang }))
+                }}
+              />
+            </CardContainerMemo>
+            <Table
+              headers={[
+                "ID",
+                "Titolo",
+                "Tipologia",
+                "Data di creazione",
+                "Sede",
+              ]}
+              records={response.map(
+                ({
+                  id,
+                  title_it,
+                  type,
+                  date_creation,
+                  mode,
+                }) => ({
+                  id,
+                  title_it,
+                  type,
+                  date_creation: format(date_creation, "dd MMMM yyyy", { locale }),
+                  mode: mode.charAt(0).toUpperCase() + mode.slice(1),
+                })
+              )}
+              actionLabel="Modifica"
+              onAction={(record) => navigate(record.id.toString())}
+              formatDimension={200}
+            />
+          </FieldsetBeije>
         </div>
         <ToastContainer />
       </div>

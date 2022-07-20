@@ -9,6 +9,8 @@ import styles from "./styles.module.css";
 import Select from "../../components/Select";
 import useStorage from "../../hooks/useStorage";
 import { notify, ToastContainer } from "../../utils/toast";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainerMemo from "../../components/CardContainer";
 
 const initState = {
   picImage: "all",
@@ -37,11 +39,16 @@ const Users = () => {
     response ?
 
       <div className={styles["container"]}>
-        {console.log(response)}
         <div className={styles["wrapper"]}>
           <div className={styles["header"]}>
             <h1>Community</h1>
-            <div className={styles["selectContainer"]}>
+
+            <Link to="new" className="primary-button">
+              + Nuovo utente
+            </Link>
+          </div>
+          <FieldsetBeije>
+            <CardContainerMemo head="Filtri" style={{ flexDirection: "row", marginBottom: "6rem", alignItems: "end" }}>
               <Select
                 value={state.picImage}
                 label={"Immagine presente"}
@@ -60,12 +67,7 @@ const Users = () => {
                   { value: "no", label: "No" },
                 ]}
                 onChange={(picOnSite) => setState((p) => ({ ...p, picOnSite }))} />
-            </div>
-            <Link to="new" className="primary-button">
-              + Nuovo utente
-            </Link>
-          </div>
-          {response && (
+            </CardContainerMemo>
             <Table
               headers={[
                 "ID",
@@ -95,7 +97,7 @@ const Users = () => {
               onAction={(record) => navigate(record.id.toString())}
               formatDimension={200}
             />
-          )}
+          </FieldsetBeije>
         </div>
         <ToastContainer />
       </div>
