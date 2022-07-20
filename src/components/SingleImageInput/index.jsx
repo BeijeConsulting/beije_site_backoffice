@@ -76,9 +76,10 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             e.target.value = "";
           }}
         />
-        <label className={styles["upload-btn"]} htmlFor={id}>
+        {!isBlogMassive && <label className={styles["upload-btn"]} htmlFor={id}>
           <span>{value ? "Modifica" : "Carica"}</span>
-        </label>
+        </label>}
+
         {value && (
           <button
             className={styles["delete-btn"]}
