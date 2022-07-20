@@ -1,3 +1,57 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 550px;
+  /* max-height: 300px; */
+  padding: 2rem;
+  border: 2px dashed var(--grey-500);
+}
+
+.container::before,
+.container::after {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: var(--white);
+}
+
+.container::before {
+  content: "Rilascia qui l'immagine";
+  z-index: -1;
+}
+
+.container::after {
+  content: "";
+  z-index: 1;
+}
+
+.info-text {
+  width: 100%;
+  max-width: 250px;
+  color: var(--grey-500);
+  text-align: center;
+  z-index: 2;
+}
+
+.dragging {
+  border-color: var(--red-500);
+}
+
+.dragging::before {
+  opacity: 1;
+  z-index: 3;
+}
+
 .actions-container {
   display: flex;
   align-items: center;
@@ -14,12 +68,18 @@
   outline-offset: 3px;
 }
 
+.images-container{
+  display: flex;
+  flex-direction: row;
+}
+
 .upload-btn{
   width: 120px;
   padding-inline: max(30px, 3rem);
   padding-block: max(8px, 0.8rem);
   border-radius: 4px;
   text-align: center;
+  z-index: 3;
 }
 
 .upload-btn {

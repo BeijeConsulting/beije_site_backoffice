@@ -23,8 +23,6 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
         const { content, error } = await readFile(value);
         if (!error) {
           onChange(content);
-        } else {
-          onChange("");
         }
       })()
     }
