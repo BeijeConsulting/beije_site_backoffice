@@ -204,7 +204,7 @@ const Job = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveJobResult?.error || saveJobResult.response && <ToastContainer />
+        saveJobResult?.error !== null || saveJobResult.response && <ToastContainer />
       }
 
     </div>

@@ -9,7 +9,7 @@ function Permalink({ state, setState, title }) {
   }, [])
 
   const handleChange = (e) => {
-    setState({ ...state, permalink: permalinkCallback(e.target.value) })
+    setState({ ...state, permalink: state.permalink === "" ? permalinkCallback(state[title]) : e.target.value})
   }
 
   return (

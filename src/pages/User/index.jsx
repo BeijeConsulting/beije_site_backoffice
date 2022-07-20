@@ -234,7 +234,7 @@ const User = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveUserResult?.error && <ToastContainer />
+        saveUserResult?.error !== null && <ToastContainer />
       }
       {
         disableUserResult?.response && <ToastContainer />
