@@ -1,4 +1,4 @@
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useCallback } from "react";
 
 // router & format
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
+import { checkIsQuickSave, navigateWithNotify, permalink } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -17,19 +18,23 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
-// import Hashtags from "../../components/Hashtags";
 import Permalink from "../../components/Permalink";
 import MultipleImageInput from "../../components/MultipleImageInput";
+// import Hashtags from "../../components/Hashtags";
+// import ActiveOrDisable from "../../components/ActiveOrDisable";
+import CardContainerMemo from "../../components/CardContainer";
 
 // styles
 import styles from "./styles.module.css";
-import ActiveOrDisable from "../../components/ActiveOrDisable";
+import SaveContainerMemo from "../../components/SaveContainer";
+import FieldsetBeije from "../../components/FieldsetBeije";
 
 const emptyState = {
   title: "",
   subtitle: "",
-  language: "",
+  language: "it",
   description: "",
+  type: "blog",
   images: [],
   author: "",
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
@@ -48,6 +53,7 @@ const imageState = {
 }
 let id = null;
 let timeout;
+let isQuickSave = false;
 
 const Blog = ({ isNew }) => {
 
@@ -71,6 +77,10 @@ const Blog = ({ isNew }) => {
     method: isNew ? "post" : "put",
   });
 
+  const [engResult, createEngBlog] = useService("/admin/blog", {
+    method: "post",
+  });
+
   const [getBlogWithPermalinkRes, getBlogPermalink] = useService(`admin/blog/${state.translate_blog_permalink}`);
 
   const [disableOrActiveResult, disableOrActiveBlog] = useService(state.disableDate ?
@@ -82,6 +92,25 @@ const Blog = ({ isNew }) => {
     method: "post"
   });
 
+  function checkImages(id) {
+    let newArray = state.images.filter((image) => !image.startsWith("https"));
+
+    newArray.map((img) => {
+      postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
+      // newState.images.shift();
+    })
+
+    if (state.cover_img !== null) {
+      // if(!state.cover_img.startsWith("https")) return;
+      postImg({
+        ...imageState,
+        file_base64: state.cover_img,
+        blogId: isNew ? id : idToUse,
+        type: "cover_img"
+      });
+    }
+  }
+
   useEffect(() => {
     if (!isNew) {
       getBlog()
@@ -90,11 +119,12 @@ const Blog = ({ isNew }) => {
     id = params.id;
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
+
+    const newState = Object.assign({}, state);
+
     const { response } = getBlogResult ?? { response: null };
-    if (response) {
-      setState(response);
-    }
+    if (response) setState(response);
 
     const responsePermalink = getBlogWithPermalinkRes ?? { response: null };
     if (responsePermalink.response) {
@@ -103,39 +133,53 @@ const Blog = ({ isNew }) => {
     }
 
     const save = saveBlogResult ?? { response: null };
-    if (save.response) {
-      state.images.map((img) => postImg({ ...imageState, file_base64: img, blogId:  isNew? save.response.id : idToUse }));
 
-      timeout = setTimeout(() => {
-        navigate('/blogs', {
-          state: {
-            toast: true
-          }
-        })
-      }, 2000);
+    if (save.response) {
+      if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
+
+      checkImages(save.response.id);
+
+      if (!isQuickSave) navigateWithNotify(navigate, '/blogs');
+      if (isQuickSave) {
+        notify("success", toastId)
+        setState(save.response);
+      }
+    };
+    console.log(save.error);
+    if (save.error) notify(`error`, toastId, save.error.message);
+
+    const uploadImg = uploadImgRes ?? { response: null };
+
+    if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
+
+    if (uploadImg.error) {
+      notify('error', toastId, uploadImg.error.message)
     }
-    if (save.error) notify('error', toastId);
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
 
     if (disableOrActive.response) {
-      navigate('/blogs', {
-        state: {
-          toast: true
-        }
-      })
+      navigateWithNotify(navigate, '/blogs');
     }
-    if (disableOrActive.error) notify('error', toastId);
+    if (disableOrActive.error) notify('error', toastId, disableOrActive.error.message);
+
+    const createEngBLog = engResult ?? { response: null };
+    if (createEngBLog.response) {
+      id = engResult.response.id;
+      setState(engResult.response);
+    }
 
     return () => {
       id = null;
       clearTimeout(timeout)
     };
 
-  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response]);
+  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error, engResult.response]);
 
-  const handleSubmitPost = (e) => {
+  const handleSubmitPost = useCallback((e) => {
     e.preventDefault();
+
+    isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
 
     saveBlog(
       {
@@ -143,13 +187,27 @@ const Blog = ({ isNew }) => {
         create_datetime: isNew ? todayWithTime() : format(state.create_datetime, "yyyy-MM-dd'T'HH:mm"),
         cover_img: null,
         images: [],
-        translate_blog_permalink: isNew ? null : state.translate_blog_permalink
+        permalink: state.permalink === "" ? permalink(state.title) : state.permalink,
+        translate_blog_permalink: isNew ? null : state.translate_blog_permalink,
+        type: isNew ? "blog" : null
       });
 
-  }
+  }, [state]);
 
   const handleSetLanguage = (language) => {
-    !isNew && getBlogPermalink();
+    (!isNew && language === "eng") && createEngBlog({
+      ...state,
+      id: null,
+      create_datetime: null,
+      cover_img: null,
+      images: [],
+      // permalink: state.permalink,
+      translate_blog_permalink: state.permalink,
+      type: "blog",
+      language: "eng",
+    });
+
+    if (!isNew && state.translate_blog_permalink !== null) getBlogPermalink();
     setState((p) => ({ ...p, language }))
   }
 
@@ -163,89 +221,101 @@ const Blog = ({ isNew }) => {
   }
 
   return (
-    <div className={styles["container"]}>
+    <div className={styles["container-bg"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} handleSubmit={handleSubmitPost} />
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
         {(isNew || getBlogResult.response) && (
           <>
-            <div className={styles["images"]}>
-              <SingleImageInput
-                aspectRatio="1"
-                style={{ maxWidth: "30%" }}
-                label="images"
-                value={state.cover_img}
-                onChange={(cover_img) => {
-                  setState((p) => ({ ...p, cover_img }));
-                }}
+            <FieldsetBeije>
+              <div className={styles["flex-container"]}>
+
+                <CardContainerMemo head={"Input"} style={{ marginRight: "2rem" }}>
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Titolo"
+                    name="title"
+                    value={state.title}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, title: e.target.value }))
+                    }
+                  />
+
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Sottotitolo"
+                    name="subtitle"
+                    value={state.subtitle}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, subtitle: e.target.value }))
+                    }
+                  />
+
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Autore"
+                    name="title"
+                    value={state.author}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, author: e.target.value }))
+                    }
+                  />
+
+                  <Permalink state={state} setState={setState} title={"title"} />
+
+                  <Select
+                    style={{ maxWidth: "none", marginTop: "2rem" }}
+                    value={state.language}
+                    label="Lingua"
+                    options={isNew ? [
+                      { value: "it", label: "italiano" },
+                      { value: "it", label: "Crea versione Inglese" },
+                    ] : [
+                      { value: "it", label: "Italiano" },
+                      { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
+                    ]
+                    }
+                    onChange={handleSetLanguage}
+                  />
+                </CardContainerMemo>
+
+                <CardContainerMemo head={"Cover image"}>
+                  <SingleImageInput
+                    aspectRatio="1"
+                    style={{ maxWidth: "100%" }}
+                    label=""
+                    value={state.cover_img}
+                    onChange={(cover_img) => {
+                      setState((p) => ({ ...p, cover_img }));
+                    }}
+                  />
+                </CardContainerMemo>
+
+                {/* <CardContainerMemo head={"Actions"}> */}
+                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
+
+                {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                {/* </CardContainerMemo>   */}
+              </div>
+
+              <MDEditor
+                value={state.description}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, description: e.target.value }))
+                }
               />
 
-              <div style={{ display: "flex" }}
-              >
+              <CardContainerMemo head={"Images"}>
 
-                <MultipleImageInput states={[state, setState]} isNew={isNew} />
-              </div>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                >
 
-            </div>
-            <div className={styles["container"]}>
+                  <MultipleImageInput states={[state, setState]} isNew={isNew} id={idToUse} />
+                </div>
+              </CardContainerMemo>
 
-              <div className={styles["inputs-row"]}>
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Titolo"
-                  name="title"
-                  value={state.title}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, title: e.target.value }))
-                  }
-                />
-
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Sottotitolo"
-                  name="subtitle"
-                  value={state.subtitle}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, subtitle: e.target.value }))
-                  }
-                />
-
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Autore"
-                  name="title"
-                  value={state.author}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, author: e.target.value }))
-                  }
-                />
-
-                <Select
-                  value={state.language}
-                  label="Lingua"
-                  options={[
-                    { value: "it", label: "italiano" },
-                    { value: "eng", label: "Inglese" },
-                  ]}
-                  onChange={handleSetLanguage}
-                />
-                <Permalink state={state} setState={setState} />
-              </div>
-
-              <div className={styles["inputs-row"]}>
-
-                <ActiveOrDisable style={{width: "20%", alignSelf: "end"}} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
-              </div>
-
-              {/* <Hashtags hashtagList={hashtagsResult} /> */}
-            </div>
-
-            <MDEditor
-              value={state.description}
-              onChange={(e) =>
-                setState((p) => ({ ...p, description: e.target.value }))
-              }
-            />
+              <SaveContainerMemo onSubmit={handleSubmitPost} isNew={isNew} />
+            </FieldsetBeije>
           </>
         )}
       </form>
@@ -264,7 +334,7 @@ const Blog = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveBlogResult?.error && <ToastContainer />
+        saveBlogResult?.error !== null || saveBlogResult.response && <ToastContainer />
       }
     </div>
   );

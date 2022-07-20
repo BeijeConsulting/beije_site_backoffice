@@ -4,7 +4,7 @@ let AUTH_TOKEN = window.localStorage.getItem("tk");
 
 const instance = axios.create({
   /* baseURL: "https://mgmt-test-api.beije.it/", */
-  baseURL: " https://dev-mgmt.beije.it/",
+  baseURL: "https://dev-mgmt.beije.it/",
   headers: {
     Authorization: AUTH_TOKEN ? "Bearer " + AUTH_TOKEN : "",
   },

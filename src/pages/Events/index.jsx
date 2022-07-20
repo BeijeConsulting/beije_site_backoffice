@@ -21,7 +21,7 @@ const Events = () => {
     const [state, setState] = useState(initState);
 
     const [{ response }, getEvents] =
-        useService(`/communityL/${state.lang}`)
+        useService(`/admin/events/${state.lang}/all`)
 
     const toastId = useId();
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import styles from "./styles.module.css";
-
+import axios from 'axios';
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,8 +14,19 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew }) => {
   const id = useId();
+
+  useEffect(() => {
+    if (isBlogMassive) {
+      (async () => {
+        const { content, error } = await readFile(value);
+        if (!error) {
+          onChange(content);
+        }
+      })()
+    }
+  }, [])
   return (
     <div
       style={{ aspectRatio, ...style }}
@@ -49,12 +60,13 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
       <div className={styles["actions-container"]}>
         <input
           className="hidden"
+          multiple
           id={id}
           type="file"
           accept="image/*"
           onChange={async (e) => {
-
             if (e.target.files[0].size > 499999) return
+
             const { content, error } = await readFile(e.target.files[0]);
             if (!error) {
               onChange(content);
@@ -70,8 +82,25 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio }) => {
         {value && (
           <button
             className={styles["delete-btn"]}
-            onClick={() => {
-              onChange("");
+            onClick={(e) => {
+              e.preventDefault();
+
+              !isNew && axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
+                data: {
+                  file_base64: null,
+                  name: value,
+                  type: null,
+                  description: value,
+                  blogId: idProp,
+                  eventId: null
+                },
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('tk')}`
+                }
+              });
+
+              onChange("", true);
+
             }}
           >
             Elimina

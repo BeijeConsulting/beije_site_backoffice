@@ -1,6 +1,6 @@
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states, isNew }) => {
+const MultipleImageInput = ({ states, id, savedImage }) => {
 
   const [state, setState] = states;
 
@@ -10,22 +10,28 @@ const MultipleImageInput = ({ states, isNew }) => {
 
       <div key={key + img} style={{ padding: "1rem" }}>
         <SingleImageInput
+          isBlogMassive={true}
           aspectRatio="1"
-          style={{ maxWidth: "200px"}}
+          style={{ maxWidth: "200px" }}
           label={"image" + (key + 1)}
-          value={state.images[key]}
-          onChange={(image) => {
-            const newState = Object.assign({}, state)
-            newState.images.splice(key, 1, image)
-            setState({ ...state, images: newState.images });
+          value={state[key]}
+          onChange={(image, isRemoved = false) => {
+            const newState = state
+            if (isRemoved) {
+              newState.splice(key, 1)
+              savedImage.splice(key, 1)
+            }
+            else newState.splice(key, 1, image)
+            setState([...newState]);
           }}
+          idProp={id}
         />
       </div>
     )
 
   }
 
-  return Array.from(Array(5).keys()).map(imageList)
+  return Array.from(Array(state.length).keys()).map(imageList)
 };
 
 export default MultipleImageInput;

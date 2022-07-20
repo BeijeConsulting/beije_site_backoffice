@@ -172,7 +172,7 @@ const Event = ({ isNew }) => {
                                         ]}
                                         onChange={handleSetLanguage}
                                     />
-                                    <Permalink state={state} setState={setState} />
+                                    <Permalink state={state} setState={setState} title="title" />
                                 </div>
                             </div>
                             <div className={styles["inputs-row"]}>

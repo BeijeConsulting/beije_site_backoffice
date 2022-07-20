@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   padding: 4rem;
+  background-color: var(--bg-container);
 }
 
 .wrapper {
@@ -16,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 96%;
 }
 
 .header .selectContainer{

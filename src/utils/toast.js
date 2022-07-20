@@ -1,14 +1,14 @@
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-const notify = (type, toastId) => {
+const notify = (type, toastId, error) => {
     let message = ""
     switch (type.toLowerCase()) {
         case "success":
             message = "Salvato"
             break;
         case "error":
-            message = "Qualcosa è andato storto"
+            message = `Qualcosa è andato storto: ${error ?? "Messaggio di errore non disponibile"}`
             break;
     }
     toast[type](message, {

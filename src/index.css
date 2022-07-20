@@ -16,6 +16,8 @@
   --red-700: hsl(8, 90%, 25%);
   --red-500: hsl(8, 90%, 35%);
   --white: #fff;
+  --bg-container: #EFEFEF;
+  --bs: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 /* Box sizing rules */
@@ -99,6 +101,12 @@ select {
   margin-left: 2rem;
 }
 
+.fxc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .primary-button {
   padding-inline: 10px;
   padding-block: 8px;
@@ -107,6 +115,7 @@ select {
   color: var(--white);
   border: 1px solid var(--red-500);
   cursor: pointer;
+  box-shadow: var(--bs);
 }
 
 .secondary-button {
@@ -117,16 +126,19 @@ select {
   color: var(--white);
   border: 1px solid var(--grey-500);
   cursor: pointer;
+  box-shadow: var(--bs);
 }
 
 .success-button {
   padding-inline: 10px;
   padding-block: 8px;
   border-radius: 4px;
+  margin: 0 1rem;
   background-color: var(--success);
   color: var(--white);
   border: 1px solid var(--success);
   cursor: pointer;
+  box-shadow: var(--bs);
 }
 
 .warning-button {
@@ -139,6 +151,7 @@ select {
   cursor: pointer;
   width: 50%;
   padding: .7rem;
+  box-shadow: var(--bs);
 }
 
 a.primary-button, a.secondary-button , a.success-button, a.warning-button  {

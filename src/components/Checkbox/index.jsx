@@ -1,10 +1,10 @@
 import { useId } from "react";
 import styles from "./styles.module.css";
 
-const Checkbox = ({ label = "", onChange, checked, ...props }) => {
+const Checkbox = ({ label = "", onChange, checked, style, ...props }) => {
   const id = useId();
   return (
-    <label className={styles["wrapper"]} htmlFor={id}>
+    <label style={{ ...style }} className={styles["wrapper"]} htmlFor={id}>
       <input className="hidden" type="checkbox" id={id} {...props}
         onChange={onChange}
         checked={checked} />

@@ -14,6 +14,7 @@ import styles from "./styles.module.css";
 import { useId } from "react";
 import { notify, ToastContainer } from "../../utils/toast";
 import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
+import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImageLoader";
 const emptyState = {
   firstName: "",
   lastName: "",
@@ -25,6 +26,7 @@ const emptyState = {
 };
 
 let id = null;
+let imageInserted = []
 const User = ({ isNew }) => {
 
 
@@ -36,6 +38,7 @@ const User = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false)
+  const [imgArray, setImgArray] = useState([])
 
   const [getUserResult, getUser] = useService(`team/user/${id}`);
   const [disableUserResult, disableUser] = useService(`/user/${id}`, {
@@ -50,6 +53,7 @@ const User = ({ isNew }) => {
   console.log(goBack)
   useEffect(() => {
     if (!isNew) getUser();
+    return () => { imageInserted = [] }
   }, []);
 
   useEffect(() => {
@@ -58,6 +62,7 @@ const User = ({ isNew }) => {
     if (response) {
       setState(response);
     }
+
     const save = saveUserResult ?? { response: null };
     if (save.response) {
       navigate('/community', {
@@ -67,7 +72,18 @@ const User = ({ isNew }) => {
       })
     }
     if (save.error) notify('error', toastId);
-  }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error]);
+
+    const disable = disableUserResult ?? { response: null }
+
+    if (disable.response) {
+      navigate('/community', {
+        state: {
+          toast: true
+        }
+      })
+    }
+    if (disable.error) notify('error', toastId);
+  }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error, disableUserResult?.response, disableUserResult?.error]);
 
 
 
@@ -198,6 +214,22 @@ const User = ({ isNew }) => {
             </div>
           </div>
         )}
+        <MassiveImageLoader
+          states={[imgArray, setImgArray]}
+          savedImage={imageInserted}
+          onChange={(images) => {
+            console.log('storeValue', imageInserted)
+            const imagesNew = [...images].filter((element) => {
+              return !imageInserted.some((imageName) => {
+                return imageName === element.name
+              })
+            })
+            imgArray.length > 0 ? setImgArray([...imgArray, ...imagesNew]) : setImgArray([...imagesNew])
+            imageInserted = [...imageInserted, ...imagesNew.map((image) => {
+              return image.name
+            })]
+          }}
+        ></MassiveImageLoader>
       </form>
       <Modal
         shouldShow={shouldShowModal}
@@ -214,9 +246,12 @@ const User = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveUserResult?.error && <ToastContainer />
+        saveUserResult?.error !== null && <ToastContainer />
       }
-    </div>
+      {
+        disableUserResult?.response && <ToastContainer />
+      }
+    </div >
   );
 };
 

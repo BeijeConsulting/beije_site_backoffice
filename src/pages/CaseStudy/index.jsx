@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
+import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
+
 
 // components
 import Input from "../../components/Input";
@@ -19,12 +21,15 @@ import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
+import { HexColorPicker } from "react-colorful";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainerMemo from "../../components/CardContainer";
+import SaveContainerMemo from "../../components/SaveContainer";
+// import ActiveOrDisable from "../../components/ActiveOrDisable";
 
 // styles
 import './styles.module.css';
 import styles from "./styles.module.css";
-import ActiveOrDisable from "../../components/ActiveOrDisable";
-import { HexColorPicker } from "react-colorful";
 
 const emptyState = {
   title: "",
@@ -40,6 +45,7 @@ const emptyState = {
 };
 
 let id = null;
+let isQuickSave = false;
 
 const CaseStudy = ({ isNew }) => {
 
@@ -91,13 +97,12 @@ const CaseStudy = ({ isNew }) => {
 
     const save = getResponse(saveCaseStudyResult);
     if (save.response) {
-      navigate('/case-studies', {
-        state: {
-          toast: true
-        }
-      })
+      if (!isQuickSave) navigateWithNotify(navigate, '/case-studies');
+      if (isQuickSave) notify("success", toastId);
+      setState(save.response);
     }
-    if (save.error) notify('error', toastId);
+
+    if (save.error) notify('error', toastId, save.error.data.message);
 
     const disableOrActive = getResponse(disableOrActiveResult);
 
@@ -113,16 +118,20 @@ const CaseStudy = ({ isNew }) => {
     return () => (id = null);
 
   },
-    [getCaseStudyResult?.response, saveCaseStudyResult?.response, saveCaseStudyResult?.error,
+    [getCaseStudyResult?.response, saveCaseStudyResult.response, saveCaseStudyResult.error,
     getCaseStudyLinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error]);
 
-  const handleSubmitPost = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
+
     saveCaseStudy(
       {
         ...state,
         createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
-        translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink
+        translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink,
+        logo: null
       });
   }
 
@@ -142,86 +151,94 @@ const CaseStudy = ({ isNew }) => {
   }
 
   return (
-    <div className={styles["container"]}>
-      <form
-        onSubmit={handleSubmitPost}
-      >
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={state.title} />
+    <div className={styles["container-bg"]}>
+      <form>
+        <DetailsHeader handleBack={handleBack} onSubmit={handleSubmit} isNew={isNew} title={state.title} />
 
         {(isNew || getCaseStudyResult.response) && (
           <>
-            <div className={styles["images"]}>
-              <SingleImageInput
-                aspectRatio="1"
-                style={{ maxWidth: "200px", maxHeight: "200px" }}
-                label="Logo"
-                value={state.logo}
-                onChange={(logo) => {
-                  setState((p) => ({ ...p, logo }));
-                }}
-              />
+            <FieldsetBeije>
               <div className={styles["container"]}>
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Titolo"
-                  name="title"
-                  value={state.title}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, title: e.target.value }))
-                  }
-                />
+                <CardContainerMemo head={"Input"}>
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Titolo"
+                    name="title"
+                    value={state.title}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, title: e.target.value }))
+                    }
+                  />
 
-                <Input
-                  style={{ width: "100%" }}
-                  placeholder="Sottotitolo"
-                  name="subtitle"
-                  value={state.subtitle}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, subtitle: e.target.value }))
-                  }
-                />
+                  <Input
+                    style={{ width: "100%", marginTop: 20 }}
+                    placeholder="Sottotitolo"
+                    name="subtitle"
+                    value={state.subtitle}
+                    onChange={(e) =>
+                      setState((p) => ({ ...p, subtitle: e.target.value }))
+                    }
+                  />
 
-                <Select
-                  value={state.language}
-                  label="Lingua"
-                  options={[
-                    { value: "it", label: "italiano" },
-                    { value: "en", label: "Inglese" },
-                  ]}
-                  onChange={handleSetLanguage}
-                />
+                  <Permalink state={state} setState={setState} title="title" />
+
+                  <Select
+                    style={{ maxWidth: "none", marginTop: "2rem" }}
+                    value={state.language}
+                    label="Lingua"
+                    options={[
+                      { value: "it", label: "italiano" },
+                      { value: "en", label: "Inglese" },
+                    ]}
+                    onChange={handleSetLanguage}
+                  />
+                </CardContainerMemo>
+                <CardContainerMemo head={"Logo"}>
+                  <SingleImageInput
+                    aspectRatio="1"
+                    style={{ maxWidth: "200px", maxHeight: "200px" }}
+                    label="Logo"
+                    value={state.logo}
+                    onChange={(logo) => {
+                      setState((p) => ({ ...p, logo }));
+                    }}
+                  />
+                </CardContainerMemo>
               </div>
-              <div className={styles["container"]}>
+              <div className="fxc">
+                <CardContainerMemo head={"Colore sfondo"} style={{ width: "50%", minHeight: "300px", backgroundColor: state.backgroundColor }}>
 
-                <div className={styles["inputs-row"]}>
-                  <button className="secondary-button mb" onClick={e => {
-                    e.preventDefault();
-                    setIsColor(!isColor)
-                  }}
-                  >
-                    {isColor ? "Chiudi" : "Scegli colore di sfondo"}
-                  </button>
-                  <div className={styles["square"]} style={{ backgroundColor: state.backgroundColor }}></div>
-                </div>
-                {
-                  isColor &&
-                  <section>
-                    <HexColorPicker color={state.backgroundColor} onChange={(e) => {
-                      setState({ ...state, backgroundColor: e })
-                    }} />
-                  </section>
+                  <div className={styles["inputs-row"]}>
+                    <button className="secondary-button mb" onClick={e => {
+                      e.preventDefault();
+                      setIsColor(!isColor)
+                    }}
+                    >
+                      {isColor ? "Chiudi" : "Scegli colore di sfondo"}
+                    </button>
+                    {
+                      isColor &&
+                      <section>
+                        <HexColorPicker color={state.backgroundColor} onChange={(e) => {
+                          setState({ ...state, backgroundColor: e })
+                        }} />
+                      </section>
+                    }
+                  </div>
+                </CardContainerMemo>
+              </div>
+              <MDEditor
+                value={state.description}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, description: e.target.value }))
                 }
+              />
 
-                <Permalink state={state} setState={setState} />
-                <ActiveOrDisable disableDate={state.disableDate} isNew={isNew} setModal={setShouldShowModal} />
+              <div className="fxc">
+                {/* <ActiveOrDisable disableDate={state.disableDate} isNew={isNew} setModal={setShouldShowModal} /> */}
+                <SaveContainerMemo onSubmit={handleSubmit} isNew={isNew} />
               </div>
-            </div>
-            <MDEditor
-              value={state.description}
-              onChange={(e) =>
-                setState((p) => ({ ...p, description: e.target.value }))
-              }
-            />
+            </FieldsetBeije>
           </>
         )}
       </form>
@@ -239,8 +256,9 @@ const CaseStudy = ({ isNew }) => {
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
-      {
-        saveCaseStudyResult?.error && <ToastContainer />
+
+      { saveCaseStudy.error !== null || saveCaseStudyResult.response  &&
+        <ToastContainer />
       }
     </div>
   );
