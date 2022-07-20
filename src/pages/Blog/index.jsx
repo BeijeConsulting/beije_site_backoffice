@@ -93,11 +93,16 @@ const Blog = ({ isNew }) => {
   });
 
   function checkImages(id) {
-    let newArray = state.images.filter((image) => !image.startsWith("https"))
+    let newArray = state.images.filter((image) => !image.startsWith("https"));
     newArray.map((img) => {
       postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
       // newState.images.shift();
     })
+    if(state.cover_img !== null) postImg({ 
+      ...imageState, 
+      file_base64: state.cover_img, 
+      blogId: isNew ? id : idToUse, 
+      type: "cover_img" });
   }
 
   useEffect(() => {
