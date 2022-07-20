@@ -8,7 +8,7 @@ const notify = (type, toastId, error) => {
             message = "Salvato"
             break;
         case "error":
-            message = `Qualcosa è andato storto: ${error}`
+            message = `Qualcosa è andato storto: ${error ?? "Messaggio di errore non disponibile"}`
             break;
     }
     toast[type](message, {
