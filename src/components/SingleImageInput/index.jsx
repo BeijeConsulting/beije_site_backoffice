@@ -1,6 +1,7 @@
 import { useEffect, useId } from "react";
 import styles from "./styles.module.css";
 import axios from 'axios';
+import useService from "../../hooks/useService";
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,8 +15,12 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew, type }) => {
   const id = useId();
+
+  const[deleteImgResult, deleteImg] = useService(`/admin/blog/delete_cover/${idProp}`,{
+    method: "delete"
+  })
 
   useEffect(() => {
     if (isBlogMassive) {
@@ -86,7 +91,9 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             onClick={(e) => {
               e.preventDefault();
 
-              !isNew && axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
+              if(type === "cover_img") deleteImg();
+
+              else !isNew && axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
                 data: {
                   file_base64: null,
                   name: value,
