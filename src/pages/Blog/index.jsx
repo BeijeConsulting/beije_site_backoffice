@@ -9,6 +9,7 @@ import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
 import { checkIsQuickSave, getResponse, navigateWithNotify, permalink } from "../../utils/utils";
+import { uploadImages } from "../../config/axios.config";
 
 // components
 import Input from "../../components/Input";
@@ -21,14 +22,14 @@ import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
 import CardContainerMemo from "../../components/CardContainer";
 import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImageLoader";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import SaveContainerMemo from "../../components/SaveContainer";
+import Loader from "../../components/Loader";
 // import Hashtags from "../../components/Hashtags";
 // import ActiveOrDisable from "../../components/ActiveOrDisable";
 
 // styles
 import styles from "./styles.module.css";
-import SaveContainerMemo from "../../components/SaveContainer";
-import FieldsetBeije from "../../components/FieldsetBeije";
-import { uploadImages } from "../../config/axios.config";
 
 const emptyState = {
   title: "",
@@ -66,7 +67,7 @@ const Blog = ({ isNew }) => {
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
-  const [goBack, setGoBack] = useState(false)
+  const [goBack, setGoBack] = useState(false);
 
   const navigate = useNavigate();
 
@@ -101,11 +102,10 @@ const Blog = ({ isNew }) => {
       res = await Promise.all(newArray.map((img) => {
         return uploadImages("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse })
       }));
-      console.log(res);
     }
 
     if (state.cover_img.startsWith("data")) {
-      await uploadImages("/upload/img", {
+      res = await uploadImages("/upload/img", {
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
@@ -114,7 +114,7 @@ const Blog = ({ isNew }) => {
     }
 
     if (res && isQuickSave) getBlog();
-  
+
     if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
   }
 
@@ -129,11 +129,8 @@ const Blog = ({ isNew }) => {
   useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
 
     const { response } = getResponse(getBlogResult);
-    if (response) {
-      console.log("sono qui");
+    if (response) setState(response);
 
-      setState(response);
-    }
 
     const responsePermalink = getResponse(getBlogWithPermalinkRes);
     if (responsePermalink.response) {
@@ -231,100 +228,101 @@ const Blog = ({ isNew }) => {
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
-        {(isNew || getBlogResult.response) && (
-          <>
-            <FieldsetBeije>
-              <div className={styles["flex-container"]}>
+        {getBlogResult.loading ? <Loader /> :
+          (
+            <>
+              <FieldsetBeije>
+                <div className={styles["flex-container"]}>
 
-                <CardContainerMemo head={"Input"} style={{ marginRight: "2rem" }}>
-                  <Input
-                    style={{ width: "100%", marginTop: 20 }}
-                    placeholder="Titolo"
-                    name="title"
-                    value={state.title}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, title: e.target.value }))
-                    }
-                  />
+                  <CardContainerMemo head={"Input"} style={{ marginRight: "2rem" }}>
+                    <Input
+                      style={{ width: "100%", marginTop: 20 }}
+                      placeholder="Titolo"
+                      name="title"
+                      value={state.title}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, title: e.target.value }))
+                      }
+                    />
 
-                  <Input
-                    style={{ width: "100%", marginTop: 20 }}
-                    placeholder="Sottotitolo"
-                    name="subtitle"
-                    value={state.subtitle}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, subtitle: e.target.value }))
-                    }
-                  />
+                    <Input
+                      style={{ width: "100%", marginTop: 20 }}
+                      placeholder="Sottotitolo"
+                      name="subtitle"
+                      value={state.subtitle}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, subtitle: e.target.value }))
+                      }
+                    />
 
-                  <Input
-                    style={{ width: "100%", marginTop: 20 }}
-                    placeholder="Autore"
-                    name="title"
-                    value={state.author}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, author: e.target.value }))
-                    }
-                  />
+                    <Input
+                      style={{ width: "100%", marginTop: 20 }}
+                      placeholder="Autore"
+                      name="title"
+                      value={state.author}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, author: e.target.value }))
+                      }
+                    />
 
-                  <Permalink state={state} setState={setState} title={"title"} />
+                    <Permalink state={state} setState={setState} title={"title"} />
 
-                  <Select
-                    style={{ maxWidth: "none", marginTop: "2rem" }}
-                    value={state.language}
-                    label="Lingua"
-                    options={isNew ? [
-                      { value: "it", label: "italiano" },
-                      { value: "it", label: "Crea versione Inglese" },
-                    ] : [
-                      { value: "it", label: "Italiano" },
-                      { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
-                    ]
-                    }
-                    onChange={handleSetLanguage}
-                  />
-                </CardContainerMemo>
+                    <Select
+                      style={{ maxWidth: "none", marginTop: "2rem" }}
+                      value={state.language}
+                      label="Lingua"
+                      options={isNew ? [
+                        { value: "it", label: "italiano" },
+                        { value: "it", label: "Crea versione Inglese" },
+                      ] : [
+                        { value: "it", label: "Italiano" },
+                        { value: "eng", label: state.translate_blog_permalink === null ? "Crea versione Inglese" : "Inglese" },
+                      ]
+                      }
+                      onChange={handleSetLanguage}
+                    />
+                  </CardContainerMemo>
 
-                <CardContainerMemo head={"Cover image"}>
-                  <SingleImageInput
-                    idProp={idToUse}
-                    type="cover_img"
-                    aspectRatio="1"
-                    style={{ maxWidth: "100%" }}
-                    label=""
-                    value={state.cover_img}
-                    onChange={(cover_img) => {
-                      setState((p) => ({ ...p, cover_img }));
-                    }}
-                  />
-                </CardContainerMemo>
+                  <CardContainerMemo head={"Cover image"}>
+                    <SingleImageInput
+                      idProp={idToUse}
+                      type="cover_img"
+                      aspectRatio="1"
+                      style={{ maxWidth: "100%" }}
+                      label=""
+                      value={state.cover_img}
+                      onChange={(cover_img) => {
+                        setState((p) => ({ ...p, cover_img }));
+                      }}
+                    />
+                  </CardContainerMemo>
 
-                {/* <CardContainerMemo head={"Actions"}> */}
-                {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
+                  {/* <CardContainerMemo head={"Actions"}> */}
+                  {/* <ActiveOrDisable style={{ width: "20%", alignSelf: "end" }} disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} /> */}
 
-                {/* <Hashtags hashtagList={hashtagsResult} /> */}
-                {/* </CardContainerMemo>   */}
-              </div>
-
-              <MDEditor
-                value={state.description}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, description: e.target.value }))
-                }
-              />
-
-              <CardContainerMemo head={"Images"}>
-
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                >
-                  <MassiveImageLoader states={[state.images, setImages]} idDelete={idToUse} />
+                  {/* <Hashtags hashtagList={hashtagsResult} /> */}
+                  {/* </CardContainerMemo>   */}
                 </div>
-              </CardContainerMemo>
 
-              <SaveContainerMemo onSubmit={handleSubmitPost} isNew={isNew} />
-            </FieldsetBeije>
-          </>
-        )}
+                <MDEditor
+                  value={state.description}
+                  onChange={(e) =>
+                    setState((p) => ({ ...p, description: e.target.value }))
+                  }
+                />
+
+                <CardContainerMemo head={"Images"}>
+
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                  >
+                    <MassiveImageLoader states={[state.images, setImages]} idDelete={idToUse} />
+                  </div>
+                </CardContainerMemo>
+
+                <SaveContainerMemo onSubmit={handleSubmitPost} isNew={isNew} />
+              </FieldsetBeije>
+            </>
+          )}
       </form>
       <Modal
         shouldShow={shouldShowModal}
