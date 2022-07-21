@@ -12,7 +12,7 @@ import useService from "../../hooks/useService";
 
 // utils
 import { notify, ToastContainer } from '../../utils/toast';
-import { checkIsQuickSave, navigateWithNotify, permalink } from "../../utils/utils";
+import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -29,7 +29,6 @@ import DetailsHeader from "../../components/DetailsHeader";
 
 // style
 import styles from "./styles.module.css";
-import Permalink from "../../components/Permalink";
 
 const emptyState = {
   title_it: "",
@@ -41,7 +40,7 @@ const emptyState = {
   date_creation: todayWithTime(),
   academy: false,
   disable_date: null,
-  permalink: "",
+  lang: "it",
 };
 
 let isQuickSave = false;
@@ -53,7 +52,7 @@ const Job = ({ isNew }) => {
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
-  const [goBack, setGoBack] = useState(false)
+  const [goBack, setGoBack] = useState(false);
 
   const navigate = useNavigate();
 
@@ -93,17 +92,17 @@ const Job = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error]);
+  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error, state.lang]);
 
   const handleSubmitJob = (e) => {  // Controllo se è un salvataggio rapido o no e setto la variabile isQuickSave. Dopo di che faccio la chiamata api
     e.preventDefault();
 
     isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
 
-    saveJob({ 
-      ...state, 
-      date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") ,
-      permalink: state.permalink === "" ? permalink(state.title_it) : state.permalink,
+    saveJob({
+      ...state,
+      date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm"),
+      lang: null
     });
   }
 
@@ -119,7 +118,12 @@ const Job = ({ isNew }) => {
   return (
     <div className={styles["container"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} onSubmit={handleSubmitJob} isNew={isNew} title={state.title_it} />
+        <DetailsHeader
+          handleBack={handleBack}
+          onSubmit={handleSubmitJob}
+          isNew={isNew}
+          title={state.lang === "it" ? state.title_it : state.title_en}
+        />
 
         {(isNew || getJobResult.response) && (
           <>
@@ -131,30 +135,29 @@ const Job = ({ isNew }) => {
                     style={{ width: "100%", marginTop: "2rem" }}
                     placeholder="Titolo"
                     name="title"
-                    value={state.title_it}
-                    onChange={(e) =>
-                      setState((p) => ({ ...p, title_it: e.target.value }))
-                    }
+                    value={state.lang === "it" ? state.title_it : state.title_en}
+                    onChange={(e) => {
+                      if (state.lang === "it") setState((p) => ({ ...p, title_it: e.target.value }));
+                      setState((p) => ({ ...p, title_en: e.target.value }))
+                    }}
                   />
 
-                  <Permalink state={state} setState={setState} title="title_it" />
-
                   <Select
-                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 3 }}
+                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 4 }}
                     value={state.type}
                     label="Posizione"
                     options={[
                       { value: "front end", label: "Front end" },
                       { value: "back end", label: "Back end" },
                       { value: "full stack", label: "Full stack" },
-                      { value: "Insegnate academy", label: "Insegnante" },
+                      { value: state.lang === "it" ? "Insegnate academy" : "Academy teacher", label: state.lang === "it" ? "Insegnante" : "Teacher" },
                       { value: "mobile", label: "Mobile" },
                     ]}
                     onChange={(type) => setState((p) => ({ ...p, type }))}
                   />
 
                   <Select
-                    style={{ maxWidth: "none", marginTop: "2rem" }}
+                    style={{ maxWidth: "none", marginTop: "2rem", zIndex: 3 }}
                     value={state.mode}
                     label="Sede"
                     options={[
@@ -165,6 +168,20 @@ const Job = ({ isNew }) => {
                     ]}
                     onChange={(mode) => setState((p) => ({ ...p, mode }))}
                   />
+
+                  <Select
+                    style={{ maxWidth: "none", marginTop: "2rem" }}
+                    value={state.lang}
+                    label="Lingua"
+                    options={[
+                      { value: "it", label: "Italiano" },
+                      { value: "eng", label: "Inglese" },
+                    ]}
+                    onChange={(lang) => {
+                      setState((p) => ({ ...p, lang }))
+                    }}
+                  />
+
                   <Checkbox
                     style={{ marginTop: "2rem" }}
                     checked={state.academy}
@@ -176,10 +193,11 @@ const Job = ({ isNew }) => {
                 </CardContainerMemo>
               </div>
               <MDEditor
-                value={state.description_it}
-                onChange={(e) =>
-                  setState((p) => ({ ...p, description_it: e.target.value }))
-                }
+                value={state.lang === "it" ? state.description_it : state.description_en}
+                onChange={(e) => {
+                  if (state.lang === "it") setState((p) => ({ ...p, description_it: e.target.value }));
+                  setState((p) => ({ ...p, description_en: e.target.value }))
+                }}
               />
               <div className="fxc">
                 <ActiveOrDisable disableDate={state.disable_date} isNew={isNew} setModal={setShouldShowModal} />
@@ -194,7 +212,7 @@ const Job = ({ isNew }) => {
         goBack={goBack}
         path={"/jobs"}
         actions={{
-          save: () => { saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm") }) },
+          save: () => { saveJob({ ...state, date_creation: isNew ? todayWithTime() : format(state.date_creation, "yyyy-MM-dd'T'HH:mm"), lang: null }) },
           disable: () => { disableOrActiveJob(); }
         }}
         setModal={setShouldShowModal}
