@@ -10,6 +10,12 @@ const instance = axios.create({
   },
 });
 
+export async function uploadImages(resource, imageObj) {
+    return await instance.post(resource, imageObj)
+    .then((response)=> response.data)
+    .catch((error)=> error);
+}
+
 function handleSuccess(response) {
   if (response.config.url.includes("signin")) {
     window.localStorage.setItem("tk", response.data.token);

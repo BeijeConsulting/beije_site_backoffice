@@ -11,6 +11,7 @@ function readFile(file) {
     reader.addEventListener("error", () => {
       reject({ error: e.target.result });
     });
+    
     reader.readAsDataURL(file);
   });
 }

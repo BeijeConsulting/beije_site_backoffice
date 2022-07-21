@@ -22,3 +22,5 @@ export function checkIsQuickSave(isQuickSave, targetName) {
 export function getResponse(apiCall) {
   return apiCall ?? { response: null }
 }
+
+

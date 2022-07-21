@@ -28,6 +28,7 @@ import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImage
 import styles from "./styles.module.css";
 import SaveContainerMemo from "../../components/SaveContainer";
 import FieldsetBeije from "../../components/FieldsetBeije";
+import { uploadImages } from "../../config/axios.config";
 
 const emptyState = {
   title: "",
@@ -51,9 +52,10 @@ const imageState = {
   type: "",
   blogId: null,
 }
+
 let id = null;
-let timeout;
 let isQuickSave = false;
+let timeout;
 
 const Blog = ({ isNew }) => {
 
@@ -88,34 +90,32 @@ const Blog = ({ isNew }) => {
     method: state.disableDate ? "put" : "delete"
   })
 
-  const [uploadImgRes, postImg] = useService("/upload/img", {
-    method: "post"
-  });
-
   async function checkImages(id) {
-    console.log(state.images);
+
+    let res;
     let newArray = state.images.filter((image) => !image.startsWith("https"));
-    console.log(state.images);
+
+    if (newArray.length === 0 && state.cover_img.startsWith("https")) return;
 
     if (newArray.length > 0) {
-      await Promise.all(newArray.map((img) => {
-        postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
-        newArray.shift();
-      }))
-      if (newArray.length === 0) navigateWithNotify(navigate, "/blogs")
-
-      // if (!isQuickSave) 
+      res = await Promise.all(newArray.map((img) => {
+        return uploadImages("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse })
+      }));
+      console.log(res);
     }
-    if (!state.cover_img.startsWith("https")) {
 
-      if (state.cover_img.startsWith("data")) await postImg({
+    if (state.cover_img.startsWith("data")) {
+      await uploadImages("/upload/img", {
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
         type: "cover_img"
-      });
-      if (!isQuickSave) navigateWithNotify(navigate, "/blogs");;
+      })
     }
+
+    if (res && isQuickSave) getBlog();
+  
+    if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
   }
 
   useEffect(() => {
@@ -128,10 +128,12 @@ const Blog = ({ isNew }) => {
 
   useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
 
-    const newState = Object.assign({}, state);
-
     const { response } = getResponse(getBlogResult);
-    if (response) setState(response);
+    if (response) {
+      console.log("sono qui");
+
+      setState(response);
+    }
 
     const responsePermalink = getResponse(getBlogWithPermalinkRes);
     if (responsePermalink.response) {
@@ -147,19 +149,9 @@ const Blog = ({ isNew }) => {
 
       if (isQuickSave) notify("success", toastId);
 
-      setState(save.response);
-
     };
 
     if (save.error) notify(`error`, toastId, save.error.message);
-
-    const uploadImg = getResponse(uploadImgRes);
-
-    if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
-
-    if (uploadImg.error) {
-      notify('error', toastId, uploadImg.error.message);
-    }
 
     const disableOrActive = getResponse(disableOrActiveResult);
 
@@ -176,10 +168,14 @@ const Blog = ({ isNew }) => {
 
     return () => {
       id = null;
-      clearTimeout(timeout)
+      clearTimeout(timeout);
     };
 
-  }, [getBlogResult.response, saveBlogResult.response, saveBlogResult.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error, engResult.response]);
+  }, [
+    getBlogResult.response, saveBlogResult.response, saveBlogResult.error,
+    getBlogWithPermalinkRes.response, disableOrActiveResult.response,
+    disableOrActiveResult.error, engResult.response
+  ]);
 
   const handleSubmitPost = useCallback((e) => {
     e.preventDefault();
@@ -225,9 +221,10 @@ const Blog = ({ isNew }) => {
     navigate("/blogs")
   }
 
-  const SetImages = (images) => {
+  const setImages = (images) => {
     setState({ ...state, images: [...images] })
   }
+
   return (
     <div className={styles["container-bg"]}>
 
@@ -320,7 +317,7 @@ const Blog = ({ isNew }) => {
 
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
-                  <MassiveImageLoader states={[state.images, SetImages]} idDelete={idToUse} />
+                  <MassiveImageLoader states={[state.images, setImages]} idDelete={idToUse} />
                 </div>
               </CardContainerMemo>
 
