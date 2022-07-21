@@ -38,7 +38,6 @@ const User = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false)
-  const [imgArray, setImgArray] = useState([])
 
   const [getUserResult, getUser] = useService(`team/user/${id}`);
   const [disableUserResult, disableUser] = useService(`/user/${id}`, {
@@ -50,7 +49,6 @@ const User = ({ isNew }) => {
   )
   useEffect(() => {
     if (!isNew) getUser();
-
   }, []);
 
   useEffect(() => {
@@ -211,9 +209,6 @@ const User = ({ isNew }) => {
             </div>
           </div>
         )}
-        <MassiveImageLoader
-          states={[imgArray, setImgArray]}
-        ></MassiveImageLoader>
       </form>
       <Modal
         shouldShow={shouldShowModal}

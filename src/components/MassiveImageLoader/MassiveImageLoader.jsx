@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styles from './styles.module.css';
-import { useId, useState } from "react";
+import { useId } from "react";
 import MultipleImageInput from '../MultipleImageInput';
 
 let imageInserted = []
