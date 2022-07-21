@@ -106,13 +106,8 @@ const CaseStudy = ({ isNew }) => {
 
     const disableOrActive = getResponse(disableOrActiveResult);
 
-    if (disableOrActive.response) {
-      navigate('/case-studies', {
-        state: {
-          toast: true
-        }
-      })
-    }
+    if (disableOrActive.response) navigateWithNotify(navigate, "/case-studies");
+    
     if (disableOrActive.error) notify('error', toastId);
 
     return () => (id = null);

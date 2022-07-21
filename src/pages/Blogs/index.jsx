@@ -112,7 +112,7 @@ const Blogs = () => {
             />
           </FieldsetBeije>
         </div>
-        <ToastContainer />
+          <ToastContainer />
       </div>
       :
       <Loader />
