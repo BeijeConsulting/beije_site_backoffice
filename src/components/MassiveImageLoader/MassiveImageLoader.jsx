@@ -1,11 +1,35 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './styles.module.css';
-import { useId } from "react";
+import { useId, useState } from "react";
 import MultipleImageInput from '../MultipleImageInput';
 
-export default function MassiveImageLoader({ onChange, states, savedImage }) {
+let imageInserted = []
+
+export default function MassiveImageLoader({ states }) {
+    const [state, setState] = states;
     const id = useId();
-    console.log('st', states)
+
+
+    useEffect(() => {
+        return () => { imageInserted = [] }
+    }, [])
+
+    const insertMutipleImages = (images) => {
+        const imagesNew = [...images].filter((element) => {
+
+            return (!imageInserted.some((imageName) => {
+
+                return imageName === element.name
+            }))
+                && element.type.includes("image")
+        })
+
+        state.length > 0 ? setState([...state, ...imagesNew]) : setState([...imagesNew])
+        imageInserted = [...imageInserted, ...imagesNew.map((image) => {
+            return image.name
+        })]
+
+    }
     return (
         <div className={styles['image-loader-container']} >
             <div className={styles["actions-container"]}>
@@ -27,7 +51,7 @@ export default function MassiveImageLoader({ onChange, states, savedImage }) {
                             console.log('drop', e)
                             e.target.classList.remove(styles["dragging"]);
                             e.preventDefault();
-                            onChange(e.dataTransfer.files)
+                            insertMutipleImages(e.dataTransfer.files)
 
                         }}
                     >
@@ -43,7 +67,7 @@ export default function MassiveImageLoader({ onChange, states, savedImage }) {
                             multiple
                             onChange={(e) => {
                                 e.preventDefault();
-                                onChange(e.target.files)
+                                insertMutipleImages(e.target.files)
                             }}
                         ></input>
                         <label className={styles["upload-btn"]} htmlFor={id}>
@@ -54,7 +78,7 @@ export default function MassiveImageLoader({ onChange, states, savedImage }) {
                 </div>
                 <div className={styles['images-container']}>
                     <MultipleImageInput
-                        savedImage={savedImage}
+                        savedImage={imageInserted}
                         states={states}></MultipleImageInput>
                 </div>
             </div>
