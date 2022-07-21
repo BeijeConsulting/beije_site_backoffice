@@ -19,10 +19,10 @@ import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import DetailsHeader from "../../components/DetailsHeader";
 import Permalink from "../../components/Permalink";
-import MultipleImageInput from "../../components/MultipleImageInput";
+import CardContainerMemo from "../../components/CardContainer";
+import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImageLoader";
 // import Hashtags from "../../components/Hashtags";
 // import ActiveOrDisable from "../../components/ActiveOrDisable";
-import CardContainerMemo from "../../components/CardContainer";
 
 // styles
 import styles from "./styles.module.css";
@@ -115,6 +115,7 @@ const Blog = ({ isNew }) => {
       // if(!isQuickSave) navigateWithNotify(navigate, "/blogs");
       if(!isQuickSave) navigate("/blogs", {state: {toast: true}});
     }
+    navigateWithNotify(navigate, "/blogs");
   }
 
   useEffect(() => {
@@ -226,6 +227,10 @@ const Blog = ({ isNew }) => {
     navigate("/blogs")
   }
 
+  const SetImages = (images) => {
+    setState({...state, images})
+  }
+
   return (
     <div className={styles["container-bg"]}>
       <form>
@@ -315,8 +320,7 @@ const Blog = ({ isNew }) => {
 
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
-
-                  {/* componente img */}
+                  <MassiveImageLoader states={[state.images, SetImages]} />
                 </div>
               </CardContainerMemo>
 
