@@ -26,7 +26,7 @@ const emptyState = {
 };
 
 let id = null;
-let imageInserted = []
+
 const User = ({ isNew }) => {
 
 
@@ -48,12 +48,9 @@ const User = ({ isNew }) => {
     method: isNew ? "post" : "put",
   }
   )
-
-
-  console.log(goBack)
   useEffect(() => {
     if (!isNew) getUser();
-    return () => { imageInserted = [] }
+
   }, []);
 
   useEffect(() => {
@@ -216,19 +213,7 @@ const User = ({ isNew }) => {
         )}
         <MassiveImageLoader
           states={[imgArray, setImgArray]}
-          savedImage={imageInserted}
-          onChange={(images) => {
-            console.log('storeValue', imageInserted)
-            const imagesNew = [...images].filter((element) => {
-              return !imageInserted.some((imageName) => {
-                return imageName === element.name
-              })
-            })
-            imgArray.length > 0 ? setImgArray([...imgArray, ...imagesNew]) : setImgArray([...imagesNew])
-            imageInserted = [...imageInserted, ...imagesNew.map((image) => {
-              return image.name
-            })]
-          }}
+
         ></MassiveImageLoader>
       </form>
       <Modal
