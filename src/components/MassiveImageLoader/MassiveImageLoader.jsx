@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import styles from './styles.module.css';
-import { useId, useState } from "react";
+import { useId } from "react";
 import MultipleImageInput from '../MultipleImageInput';
 
 let imageInserted = []
 
-export default function MassiveImageLoader({ states }) {
+export default function MassiveImageLoader({ states, idDelete }) {
     const [state, setState] = states;
     const id = useId();
 
@@ -78,6 +78,7 @@ export default function MassiveImageLoader({ states }) {
                 </div>
                 <div className={styles['images-container']}>
                     <MultipleImageInput
+                        id={idDelete}
                         savedImage={imageInserted}
                         states={states}></MultipleImageInput>
                 </div>
