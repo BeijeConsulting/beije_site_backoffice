@@ -93,18 +93,22 @@ const Blog = ({ isNew }) => {
   });
 
   async function checkImages(id) {
+    console.log(state.images);
     let newArray = state.images.filter((image) => !image.startsWith("https"));
+    console.log(state.images);
 
     if (newArray.length > 0) {
-      console.log("primo if");
-      newArray.map(async (img) => {
-        await postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
-      })
-      if (!isQuickSave) navigateWithNotify(navigate, "/blogs");
+      await Promise.all(newArray.map((img) => {
+        postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
+        newArray.shift();
+      }))
+      if (newArray.length === 0) navigateWithNotify(navigate, "/blogs")
+
+      // if (!isQuickSave) 
     }
     if (!state.cover_img.startsWith("https")) {
 
-      if(state.cover_img.startsWith("data")) await postImg({
+      if (state.cover_img.startsWith("data")) await postImg({
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
@@ -222,7 +226,7 @@ const Blog = ({ isNew }) => {
   }
 
   const SetImages = (images) => {
-    setState({ ...state, images })
+    setState({ ...state, images: [...state.images, images] })
   }
 
   return (
