@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  max-width: 550px;
-  /* max-height: 300px; */
+  max-width: 400px;
+  width: 250px;
   padding: 2rem;
   border: 2px dashed var(--grey-500);
 }
@@ -54,13 +54,10 @@
 
 .actions-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 60%;
   gap: 2rem;
   position: relative;
   z-index: 2;
+  margin-top: 5rem;
 }
 
 .actions-container input:focus ~ .upload-btn {
@@ -71,6 +68,8 @@
 .images-container{
   display: flex;
   flex-direction: row;
+      flex-wrap: wrap;
+        width: 100%;
 }
 
 .upload-btn{

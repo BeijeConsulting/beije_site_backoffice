@@ -213,7 +213,6 @@ const User = ({ isNew }) => {
         )}
         <MassiveImageLoader
           states={[imgArray, setImgArray]}
-
         ></MassiveImageLoader>
       </form>
       <Modal
