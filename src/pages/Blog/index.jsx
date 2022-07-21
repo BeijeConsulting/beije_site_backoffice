@@ -92,22 +92,28 @@ const Blog = ({ isNew }) => {
     method: "post"
   });
 
-  function checkImages(id) {
+  async function checkImages(id) {
     let newArray = state.images.filter((image) => !image.startsWith("https"));
 
-    newArray.map((img) => {
-      postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
-      // newState.images.shift();
-    })
+    if (newArray.length > 0) {
 
-    if (state.cover_img !== null) {
+      newArray.map(async (img) => {
+        await postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
+        // newState.images.shift();
+      })
+      if(!isQuickSave) navigateWithNotify(navigate, "/blogs");
+    }
+
+    if (!state.cover_img.startsWith("https")) {
       // if(!state.cover_img.startsWith("https")) return;
-      postImg({
+      await postImg({
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
         type: "cover_img"
       });
+      // if(!isQuickSave) navigateWithNotify(navigate, "/blogs");
+      if(!isQuickSave) navigate("/blogs", {state: {toast: true}});
     }
   }
 
@@ -139,13 +145,13 @@ const Blog = ({ isNew }) => {
 
       checkImages(save.response.id);
 
-      if (!isQuickSave) navigateWithNotify(navigate, '/blogs');
+      // if (!isQuickSave) navigateWithNotify(navigate, '/blogs');
       if (isQuickSave) {
         notify("success", toastId)
         setState(save.response);
       }
     };
-    console.log(save.error);
+
     if (save.error) notify(`error`, toastId, save.error.message);
 
     const uploadImg = uploadImgRes ?? { response: null };
@@ -153,7 +159,7 @@ const Blog = ({ isNew }) => {
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
 
     if (uploadImg.error) {
-      notify('error', toastId, uploadImg.error.message)
+      notify('error', toastId, uploadImg.error.message);
     }
 
     const disableOrActive = disableOrActiveResult ?? { response: null };
@@ -201,7 +207,7 @@ const Blog = ({ isNew }) => {
       create_datetime: null,
       cover_img: null,
       images: [],
-      // permalink: state.permalink,
+      permalink: state.permalink,
       translate_blog_permalink: state.permalink,
       type: "blog",
       language: "eng",
@@ -310,7 +316,7 @@ const Blog = ({ isNew }) => {
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
 
-                  <MultipleImageInput states={[state, setState]} isNew={isNew} id={idToUse} />
+                  {/* componente img */}
                 </div>
               </CardContainerMemo>
 
