@@ -22,7 +22,6 @@ import styles from "./styles.module.css";
 const initState = {
   academy: "all",
   active: "yes",
-  lang: "it",
 }
 
 const Jobs = () => {
@@ -42,7 +41,7 @@ const Jobs = () => {
     if (location.state !== null) {
       notify("success", toastId)
     }
-  }, [state.academy, state.active, state.language]);
+  }, [state.academy, state.active]);
 
   return (
     response ?
@@ -82,17 +81,6 @@ const Jobs = () => {
                 onChange={(academy) => setState((p) => ({ ...p, academy }))}
               />
 
-              {/* <Select
-                value={state.lang}
-                label="Lingua"
-                options={[
-                  { value: "it", label: "Italiano" },
-                  { value: "eng", label: "Inglese" },
-                ]}
-                onChange={(lang) => {
-                  setState((p) => ({ ...p, lang }))
-                }}
-              /> */}
             </CardContainerMemo>
             <Table
               headers={[
