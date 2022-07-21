@@ -226,11 +226,11 @@ const Blog = ({ isNew }) => {
   }
 
   const SetImages = (images) => {
-    setState({ ...state, images: [...state.images, images] })
+    setState({ ...state, images: [...images] })
   }
-
   return (
     <div className={styles["container-bg"]}>
+
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 

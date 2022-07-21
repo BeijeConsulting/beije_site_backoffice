@@ -24,7 +24,6 @@ import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import styles from "./styles.module.css";
 
-import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
 import DetailsHeader from "../../components/DetailsHeader";
 import FieldsetBeije from "../../components/FieldsetBeije";
 import CardContainerMemo from "../../components/CardContainer";
@@ -150,63 +149,65 @@ const User = ({ isNew }) => {
                     </div>
                   </div>
                 </CardContainerMemo>
-                <CardContainerMemo head={"Input"}>
-                  <div>
-                    <div className={styles["text-row"]}>
-                      <Input
-                        placeholder="Nome"
-                        name="firstName"
-                        value={state.firstName}
-                        onChange={(e) =>
-                          setState((p) => ({ ...p, firstName: e.target.value }))
-                        }
-                      />
-                      <Input
-                        placeholder="Cognome"
-                        name="lastName"
-                        value={state.lastName}
-                        onChange={(e) =>
-                          setState((p) => ({ ...p, lastName: e.target.value }))
-                        }
-                      />
-                    </div>
-                    <div className={styles["text-row"]}>
-                      <DatePicker
-                        placeholder="Data di assunzione"
-                        value={state.hireDate}
-                        onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
-                      />
-                      <Select
-                        value={state.role}
-                        label="Ruolo"
-                        options={[
-                          { value: "frontend", label: "Frontend" },
-                          { value: "backend", label: "Backend" },
-                          { value: "fullstack", label: "Fullstack" },
-                          { value: "hr", label: "HR" },
-                          { value: "marketing", label: "Marketing" },
-                          { value: "admin", label: "Admin" },
-                        ]}
-                        onChange={(role) => setState((p) => ({ ...p, role }))}
-                      />
-                      <div style={{ marginTop: "auto" }}>
-                        <Checkbox
-                          checked={state.picOnSite}
-                          onChange={(e) => {
-                            setState((p) => ({ ...p, picOnSite: e.target.checked }));
-                          }}
-                          label="Mostra sul sito: "
-                        />
-                      </div>
+                <div className={styles["container"]}>
+                  <CardContainerMemo head={"Input"}>
+                    <Input
+                      style={{ width: "100%", marginTop: 20 }}
+                      placeholder="Nome"
+                      name="firstName"
+                      value={state.firstName}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, firstName: e.target.value }))
+                      }
+                    />
+                    <Input
+                      style={{ width: "100%", marginTop: 20 }}
+                      placeholder="Cognome"
+                      name="lastName"
+                      value={state.lastName}
+                      onChange={(e) =>
+                        setState((p) => ({ ...p, lastName: e.target.value }))
+                      }
+                    />
 
+
+                    <DatePicker
+                      placeholder="Data di assunzione"
+                      value={state.hireDate}
+                      onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
+                    />
+                    <Select
+                      style={{ maxWidth: "none", marginTop: "2rem" }}
+                      value={state.role}
+                      label="Ruolo"
+                      options={[
+                        { value: "frontend", label: "Frontend" },
+                        { value: "backend", label: "Backend" },
+                        { value: "fullstack", label: "Fullstack" },
+                        { value: "hr", label: "HR" },
+                        { value: "marketing", label: "Marketing" },
+                        { value: "admin", label: "Admin" },
+                      ]}
+                      onChange={(role) => setState((p) => ({ ...p, role }))}
+                    />
+                    <div style={{ marginTop: "auto" }}>
+                      <Checkbox
+                        checked={state.picOnSite}
+                        onChange={(e) => {
+                          setState((p) => ({ ...p, picOnSite: e.target.checked }));
+                        }}
+                        label="Mostra sul sito: "
+                      />
                     </div>
+
+
                     {isNew ? "" : <button className="primary-button"
                       onClick={(e) => {
                         e.preventDefault();
                         setShouldShowModal(true)
                       }}>Disabilita</button>}
-                  </div>
-                </CardContainerMemo>
+                  </CardContainerMemo>
+                </div>
               </div>
             </FieldsetBeije>
           </>
