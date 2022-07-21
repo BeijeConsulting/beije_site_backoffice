@@ -18,3 +18,7 @@ export function checkIsQuickSave(isQuickSave, targetName) {
   }
   return isQuickSave;
 }
+
+export function getResponse(apiCall) {
+  return apiCall ?? { response: null }
+}
