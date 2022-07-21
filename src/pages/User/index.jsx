@@ -1,8 +1,20 @@
+
 import { useState, useEffect } from "react";
+import { useId } from "react";
+//navigation
 import { useParams, useNavigate } from "react-router-dom";
+
+// date format
 import { format } from "date-fns";
+
+//api
 import useService from "../../hooks/useService";
 
+//utils
+import { notify, ToastContainer } from "../../utils/toast";
+import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
+
+//components
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
 import Select from "../../components/Select";
@@ -11,10 +23,12 @@ import SingleImageInput from "../../components/SingleImageInput";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import styles from "./styles.module.css";
-import { useId } from "react";
-import { notify, ToastContainer } from "../../utils/toast";
+
 import GoBackArrow from "../../components/GoBackArrow/GoBackArrow";
-import MassiveImageLoader from "../../components/MassiveImageLoader/MassiveImageLoader";
+import DetailsHeader from "../../components/DetailsHeader";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainerMemo from "../../components/CardContainer";
+
 const emptyState = {
   firstName: "",
   lastName: "",
@@ -53,37 +67,33 @@ const User = ({ isNew }) => {
 
   useEffect(() => {
     const { response } = getUserResult ?? { response: null };
-
     if (response) {
       setState(response);
     }
-
     const save = saveUserResult ?? { response: null };
     if (save.response) {
-      navigate('/community', {
-        state: {
-          toast: true
-        }
-      })
+      if (!isQuickSave) navigateWithNotify(navigate, '/community');
+      if (isQuickSave) notify("success", toastId);
+      setState(save.response);
     }
     if (save.error) notify('error', toastId);
 
     const disable = disableUserResult ?? { response: null }
 
     if (disable.response) {
-      navigate('/community', {
-        state: {
-          toast: true
-        }
-      })
+      navigateWithNotify(navigate, '/community');
     }
     if (disable.error) notify('error', toastId);
+
   }, [getUserResult?.response, saveUserResult?.response, saveUserResult?.error, disableUserResult?.response, disableUserResult?.error]);
 
-
+  const handleSubmitUser = (e) => {
+    e.preventDefault();
+    saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
+    setGoBack(true);
+  }
 
   function handleBack() {
-
     if (!isNew && getUserResult?.response !== state) {
       setGoBack(true);
       setShouldShowModal(true)
@@ -94,53 +104,40 @@ const User = ({ isNew }) => {
 
   return (
     <div className={styles["container"]}>
-      {console.log(state)}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") })
-          setGoBack(true);
-        }}
-      >
+      <form>
+        <DetailsHeader
+          handleBack={handleBack}
+          onSubmit={handleSubmitUser}
+          isNew={isNew}
+          title={isNew ? "Utente" : `${getUserResult.response?.firstName} ${getUserResult.response?.lastName}`} />
 
-        <div className={styles["title-row"]}>
-          <GoBackArrow
-            handleBack={handleBack}></GoBackArrow>
-          <h2>
-            {isNew
-              ? "Nuovo utente"
-              : getUserResult.response
-                ? `Modifica ${getUserResult.response.firstName} ${getUserResult.response.lastName}`
-                : ""}
-          </h2>
-          <button type="submit" className="success-button">
-            Salva Modifiche
-          </button>
-        </div>
         {(isNew || getUserResult.response) && (
-          <div className={styles["inputs-container"]}>
-            <div className={styles["images"]}>
-              <SingleImageInput
-                aspectRatio="1"
-                style={{ maxWidth: "400px" }}
-                label="Immagine profilo"
-                value={state.picImage}
-                onChange={(picImage) => {
-                  setState((p) => {
-                    let newState = { ...p, picImage };
-                    /*  if (picImage) newState.picImageThumbnail = picImage; */
-                    //Rimossa clonazione su thumbnail in data 14/07/2022
-                    return newState;
-                  });
-                }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {/*  <SingleImageInput
+          <>
+            <FieldsetBeije>
+              <div className={styles["inputs-container"]}>
+                <CardContainerMemo>
+                  <div className={styles["images"]}>
+                    <SingleImageInput
+                      aspectRatio="1"
+                      style={{ maxWidth: "400px" }}
+                      label="Immagine profilo"
+                      value={state.picImage}
+                      onChange={(picImage) => {
+                        setState((p) => {
+                          let newState = { ...p, picImage };
+                          /*  if (picImage) newState.picImageThumbnail = picImage; */
+                          //Rimossa clonazione su thumbnail in data 14/07/2022
+                          return newState;
+                        });
+                      }}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {/*  <SingleImageInput
                   aspectRatio="1"
                   style={{ maxWidth: "200px" }}
                   label="Thumbnail"
@@ -150,64 +147,69 @@ const User = ({ isNew }) => {
                   }}
                 /> */}
 
-              </div>
-            </div>
-            <div>
-              <div className={styles["text-row"]}>
-                <Input
-                  placeholder="Nome"
-                  name="firstName"
-                  value={state.firstName}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, firstName: e.target.value }))
-                  }
-                />
-                <Input
-                  placeholder="Cognome"
-                  name="lastName"
-                  value={state.lastName}
-                  onChange={(e) =>
-                    setState((p) => ({ ...p, lastName: e.target.value }))
-                  }
-                />
-              </div>
-              <div className={styles["text-row"]}>
-                <DatePicker
-                  placeholder="Data di assunzione"
-                  value={state.hireDate}
-                  onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
-                />
-                <Select
-                  value={state.role}
-                  label="Ruolo"
-                  options={[
-                    { value: "frontend", label: "Frontend" },
-                    { value: "backend", label: "Backend" },
-                    { value: "fullstack", label: "Fullstack" },
-                    { value: "hr", label: "HR" },
-                    { value: "marketing", label: "Marketing" },
-                    { value: "admin", label: "Admin" },
-                  ]}
-                  onChange={(role) => setState((p) => ({ ...p, role }))}
-                />
-                <div style={{ marginTop: "auto" }}>
-                  <Checkbox
-                    checked={state.picOnSite}
-                    onChange={(e) => {
-                      setState((p) => ({ ...p, picOnSite: e.target.checked }));
-                    }}
-                    label="Mostra sul sito: "
-                  />
-                </div>
+                    </div>
+                  </div>
+                </CardContainerMemo>
+                <CardContainerMemo head={"Input"}>
+                  <div>
+                    <div className={styles["text-row"]}>
+                      <Input
+                        placeholder="Nome"
+                        name="firstName"
+                        value={state.firstName}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, firstName: e.target.value }))
+                        }
+                      />
+                      <Input
+                        placeholder="Cognome"
+                        name="lastName"
+                        value={state.lastName}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, lastName: e.target.value }))
+                        }
+                      />
+                    </div>
+                    <div className={styles["text-row"]}>
+                      <DatePicker
+                        placeholder="Data di assunzione"
+                        value={state.hireDate}
+                        onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
+                      />
+                      <Select
+                        value={state.role}
+                        label="Ruolo"
+                        options={[
+                          { value: "frontend", label: "Frontend" },
+                          { value: "backend", label: "Backend" },
+                          { value: "fullstack", label: "Fullstack" },
+                          { value: "hr", label: "HR" },
+                          { value: "marketing", label: "Marketing" },
+                          { value: "admin", label: "Admin" },
+                        ]}
+                        onChange={(role) => setState((p) => ({ ...p, role }))}
+                      />
+                      <div style={{ marginTop: "auto" }}>
+                        <Checkbox
+                          checked={state.picOnSite}
+                          onChange={(e) => {
+                            setState((p) => ({ ...p, picOnSite: e.target.checked }));
+                          }}
+                          label="Mostra sul sito: "
+                        />
+                      </div>
 
+                    </div>
+                    {isNew ? "" : <button className="primary-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShouldShowModal(true)
+                      }}>Disabilita</button>}
+                  </div>
+                </CardContainerMemo>
               </div>
-              {isNew ? "" : <button className="primary-button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShouldShowModal(true)
-                }}>Disabilita</button>}
-            </div>
-          </div>
+            </FieldsetBeije>
+          </>
         )}
       </form>
       <Modal

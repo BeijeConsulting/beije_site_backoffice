@@ -11,7 +11,7 @@ function DetailsHeader({ handleBack, isNew, title, onSubmit }) {
         <h2>
           {
             isNew ?
-              `nuovo ${title}`
+              `Nuovo ${title}`
               : `Modifica ${title}`
           }
         </h2>
