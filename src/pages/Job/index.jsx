@@ -74,14 +74,14 @@ const Job = ({ isNew }) => {
   useEffect(() => {
     const { response } = getJobResult ?? { response: null };
     if (response) {
-      setState(response);
+      setState({ ...response, lang: state.lang });
     }
 
     const save = saveJobResult ?? { response: null };
     if (save.response) {
       if (!isQuickSave) navigateWithNotify(navigate, '/jobs');
       if (isQuickSave) notify("success", toastId);
-      setState(save.response);
+      setState({...save.response, lang: state.lang});
     }
     if (save.error) notify('error', toastId, save.error.data.message);
 
@@ -92,7 +92,8 @@ const Job = ({ isNew }) => {
     }
     if (disableOrActive.error) notify('error', toastId);
 
-  }, [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error, state.lang]);
+  },
+    [getJobResult?.response, saveJobResult?.response, saveJobResult?.error, disableOrActiveResult?.response, disableOrActiveResult?.error, state.lang]);
 
   const handleSubmitJob = (e) => {  // Controllo se è un salvataggio rapido o no e setto la variabile isQuickSave. Dopo di che faccio la chiamata api
     e.preventDefault();
@@ -117,6 +118,7 @@ const Job = ({ isNew }) => {
 
   return (
     <div className={styles["container"]}>
+      {console.log(state.lang)}
       <form>
         <DetailsHeader
           handleBack={handleBack}
@@ -138,7 +140,7 @@ const Job = ({ isNew }) => {
                     value={state.lang === "it" ? state.title_it : state.title_en}
                     onChange={(e) => {
                       if (state.lang === "it") setState((p) => ({ ...p, title_it: e.target.value }));
-                      setState((p) => ({ ...p, title_en: e.target.value }))
+                      else setState((p) => ({ ...p, title_en: e.target.value }));
                     }}
                   />
 
@@ -169,18 +171,19 @@ const Job = ({ isNew }) => {
                     onChange={(mode) => setState((p) => ({ ...p, mode }))}
                   />
 
-                  <Select
-                    style={{ maxWidth: "none", marginTop: "2rem" }}
-                    value={state.lang}
-                    label="Lingua"
-                    options={[
-                      { value: "it", label: "Italiano" },
-                      { value: "eng", label: "Inglese" },
-                    ]}
-                    onChange={(lang) => {
-                      setState((p) => ({ ...p, lang }))
-                    }}
-                  />
+                  {!isNew &&
+                    <Select
+                      style={{ maxWidth: "none", marginTop: "2rem" }}
+                      value={state.lang}
+                      label="Lingua"
+                      options={[
+                        { value: "it", label: "Italiano" },
+                        { value: "eng", label: "Inglese" },
+                      ]}
+                      onChange={(lang) => {
+                        setState((p) => ({ ...p, lang }))
+                      }}
+                    />}
 
                   <Checkbox
                     style={{ marginTop: "2rem" }}
@@ -196,7 +199,7 @@ const Job = ({ isNew }) => {
                 value={state.lang === "it" ? state.description_it : state.description_en}
                 onChange={(e) => {
                   if (state.lang === "it") setState((p) => ({ ...p, description_it: e.target.value }));
-                  setState((p) => ({ ...p, description_en: e.target.value }))
+                  else setState((p) => ({ ...p, description_en: e.target.value }));
                 }}
               />
               <div className="fxc">
@@ -222,7 +225,7 @@ const Job = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
       {
-        saveJobResult?.error !== null || saveJobResult.response && <ToastContainer />
+        saveJobResult?.error !== null || (isQuickSave && saveJobResult.response) && <ToastContainer />
       }
 
     </div>

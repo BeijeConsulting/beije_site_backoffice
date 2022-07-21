@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { checkIsQuickSave, navigateWithNotify } from "../../utils/utils";
+import { checkIsQuickSave, getResponse, navigateWithNotify } from "../../utils/utils";
 
 
 // components
@@ -73,10 +73,6 @@ const CaseStudy = ({ isNew }) => {
     `/admin/casestudy/re_activate/${idToUse}` : `/admin/casestudy/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
-
-  function getResponse(apiCall) {
-    return apiCall ?? { response: null }
-  }
 
   useEffect(() => {
     if (!isNew) { getCaseStudy() }
