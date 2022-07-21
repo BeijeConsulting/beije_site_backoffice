@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { checkIsQuickSave, navigateWithNotify, permalink } from "../../utils/utils";
+import { checkIsQuickSave, getResponse, navigateWithNotify, permalink } from "../../utils/utils";
 
 // components
 import Input from "../../components/Input";
@@ -96,26 +96,22 @@ const Blog = ({ isNew }) => {
     let newArray = state.images.filter((image) => !image.startsWith("https"));
 
     if (newArray.length > 0) {
-
+      console.log("primo if");
       newArray.map(async (img) => {
         await postImg({ ...imageState, file_base64: img, blogId: isNew ? id : idToUse });
-        // newState.images.shift();
       })
-      if(!isQuickSave) navigateWithNotify(navigate, "/blogs");
+      if (!isQuickSave) navigateWithNotify(navigate, "/blogs");
     }
-
     if (!state.cover_img.startsWith("https")) {
-      // if(!state.cover_img.startsWith("https")) return;
-      await postImg({
+
+      if(state.cover_img.startsWith("data")) await postImg({
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
         type: "cover_img"
       });
-      // if(!isQuickSave) navigateWithNotify(navigate, "/blogs");
-      if(!isQuickSave) navigate("/blogs", {state: {toast: true}});
+      if (!isQuickSave) navigateWithNotify(navigate, "/blogs");;
     }
-    navigateWithNotify(navigate, "/blogs");
   }
 
   useEffect(() => {
@@ -130,32 +126,30 @@ const Blog = ({ isNew }) => {
 
     const newState = Object.assign({}, state);
 
-    const { response } = getBlogResult ?? { response: null };
+    const { response } = getResponse(getBlogResult);
     if (response) setState(response);
 
-    const responsePermalink = getBlogWithPermalinkRes ?? { response: null };
+    const responsePermalink = getResponse(getBlogWithPermalinkRes);
     if (responsePermalink.response) {
       id = responsePermalink.response.id
       setState(responsePermalink.response);
     }
 
-    const save = saveBlogResult ?? { response: null };
-
+    const save = getResponse(saveBlogResult);
     if (save.response) {
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
 
       checkImages(save.response.id);
 
-      // if (!isQuickSave) navigateWithNotify(navigate, '/blogs');
-      if (isQuickSave) {
-        notify("success", toastId)
-        setState(save.response);
-      }
+      if (isQuickSave) notify("success", toastId);
+
+      setState(save.response);
+
     };
 
     if (save.error) notify(`error`, toastId, save.error.message);
 
-    const uploadImg = uploadImgRes ?? { response: null };
+    const uploadImg = getResponse(uploadImgRes);
 
     if (newState.images.length === 0 && uploadImg.response) navigateWithNotify(navigate, '/blogs');
 
@@ -163,14 +157,14 @@ const Blog = ({ isNew }) => {
       notify('error', toastId, uploadImg.error.message);
     }
 
-    const disableOrActive = disableOrActiveResult ?? { response: null };
+    const disableOrActive = getResponse(disableOrActiveResult);
 
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
     }
     if (disableOrActive.error) notify('error', toastId, disableOrActive.error.message);
 
-    const createEngBLog = engResult ?? { response: null };
+    const createEngBLog = getResponse(engResult);
     if (createEngBLog.response) {
       id = engResult.response.id;
       setState(engResult.response);
@@ -181,7 +175,7 @@ const Blog = ({ isNew }) => {
       clearTimeout(timeout)
     };
 
-  }, [getBlogResult?.response, saveBlogResult?.response, saveBlogResult?.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error, engResult.response]);
+  }, [getBlogResult.response, saveBlogResult.response, saveBlogResult.error, getBlogWithPermalinkRes.response, disableOrActiveResult.response, disableOrActiveResult.error, engResult.response]);
 
   const handleSubmitPost = useCallback((e) => {
     e.preventDefault();
@@ -228,7 +222,7 @@ const Blog = ({ isNew }) => {
   }
 
   const SetImages = (images) => {
-    setState({...state, images})
+    setState({ ...state, images })
   }
 
   return (
@@ -292,6 +286,8 @@ const Blog = ({ isNew }) => {
 
                 <CardContainerMemo head={"Cover image"}>
                   <SingleImageInput
+                    idProp={idToUse}
+                    type="cover_img"
                     aspectRatio="1"
                     style={{ maxWidth: "100%" }}
                     label=""
@@ -320,7 +316,7 @@ const Blog = ({ isNew }) => {
 
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
-                  <MassiveImageLoader states={[state.images, SetImages]} />
+                  <MassiveImageLoader states={[state.images, SetImages]} idDelete={idToUse} />
                 </div>
               </CardContainerMemo>
 
@@ -343,8 +339,10 @@ const Blog = ({ isNew }) => {
       >
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
+
       {
-        saveBlogResult?.error !== null || saveBlogResult.response && <ToastContainer />
+        saveBlogResult.error !== null || (isQuickSave && saveBlogResult.response) &&
+        <ToastContainer />
       }
     </div>
   );
