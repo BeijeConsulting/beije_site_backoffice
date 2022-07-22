@@ -39,6 +39,7 @@ const Blogs = () => {
     if (location.state !== null) {
       notify("success", toastId);
     }
+
   }, [state.lang, state.active]);
 
 
@@ -78,7 +79,7 @@ const Blogs = () => {
                 options={[
                   { value: "all", label: "Tutti" },
                   { value: "yes", label: "Attivi" },
-                  { value: "no", label: "Non attivi" }
+                  // { value: "no", label: "Non attivi" }
                 ]}
                 onChange={(active) => {
                   console.log(active);

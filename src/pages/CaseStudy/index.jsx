@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
-import { checkIsQuickSave, getResponse, navigateWithNotify } from "../../utils/utils";
+import { checkIsQuickSave, getResponse, navigateWithNotify, permalink } from "../../utils/utils";
 
 
 // components
@@ -34,7 +34,7 @@ import styles from "./styles.module.css";
 const emptyState = {
   title: "",
   subtitle: "",
-  language: "",
+  language: "it",
   description: "",
   logo: "",
   backgroundColor: "",
@@ -121,8 +121,9 @@ const CaseStudy = ({ isNew }) => {
       {
         ...state,
         createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
-        translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink,
-        logo: null
+        permalink: state.permalink === "" ? permalink(state.title) : state.permalink,
+        translateCasePermalink: null
+        // translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink,
       });
   }
 
@@ -188,7 +189,6 @@ const CaseStudy = ({ isNew }) => {
                   <SingleImageInput
                     aspectRatio="1"
                     style={{ maxWidth: "200px", maxHeight: "200px" }}
-                    label="Logo"
                     value={state.logo}
                     onChange={(logo) => {
                       setState((p) => ({ ...p, logo }));
@@ -248,7 +248,7 @@ const CaseStudy = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
 
-      { saveCaseStudy.error !== null || saveCaseStudyResult.response  &&
+      { saveCaseStudy.error !== null || (isQuickSave && saveCaseStudyResult.response)  &&
         <ToastContainer />
       }
     </div>
