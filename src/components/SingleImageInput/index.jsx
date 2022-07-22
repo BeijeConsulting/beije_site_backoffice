@@ -97,8 +97,7 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
                 name: value,
                 type: null,
                 description: value,
-                blogId: idProp,
-                eventId: null
+                [type]: idProp,
               }, "delete");
 
               onChange("", true);

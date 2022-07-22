@@ -126,15 +126,16 @@ const Blog = ({ isNew }) => {
     if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
   }
 
-  useEffect(() => {
+  const mountEffect = () => {
     if (!isNew) {
       getBlog()
       // getHashtags()
     }
+    setLoading(false);
     id = params.id;
-  }, []);
+  }
 
-  useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
+  const updateEffect = () => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
     const { response } = getResponse(getBlogResult);
     if (response) {
       setLoading(false);
@@ -177,8 +178,11 @@ const Blog = ({ isNew }) => {
       isImage = false;
       clearTimeout(timeout);
     };
+  }
 
-  }, [
+  useEffect(mountEffect, []); // recupera i dati nel casso di una put e setta a false il loader; entra una sola volta 
+
+  useEffect(updateEffect, [
     getBlogResult.response, saveBlogResult.response, saveBlogResult.error,
     getBlogWithPermalinkRes.response, disableOrActiveResult.response,
     disableOrActiveResult.error, engResult.response
@@ -197,7 +201,7 @@ const Blog = ({ isNew }) => {
         images: [],
         permalink: state.permalink === "" ? permalink(state.title) : state.permalink,
         translate_blog_permalink: isNew ? null : state.translate_blog_permalink,
-        type: isNew ? "blog" : null
+        type: isNew ? "blog" : null //cambiare valore in event
       });
 
   }, [state]);
@@ -235,7 +239,8 @@ const Blog = ({ isNew }) => {
   return (
     <div className={styles["container-bg"]}>
       <form>
-        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
+        {/* dovrai modificare il title di DetailsHeader */}
+        <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} /> 
 
         {loading ? <Loader isImage={isImage} /> :
           (
@@ -324,7 +329,8 @@ const Blog = ({ isNew }) => {
 
                   <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                   >
-                    <MassiveImageLoader states={[state.images, setImages]} idDelete={idToUse} />
+                    {/* devi cambiare il type da blog id a eventId */}
+                    <MassiveImageLoader states={[state.images, setImages]} idDelete={idToUse} type="blogId" /> 
                   </div>
                 </CardContainerMemo>
 

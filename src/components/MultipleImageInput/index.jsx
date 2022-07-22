@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states, id, savedImage, isBlogMassive }) => {
+const MultipleImageInput = ({ states, id, savedImage, isBlogMassive, type }) => {
 
 
   const [state, setState] = states;
@@ -13,6 +13,7 @@ const MultipleImageInput = ({ states, id, savedImage, isBlogMassive }) => {
 
       <div key={key + img} style={{ padding: "1rem" }}>
         <SingleImageInput
+          type={type}
           isBlogMassive={isBlogMassive}
           noEdit={true}
           aspectRatio="1"

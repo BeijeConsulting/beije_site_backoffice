@@ -5,7 +5,7 @@ import MultipleImageInput from '../MultipleImageInput';
 
 let imageInserted = []
 let isBlogMassive = false
-export default function MassiveImageLoader({ states, idDelete }) {
+export default function MassiveImageLoader({ states, idDelete, type }) {
     const [state, setState] = states;
     const id = useId();
 
@@ -79,6 +79,7 @@ export default function MassiveImageLoader({ states, idDelete }) {
                 </div>
                 <div className={styles['images-container']}>
                     <MultipleImageInput
+                        type={type}
                         isBlogMassive={isBlogMassive}
                         id={idDelete}
                         savedImage={imageInserted}
