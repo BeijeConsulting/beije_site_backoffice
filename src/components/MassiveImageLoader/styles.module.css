@@ -7,7 +7,7 @@
   gap: 2rem;
   max-width: 400px;
   width: 250px;
-  padding: 2rem;
+  padding: 1.5rem;
   border: 2px dashed var(--grey-500);
 }
 
