@@ -226,7 +226,7 @@ const Blog = ({ isNew }) => {
   }
 
   const SetImages = (images) => {
-    setState({ ...state, images: [...images] })
+    setState({ ...state, images: images })
   }
   return (
     <div className={styles["container-bg"]}>

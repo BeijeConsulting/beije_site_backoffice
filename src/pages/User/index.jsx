@@ -23,7 +23,7 @@ import SingleImageInput from "../../components/SingleImageInput";
 import Modal from "../../components/Modal/Modal";
 import Message from "../../components/Message";
 import styles from "./styles.module.css";
-
+import Loader from "../../components/Loader";
 import DetailsHeader from "../../components/DetailsHeader";
 import FieldsetBeije from "../../components/FieldsetBeije";
 import CardContainerMemo from "../../components/CardContainer";
@@ -102,41 +102,42 @@ const User = ({ isNew }) => {
   }
 
   return (
-    <div className={styles["container"]}>
-      <form>
-        <DetailsHeader
-          handleBack={handleBack}
-          onSubmit={handleSubmitUser}
-          isNew={isNew}
-          title={isNew ? "Utente" : `${getUserResult.response?.firstName} ${getUserResult.response?.lastName}`} />
+    getUserResult?.response ?
+      <div className={styles["container"]}>
+        <form>
+          <DetailsHeader
+            handleBack={handleBack}
+            onSubmit={handleSubmitUser}
+            isNew={isNew}
+            title={isNew ? "Utente" : `${getUserResult.response?.firstName} ${getUserResult.response?.lastName}`} />
 
-        {(isNew || getUserResult.response) && (
-          <>
-            <FieldsetBeije>
-              <div className={styles["inputs-container"]}>
-                <CardContainerMemo>
-                  <div className={styles["images"]}>
-                    <SingleImageInput
-                      aspectRatio="1"
-                      style={{ maxWidth: "400px" }}
-                      label="Immagine profilo"
-                      value={state.picImage}
-                      onChange={(picImage) => {
-                        setState((p) => {
-                          let newState = { ...p, picImage };
-                          /*  if (picImage) newState.picImageThumbnail = picImage; */
-                          //Rimossa clonazione su thumbnail in data 14/07/2022
-                          return newState;
-                        });
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      {/*  <SingleImageInput
+          {(isNew || getUserResult.response) && (
+            <>
+              <FieldsetBeije>
+                <div className={styles["inputs-container"]}>
+                  <CardContainerMemo>
+                    <div className={styles["images"]}>
+                      <SingleImageInput
+                        aspectRatio="1"
+                        style={{ maxWidth: "400px" }}
+                        label="Immagine profilo"
+                        value={state.picImage}
+                        onChange={(picImage) => {
+                          setState((p) => {
+                            let newState = { ...p, picImage };
+                            /*  if (picImage) newState.picImageThumbnail = picImage; */
+                            //Rimossa clonazione su thumbnail in data 14/07/2022
+                            return newState;
+                          });
+                        }}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        {/*  <SingleImageInput
                   aspectRatio="1"
                   style={{ maxWidth: "200px" }}
                   label="Thumbnail"
@@ -146,94 +147,98 @@ const User = ({ isNew }) => {
                   }}
                 /> */}
 
+                      </div>
                     </div>
-                  </div>
-                </CardContainerMemo>
-                <div className={styles["container"]}>
-                  <CardContainerMemo head={"Input"}>
-                    <Input
-                      style={{ width: "100%", marginTop: 20 }}
-                      placeholder="Nome"
-                      name="firstName"
-                      value={state.firstName}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, firstName: e.target.value }))
-                      }
-                    />
-                    <Input
-                      style={{ width: "100%", marginTop: 20 }}
-                      placeholder="Cognome"
-                      name="lastName"
-                      value={state.lastName}
-                      onChange={(e) =>
-                        setState((p) => ({ ...p, lastName: e.target.value }))
-                      }
-                    />
-
-
-                    <DatePicker
-                      placeholder="Data di assunzione"
-                      value={state.hireDate}
-                      onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
-                    />
-                    <Select
-                      style={{ maxWidth: "none", marginTop: "2rem" }}
-                      value={state.role}
-                      label="Ruolo"
-                      options={[
-                        { value: "frontend", label: "Frontend" },
-                        { value: "backend", label: "Backend" },
-                        { value: "fullstack", label: "Fullstack" },
-                        { value: "hr", label: "HR" },
-                        { value: "marketing", label: "Marketing" },
-                        { value: "admin", label: "Admin" },
-                      ]}
-                      onChange={(role) => setState((p) => ({ ...p, role }))}
-                    />
-                    <div style={{ marginTop: "auto" }}>
-                      <Checkbox
-                        checked={state.picOnSite}
-                        onChange={(e) => {
-                          setState((p) => ({ ...p, picOnSite: e.target.checked }));
-                        }}
-                        label="Mostra sul sito: "
-                      />
-                    </div>
-
-
-                    {isNew ? "" : <button className="primary-button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShouldShowModal(true)
-                      }}>Disabilita</button>}
                   </CardContainerMemo>
-                </div>
-              </div>
-            </FieldsetBeije>
-          </>
-        )}
-      </form>
-      <Modal
-        shouldShow={shouldShowModal}
-        goBack={goBack}
-        path={"/community"}
-        actions={{
-          save: () => { saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
-          disable: () => { disableUser() }
-        }}
-        setModal={setShouldShowModal}
-        setGoBack={setGoBack}
+                  <div className={styles["container"]}>
+                    <CardContainerMemo head={"Input"}>
+                      <Input
+                        style={{ width: "100%", marginTop: 20 }}
+                        placeholder="Nome"
+                        name="firstName"
+                        value={state.firstName}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, firstName: e.target.value }))
+                        }
+                      />
+                      <Input
+                        style={{ width: "100%", marginTop: 20, marginBottom: 20 }}
+                        placeholder="Cognome"
+                        name="lastName"
+                        value={state.lastName}
+                        onChange={(e) =>
+                          setState((p) => ({ ...p, lastName: e.target.value }))
+                        }
+                      />
 
-      >
-        <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
-      </Modal>
-      {
-        saveUserResult?.error !== null && <ToastContainer />
-      }
-      {
-        disableUserResult?.response && <ToastContainer />
-      }
-    </div >
+
+                      <DatePicker
+                        placeholder="Data di assunzione"
+                        value={state.hireDate}
+                        onChange={(hireDate) => setState((p) => ({ ...p, hireDate }))}
+                      />
+                      <Select
+                        style={{ maxWidth: "none", marginTop: "2rem" }}
+                        value={state.role}
+                        label="Ruolo"
+                        options={[
+                          { value: "frontend", label: "Frontend" },
+                          { value: "backend", label: "Backend" },
+                          { value: "fullstack", label: "Fullstack" },
+                          { value: "hr", label: "HR" },
+                          { value: "marketing", label: "Marketing" },
+                          { value: "admin", label: "Admin" },
+                        ]}
+                        onChange={(role) => setState((p) => ({ ...p, role }))}
+                      />
+                      <div style={{ marginTop: "auto" }}>
+                        <Checkbox
+                          style={{ width: "100%", marginTop: 20, marginBottom: 20 }}
+                          checked={state.picOnSite}
+                          onChange={(e) => {
+                            setState((p) => ({ ...p, picOnSite: e.target.checked }));
+                          }}
+                          label="Mostra sul sito: "
+                        />
+
+
+
+                        {isNew ? "" : <button className="primary-button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShouldShowModal(true)
+                          }}>Disabilita</button>}
+                      </div>
+                    </CardContainerMemo>
+                  </div>
+                </div>
+              </FieldsetBeije>
+            </>
+          )}
+        </form>
+        <Modal
+          shouldShow={shouldShowModal}
+          goBack={goBack}
+          path={"/community"}
+          actions={{
+            save: () => { saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
+            disable: () => { disableUser() }
+          }}
+          setModal={setShouldShowModal}
+          setGoBack={setGoBack}
+
+        >
+          <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
+        </Modal>
+        {
+          saveUserResult?.error !== null && <ToastContainer />
+        }
+        {
+          disableUserResult?.response && <ToastContainer />
+        }
+      </div >
+      :
+      <Loader />
   );
 };
 
