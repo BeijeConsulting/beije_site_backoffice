@@ -27,6 +27,7 @@ import Loader from "../../components/Loader";
 import DetailsHeader from "../../components/DetailsHeader";
 import FieldsetBeije from "../../components/FieldsetBeije";
 import CardContainerMemo from "../../components/CardContainer";
+import SaveContainerMemo from "../../components/SaveContainer";
 
 const emptyState = {
   firstName: "",
@@ -208,6 +209,7 @@ const User = ({ isNew }) => {
                             e.preventDefault();
                             setShouldShowModal(true)
                           }}>Disabilita</button>}
+                        <SaveContainerMemo onSubmit={handleSubmitUser} isNew={isNew} />
                       </div>
                     </CardContainerMemo>
                   </div>
@@ -221,7 +223,7 @@ const User = ({ isNew }) => {
           goBack={goBack}
           path={"/community"}
           actions={{
-            save: () => { saveUser({ ...state, picImage: null, picImageThumbnail: null, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
+            save: () => { saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
             disable: () => { disableUser() }
           }}
           setModal={setShouldShowModal}

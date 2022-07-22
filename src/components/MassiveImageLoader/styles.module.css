@@ -58,6 +58,7 @@
   position: relative;
   z-index: 2;
   margin-top: 5rem;
+  align-items: center;
 }
 
 .actions-container input:focus ~ .upload-btn {

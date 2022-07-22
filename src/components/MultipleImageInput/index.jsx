@@ -9,7 +9,7 @@ const MultipleImageInput = ({ states, id, savedImage, isBlogMassive, type }) => 
 
     return (
 
-      <div key={key + img} style={{ padding: "1rem" }}>
+      <div key={key + img} style={{ padding: " 0 1rem" }}>
         <SingleImageInput
           type={type}
           isBlogMassive={isBlogMassive}

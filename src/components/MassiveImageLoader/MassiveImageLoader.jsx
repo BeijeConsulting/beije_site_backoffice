@@ -57,7 +57,7 @@ export default function MassiveImageLoader({ states, idDelete, type }) {
                         }}
                     >
                         <p className={styles["info-text"]}>
-                            Carica un'immagine con il pulsante qui sotto o trascinandola nell'area
+                            Carica una o piu'immagini con il pulsante qui sotto o trascinandola nell'area
                             tratteggiata.
                         </p>
                         <input
