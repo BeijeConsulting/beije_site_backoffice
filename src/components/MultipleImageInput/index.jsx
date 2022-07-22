@@ -1,8 +1,6 @@
-import { useEffect, useRef } from "react";
 import SingleImageInput from "../SingleImageInput";
 
 const MultipleImageInput = ({ states, id, savedImage, isBlogMassive, type }) => {
-
 
   const [state, setState] = states;
 
@@ -18,7 +16,6 @@ const MultipleImageInput = ({ states, id, savedImage, isBlogMassive, type }) => 
           noEdit={true}
           aspectRatio="1"
           style={{ maxWidth: "200px" }}
-          label={"image" + (key + 1)}
           value={state[key]}
           onChange={(image, isRemoved = false) => {
             const newState = state
