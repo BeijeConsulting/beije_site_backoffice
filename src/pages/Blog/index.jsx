@@ -112,7 +112,7 @@ const Blog = ({ isNew }) => {
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
         type: "cover_img"
-      }, "post")
+      }, "post").catch(err => notify("error", toastId, err.message))
     }
 
     if (res && isQuickSave) {
