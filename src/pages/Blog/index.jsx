@@ -36,7 +36,7 @@ const emptyState = {
   subtitle: "",
   language: "it",
   description: "",
-  type: "blog",
+  type: "blog", //qui deve essere event
   images: [],
   author: "",
   create_datetime: format(Date.now(), "yyyy-MM-dd"),
@@ -68,6 +68,7 @@ const Blog = ({ isNew }) => {
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [goBack, setGoBack] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -96,12 +97,12 @@ const Blog = ({ isNew }) => {
     let res;
     let newArray = state.images.filter((image) => !image.startsWith("https"));
 
-    if (newArray.length === 0 && state.cover_img.startsWith("https")) return;
+    if (newArray.length === 0 && state.cover_img.startsWith("https")) setLoading(false);
 
     if (newArray.length > 0) {
       res = await Promise.all(newArray.map((img) => {
-        return imagesApi("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse }, "post")
-      }));
+        return imagesApi("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse }, "post") //invece che blogId qua passagli eventId
+      })).catch(err => notify("error", toastId, err.message))
     }
 
     if (state.cover_img.startsWith("data")) {
@@ -113,7 +114,13 @@ const Blog = ({ isNew }) => {
       }, "post")
     }
 
-    if (res && isQuickSave) getBlog();
+    if (res && isQuickSave) {
+      timeout = setTimeout(() => {
+        getBlog();
+        notify("success", toastId);
+        setLoading(false)
+      }, 1000);
+    }
 
     if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
   }
@@ -127,10 +134,11 @@ const Blog = ({ isNew }) => {
   }, []);
 
   useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
-
     const { response } = getResponse(getBlogResult);
-    if (response) setState(response);
-
+    if (response) {
+      setLoading(false);
+      setState(response);
+    }
 
     const responsePermalink = getResponse(getBlogWithPermalinkRes);
     if (responsePermalink.response) {
@@ -140,12 +148,12 @@ const Blog = ({ isNew }) => {
 
     const save = getResponse(saveBlogResult);
     if (save.response) {
+
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
 
+      setLoading(true);
+
       checkImages(save.response.id);
-
-      if (isQuickSave) notify("success", toastId);
-
     };
 
     if (save.error) notify(`error`, toastId, save.error.message);
@@ -201,7 +209,7 @@ const Blog = ({ isNew }) => {
       images: [],
       permalink: state.permalink,
       translate_blog_permalink: state.permalink,
-      type: "blog",
+      type: "blog", //event qui
       language: "eng",
     });
 
@@ -218,17 +226,18 @@ const Blog = ({ isNew }) => {
     navigate("/blogs")
   }
 
-  const SetImages = (images) => {
+  const setImages = (images) => {
     setState({ ...state, images: images })
   }
 
   return (
     <div className={styles["container-bg"]}>
 
+      {console.log(state)}
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
-        {getBlogResult.loading ? <Loader /> :
+        {loading ? <Loader /> :
           (
             <>
               <FieldsetBeije>
