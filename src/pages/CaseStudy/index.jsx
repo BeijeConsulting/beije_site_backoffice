@@ -51,7 +51,7 @@ const CaseStudy = ({ isNew }) => {
 
   const params = useParams();
   const toastId = useId();
-  const idToUse = id ? id : params.id;
+  const idToUse = id ? id : params.id; // id da usare come parametro per chiamate o props componenti
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
@@ -60,7 +60,7 @@ const CaseStudy = ({ isNew }) => {
 
   const navigate = useNavigate();
 
-  // api
+  //* api
   const [getCaseStudyResult, getCaseStudy] = useService(`/admin/casestudy/${idToUse}`);
 
   const [saveCaseStudyResult, saveCaseStudy] = useService(isNew ? "/admin/casestudy" : `/admin/casestudy/${idToUse}`, {
@@ -73,6 +73,7 @@ const CaseStudy = ({ isNew }) => {
     `/admin/casestudy/re_activate/${idToUse}` : `/admin/casestudy/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
+  // * fine api
 
   useEffect(() => {
     if (!isNew) { getCaseStudy() }
@@ -122,24 +123,24 @@ const CaseStudy = ({ isNew }) => {
         ...state,
         createDate: isNew ? todayWithTime() : format(state.createDate, "yyyy-MM-dd'T'HH:mm"),
         permalink: state.permalink === "" ? permalink(state.title) : state.permalink,
-        translateCasePermalink: null
-        // translateCasePermalink: isNew ? state.permalink : state.translateCasePermalink,
+        translateCasePermalink: null,
+        logo: isNew ? null : state.logo
       });
   }
 
   const handleSetLanguage = (language) => {
     !isNew && getCaseStudyWithLink();
-    setState((p) => ({ ...p, language }))
+    setState((p) => ({ ...p, language }));
   }
 
 
   const handleBack = () => {
     if (getCaseStudyResult?.response !== state) {
-      setGoBack(true)
-      setShouldShowModal(true)
+      setGoBack(true);
+      setShouldShowModal(true);
       return
     }
-    navigate("/case-studies")
+    navigate("/case-studies");
   }
 
   return (
@@ -248,7 +249,7 @@ const CaseStudy = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
 
-      { saveCaseStudy.error !== null || (isQuickSave && saveCaseStudyResult.response)  &&
+      { saveCaseStudyResult.error !== null || saveCaseStudyResult.response  &&
         <ToastContainer />
       }
     </div>
