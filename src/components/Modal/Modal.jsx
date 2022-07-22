@@ -6,13 +6,14 @@ const Modal = ({ children, goBack, path, shouldShow, setModal, actions, setGoBac
 	const navigate = useNavigate();
 
 	const onRequestModal = (action) => {
-
+		console.log('arrivo qua')
 		setModal(false);
 		switch (action) {
 			case "yes":
 				if (goBack) {
 					actions?.save()
 					setGoBack(false)
+					break;
 				}
 				actions?.disable()
 				break;

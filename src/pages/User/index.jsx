@@ -146,7 +146,6 @@ const User = ({ isNew }) => {
                     setState((p) => ({ ...p, picImageThumbnail }));
                   }}
                 /> */}
-
                       </div>
                     </div>
                   </CardContainerMemo>
