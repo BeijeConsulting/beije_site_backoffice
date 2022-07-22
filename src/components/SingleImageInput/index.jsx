@@ -18,7 +18,7 @@ function readFile(file) {
 const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew, type, noEdit }) => {
   const id = useId();
 
-  const [deleteImgResult, deleteImg] = useService(`/admin/blog/delete_cover/${idProp}`, {
+  const [deleteImgResult, deleteImg] = useService(`/admin/${type === "blogId" ? "blog" : "event"}/delete_cover/${idProp}`, {
     method: "delete"
   })
 
