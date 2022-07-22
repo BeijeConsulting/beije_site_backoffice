@@ -1,19 +1,25 @@
-import React, { useId, useState, useEffect } from 'react'
+import { useEffect, useId, useState } from "react";
+import locale from "date-fns/locale/it";
+import { format } from "date-fns/esm";
 
 // router
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // hooks & components
 import useService from "../../hooks/useService";
 import Table from "../../components/Table";
-import Loader from '../../components/Loader';
-import { notify } from '../../utils/toast';
+import { notify, ToastContainer } from "../../utils/toast";
+import Loader from "../../components/Loader";
+import Select from "../../components/Select";
+import FieldsetBeije from "../../components/FieldsetBeije";
+import CardContainerMemo from "../../components/CardContainer";
 
 // style
 import styles from "./styles.module.css";
-import Select from "../../components/Select";
+
 const initState = {
     lang: "it",
+    active: "yes"
 }
 
 const Events = () => {
@@ -21,69 +27,96 @@ const Events = () => {
     const [state, setState] = useState(initState);
 
     const [{ response }, getEvents] =
-        useService(`/admin/events/${state.lang}/all`)
+        useService(`/admin/events/${state.lang}/${state.active}`);
 
     const toastId = useId();
+
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
         getEvents();
         if (location.state !== null) {
-            notify("success", toastId)
+            notify("success", toastId);
         }
-    }, [state.lang])
+    }, [state.lang, state.active]);
+
 
 
     return (
         response ?
             <div className={styles["container"]}>
-                {console.log(response)}
                 <div className={styles["wrapper"]}>
+
                     <div className={styles["header"]}>
                         <h1>Eventi</h1>
-                        <Select
-                            value={state.lang}
-                            label="Lingua"
-                            options={[
-                                { value: "it", label: "Italiano" },
-                                { value: "eng", label: "Inglese" },
-                            ]}
-                            onChange={(lang) => {
-                                console.log(lang);
-                                setState((p) => ({ ...p, lang }))
-                            }}
-                        />
+
+
+
                         <Link to="new" className="primary-button">
                             + Nuovo Evento
                         </Link>
+
                     </div>
-                    <Table
-                        headers={[
-                            "ID",
-                            "Titolo",
-                            "Descrizione"
-                        ]}
-                        records={response.map(
-                            ({
-                                id,
-                                title,
-                                description
-                            }) => ({
-                                id,
-                                title,
-                                description
-                            })
-                        )}
-                        actionLabel="Modifica"
-                        onAction={(record) => navigate(record.id.toString())}
-                        formatDimension={300}
-                    />
+                    <FieldsetBeije>
+                        <CardContainerMemo head="Filtri" style={{ flexDirection: "row", marginBottom: "6rem", alignItems: "end" }}>
+                            <Select
+                                value={state.lang}
+                                label="Lingua"
+                                options={[
+                                    { value: "it", label: "Italiano" },
+                                    { value: "eng", label: "Inglese" },
+                                ]}
+                                onChange={(lang) => {
+                                    setState((p) => ({ ...p, lang }))
+                                }}
+                            />
+
+                            <Select
+                                value={state.active}
+                                label="Attivi"
+                                options={[
+                                    { value: "all", label: "Tutti" },
+                                    { value: "yes", label: "Attivi" },
+                                    { value: "no", label: "Non attivi" }
+                                ]}
+                                onChange={(active) => {
+                                    console.log(active);
+                                    setState((p) => ({ ...p, active }))
+                                }}
+                            />
+                        </CardContainerMemo>
+                        <Table
+                            headers={[
+                                "ID",
+                                "Titolo",
+                                "Autore",
+                                "Data di creazione",
+                            ]}
+                            records={response.map(
+                                ({
+                                    id,
+                                    title,
+                                    author,
+                                    create_datetime,
+                                }) => ({
+                                    id,
+                                    title,
+                                    author,
+                                    create_datetime: format(create_datetime, "dd MMMM yyyy", { locale }),
+                                })
+                            )}
+                            actionLabel="Modifica"
+                            onAction={(record) => navigate(record.id.toString())}
+                            formatDimension={250}
+                        />
+                    </FieldsetBeije>
                 </div>
-            </div >
+                <ToastContainer />
+            </div>
             :
             <Loader />
-    )
-}
+    );
+};
 
-export default Events
+export default Events;
