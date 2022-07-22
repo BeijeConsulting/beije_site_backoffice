@@ -117,7 +117,8 @@ const User = ({ isNew }) => {
             <>
               <FieldsetBeije>
                 <div className={styles["inputs-container"]}>
-                  <CardContainerMemo>
+                  <CardContainerMemo
+                    style={{ justifyContent: 'center' }}>
                     <div className={styles["images"]}>
                       <SingleImageInput
                         aspectRatio="1"
@@ -209,12 +210,13 @@ const User = ({ isNew }) => {
                             e.preventDefault();
                             setShouldShowModal(true)
                           }}>Disabilita</button>}
-                        <SaveContainerMemo onSubmit={handleSubmitUser} isNew={isNew} />
+
                       </div>
                     </CardContainerMemo>
                   </div>
                 </div>
               </FieldsetBeije>
+              <SaveContainerMemo onSubmit={handleSubmitUser} isNew={isNew} />
             </>
           )}
         </form>
