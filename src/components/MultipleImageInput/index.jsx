@@ -4,7 +4,6 @@ const MultipleImageInput = ({ states, id, savedImage, isBlogMassive, type }) => 
 
   const [state, setState] = states;
 
-  console.log('test', state)
   const imageList = (img, key) => {
 
     return (

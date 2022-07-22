@@ -298,7 +298,8 @@ const Event = ({ isNew }) => {
                                     <CardContainerMemo head={"Cover image"}>
                                         <SingleImageInput
                                             idProp={idToUse}
-                                            type="cover_img"
+                                            type="eventId"
+                                            isCover
                                             aspectRatio="1"
                                             style={{ maxWidth: "100%" }}
                                             label=""

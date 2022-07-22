@@ -304,7 +304,8 @@ const Blog = ({ isNew }) => {
                   <CardContainerMemo head={"Cover image"}>
                     <SingleImageInput
                       idProp={idToUse}
-                      type="cover_img"
+                      type="blogId"
+                      isCover
                       aspectRatio="1"
                       style={{ maxWidth: "100%" }}
                       label=""

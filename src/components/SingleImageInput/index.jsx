@@ -1,7 +1,11 @@
 import { useEffect, useId } from "react";
-import styles from "./styles.module.css";
+// hooks
 import useService from "../../hooks/useService";
+// axios
 import { imagesApi } from "../../config/axios.config";
+// style
+import styles from "./styles.module.css";
+
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -15,9 +19,9 @@ function readFile(file) {
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew, type, noEdit }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isCover, isNew, type, noEdit }) => {
   const id = useId();
-
+  
   const [deleteImgResult, deleteImg] = useService(`/admin/${type === "blogId" ? "blog" : "event"}/delete_cover/${idProp}`, {
     method: "delete"
   })
@@ -29,6 +33,14 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
   const [deleteImgProfileRes, deleteImgProfile] = useService(`/team/user/delete_img/${idProp}`, {
     method: "put"
   })
+
+  const imageObj = {
+    file_base64: null,
+    name: value,
+    type: null,
+    description: value,
+    [type]: idProp,
+  }
 
   useEffect(() => {
     if (isBlogMassive) {
@@ -97,11 +109,9 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             className={styles["delete-btn"]}
             onClick={(e) => {
               e.preventDefault();
+              if(isCover) deleteImg();
+              
               switch (type) {
-                case "cover_img":
-                  deleteImg();
-                  break;
-                  
                 case "case_study":
                   deleteLogo();
                   break;
@@ -111,19 +121,10 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
                   break;
 
                 default:
-                  !isNew && imagesApi("/admin/site_image/blog/delete", {
-                    file_base64: null,
-                    name: value,
-                    type: null,
-                    description: value,
-                    [type]: idProp,
-                  }, "delete");
+                  (!isNew && !isCover) && imagesApi(`/admin/site_image/${type === "blogId" ? "blog" : "event"}/delete`, imageObj, "delete");
                   break;
               }
-
-
               onChange("", true);
-
             }}
           >
             Elimina
