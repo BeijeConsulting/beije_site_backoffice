@@ -1,16 +1,20 @@
+import { useEffect, useRef } from "react";
 import SingleImageInput from "../SingleImageInput";
 
-const MultipleImageInput = ({ states, id, savedImage }) => {
+const MultipleImageInput = ({ states, id, savedImage, isBlogMassive }) => {
+
 
   const [state, setState] = states;
 
+  console.log('test', state)
   const imageList = (img, key) => {
 
     return (
 
       <div key={key + img} style={{ padding: "1rem" }}>
         <SingleImageInput
-          isBlogMassive={true}
+          isBlogMassive={isBlogMassive}
+          noEdit={true}
           aspectRatio="1"
           style={{ maxWidth: "200px" }}
           label={"image" + (key + 1)}

@@ -4,14 +4,14 @@ import { useId } from "react";
 import MultipleImageInput from '../MultipleImageInput';
 
 let imageInserted = []
-
+let isBlogMassive = false
 export default function MassiveImageLoader({ states, idDelete }) {
     const [state, setState] = states;
     const id = useId();
 
 
     useEffect(() => {
-        return () => { imageInserted = [] }
+        return () => { imageInserted = [], isBlogMassive = false }
     }, [])
 
     const insertMutipleImages = (images) => {
@@ -28,8 +28,9 @@ export default function MassiveImageLoader({ states, idDelete }) {
         imageInserted = [...imageInserted, ...imagesNew.map((image) => {
             return image.name
         })]
-
+        isBlogMassive = true
     }
+
     return (
         <div className={styles['image-loader-container']} >
             <div className={styles["actions-container"]}>
@@ -78,6 +79,7 @@ export default function MassiveImageLoader({ states, idDelete }) {
                 </div>
                 <div className={styles['images-container']}>
                     <MultipleImageInput
+                        isBlogMassive={isBlogMassive}
                         id={idDelete}
                         savedImage={imageInserted}
                         states={states}></MultipleImageInput>

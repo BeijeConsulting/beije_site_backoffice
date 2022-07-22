@@ -11,15 +11,14 @@ function readFile(file) {
     reader.addEventListener("error", () => {
       reject({ error: e.target.result });
     });
-    
     reader.readAsDataURL(file);
   });
 }
 
-const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew, type }) => {
+const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMassive, idProp, isNew, type, noEdit }) => {
   const id = useId();
 
-  const[deleteImgResult, deleteImg] = useService(`/admin/blog/delete_cover/${idProp}`,{
+  const [deleteImgResult, deleteImg] = useService(`/admin/blog/delete_cover/${idProp}`, {
     method: "delete"
   })
 
@@ -72,7 +71,6 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
           accept="image/*"
           onChange={async (e) => {
             if (e.target.files[0].size > 499999) return
-
             const { content, error } = await readFile(e.target.files[0]);
             if (!error) {
               onChange(content);
@@ -82,7 +80,7 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             e.target.value = "";
           }}
         />
-        {!isBlogMassive && <label className={styles["upload-btn"]} htmlFor={id}>
+        {!noEdit && <label className={styles["upload-btn"]} htmlFor={id}>
           <span>{value ? "Modifica" : "Carica"}</span>
         </label>}
 
@@ -92,9 +90,9 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             onClick={(e) => {
               e.preventDefault();
 
-              if(type === "cover_img") deleteImg();
+              if (type === "cover_img") deleteImg();
 
-              else !isNew && imagesApi("/admin/site_image/blog/delete",   {
+              else !isNew && imagesApi("/admin/site_image/blog/delete", {
                 file_base64: null,
                 name: value,
                 type: null,
