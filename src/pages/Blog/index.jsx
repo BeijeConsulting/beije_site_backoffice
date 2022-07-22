@@ -54,7 +54,7 @@ const imageState = {
   blogId: null,
 }
 
-let id = null;
+let id = null; //id per le casistiche con il permalink
 let isQuickSave = false;
 let timeout;
 let isImage = false;
@@ -64,7 +64,7 @@ const Blog = ({ isNew }) => {
   const params = useParams();
   const toastId = useId();
 
-  const idToUse = id ? id : params.id;
+  const idToUse = id ? id : params.id; //id da usare ovunque deve essere passato un id
 
   const [state, setState] = useState(emptyState);
   const [shouldShowModal, setShouldShowModal] = useState(false);
@@ -73,7 +73,7 @@ const Blog = ({ isNew }) => {
 
   const navigate = useNavigate();
 
-  // api
+  //* api
   const [getBlogResult, getBlog] = useService(`/blog/id/${idToUse}`);
 
   // const [hashtagsResult, getHashtags] = useService(`/blog_hashtag/blog/${idToUse}`); Hashtag logic has been suspended  14/07/22
@@ -92,21 +92,22 @@ const Blog = ({ isNew }) => {
     `/admin/blog/re_activate/${idToUse}` : `/admin/blog/delete/${idToUse}`, {
     method: state.disableDate ? "put" : "delete"
   })
+  // * Fine api
 
-  async function checkImages(id) {
+  async function checkImages(id) { //97-128 Fa dei controlli e le chiamate api per il salvataggio di imagini 
     isImage = true;
     let res;
-    let newArray = state.images.filter((image) => !image.startsWith("https"));
+    let newArray = state.images.filter((image) => !image.startsWith("https")); //creo un array con solo i dati da mandare all'api
 
-    if (newArray.length === 0 && state.cover_img.startsWith("https")) setLoading(false);
+    if (newArray.length === 0 && state.cover_img.startsWith("https")) setLoading(false); //caso base
 
-    if (newArray.length > 0) {
+    if (newArray.length > 0) { //103-107 uso Promise.all per fare chiamate in "sync", faccio n chiamate a seconda dell'array
       res = await Promise.all(newArray.map((img) => {
         return imagesApi("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse }, "post") //invece che blogId qua passagli eventId
       })).catch(err => notify("error", toastId, err.message))
     }
 
-    if (state.cover_img.startsWith("data")) {
+    if (state.cover_img.startsWith("data")) { //109-116 chiamata per salvare la cover_img dopo un controllo
       res = await imagesApi("/upload/img", {
         ...imageState,
         file_base64: state.cover_img,
@@ -115,7 +116,7 @@ const Blog = ({ isNew }) => {
       }, "post").catch(err => notify("error", toastId, err.message))
     }
 
-    if (res && isQuickSave) {
+    if (res && isQuickSave) { //118-124 se è andato tutto a buon fine dopo un sec prendo i dati nuovi, mostro popup e loader a false
       timeout = setTimeout(() => {
         getBlog();
         notify("success", toastId);
@@ -123,10 +124,10 @@ const Blog = ({ isNew }) => {
       }, 1000);
     }
 
-    if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
+    if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs"); //navigo nella pagina principale dei blog
   }
 
-  const mountEffect = () => {
+  const mountEffect = () => { //funzione per lo userEffect che fa da mount
     if (!isNew) {
       getBlog()
       // getHashtags()
@@ -135,20 +136,21 @@ const Blog = ({ isNew }) => {
     id = params.id;
   }
 
-  const updateEffect = () => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
-    const { response } = getResponse(getBlogResult);
+  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
+  const updateEffect = () => {  
+    const { response } = getResponse(getBlogResult);  //140-144 se la chiamata va a buon fine salvo i dati nello state e setto loading a false
     if (response) {
       setLoading(false);
       setState(response);
     }
 
-    const responsePermalink = getResponse(getBlogWithPermalinkRes);
+    const responsePermalink = getResponse(getBlogWithPermalinkRes); //146-150 se status 200 mi salvo id e aggiorno lo stato
     if (responsePermalink.response) {
       id = responsePermalink.response.id
       setState(responsePermalink.response);
     }
 
-    const save = getResponse(saveBlogResult);
+    const save = getResponse(saveBlogResult); //152-160 faccio dei controlli e gestisco le chiamate api per le immagini nella func checkImages
     if (save.response) {
 
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
@@ -160,7 +162,7 @@ const Blog = ({ isNew }) => {
 
     if (save.error) notify(`error`, toastId, save.error.message);
 
-    const disableOrActive = getResponse(disableOrActiveResult);
+    const disableOrActive = getResponse(disableOrActiveResult); 
 
     if (disableOrActive.response) {
       navigateWithNotify(navigate, '/blogs');
@@ -173,7 +175,7 @@ const Blog = ({ isNew }) => {
       setState(engResult.response);
     }
 
-    return () => {
+    return () => { //resetto le variabili e pulisco il Timeout
       id = null;
       isImage = false;
       clearTimeout(timeout);
@@ -188,7 +190,7 @@ const Blog = ({ isNew }) => {
     disableOrActiveResult.error, engResult.response
   ]);
 
-  const handleSubmitPost = useCallback((e) => {
+  const handleSubmitPost = useCallback((e) => {  //192-208 controllo se è un salvataggio rapido poi salvo i dati
     e.preventDefault();
 
     isQuickSave = checkIsQuickSave(isQuickSave, e.target?.name);
@@ -206,7 +208,8 @@ const Blog = ({ isNew }) => {
 
   }, [state]);
 
-  const handleSetLanguage = (language) => {
+  //210-221 se non esiste un blog in inglese me lo vado a creare tramite la chiamata api altrimenti recupero solo i valori della lingua opposta
+  const handleSetLanguage = (language) => { 
     (!isNew && language === "eng") && createEngBlog({
       ...state,
       id: null,
@@ -223,7 +226,8 @@ const Blog = ({ isNew }) => {
     setState((p) => ({ ...p, language }))
   }
 
-  const handleBack = () => {
+  const handleBack = () => { //228-235 func per gestire il torna indietro, se ci sono state modifiche non salvate apre una modale
+    if(isNew) navigate("/blogs");
     if (getBlogResult?.response !== state) {
       setGoBack(true);
       setShouldShowModal(true)
