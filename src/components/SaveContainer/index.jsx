@@ -5,10 +5,11 @@ function SaveContainer({ isNew, onSubmit }) {
 
   return (
     <div className={styles["save-container"]}>
-      {/* <button type="submit" className="success-button"
+
+      <button type="submit" className="secondary-button"
         onClick={onSubmit}>
         Salvataggio rapido
-      </button> */}
+      </button>
 
       <button type="submit" className="success-button"
         onClick={onSubmit}>

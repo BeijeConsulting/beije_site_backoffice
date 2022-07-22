@@ -21,7 +21,7 @@ function DetailsHeader({ handleBack, isNew, title, onSubmit }) {
         <button
           name="quickSave"
           type="submit"
-          className="success-button"
+          className="secondary-button"
           onClick={onSubmit}
         >
           Salvataggio rapido
