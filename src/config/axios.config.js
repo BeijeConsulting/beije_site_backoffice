@@ -10,6 +10,12 @@ const instance = axios.create({
   },
 });
 
+export async function imagesApi(resource, imageObj, method) {
+    return await instance(resource, {data: imageObj, method})
+    .then((response)=> response.data)
+    .catch((error)=> error);
+}
+
 function handleSuccess(response) {
   if (response.config.url.includes("signin")) {
     window.localStorage.setItem("tk", response.data.token);
