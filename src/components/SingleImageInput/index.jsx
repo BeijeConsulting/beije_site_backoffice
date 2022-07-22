@@ -1,7 +1,7 @@
 import { useEffect, useId } from "react";
 import styles from "./styles.module.css";
-import axios from 'axios';
 import useService from "../../hooks/useService";
+import { imagesApi } from "../../config/axios.config";
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -94,19 +94,14 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
 
               if(type === "cover_img") deleteImg();
 
-              else !isNew && axios.delete('https://dev-mgmt.beije.it/admin/site_image/blog/delete', {
-                data: {
-                  file_base64: null,
-                  name: value,
-                  type: null,
-                  description: value,
-                  blogId: idProp,
-                  eventId: null
-                },
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem('tk')}`
-                }
-              });
+              else !isNew && imagesApi("/admin/site_image/blog/delete",   {
+                file_base64: null,
+                name: value,
+                type: null,
+                description: value,
+                blogId: idProp,
+                eventId: null
+              }, "delete");
 
               onChange("", true);
 
