@@ -57,6 +57,7 @@ const imageState = {
 let id = null;
 let isQuickSave = false;
 let timeout;
+let isImage = false;
 
 const Blog = ({ isNew }) => {
 
@@ -93,7 +94,7 @@ const Blog = ({ isNew }) => {
   })
 
   async function checkImages(id) {
-
+    isImage = true;
     let res;
     let newArray = state.images.filter((image) => !image.startsWith("https"));
 
@@ -173,6 +174,7 @@ const Blog = ({ isNew }) => {
 
     return () => {
       id = null;
+      isImage = false;
       clearTimeout(timeout);
     };
 
@@ -235,7 +237,7 @@ const Blog = ({ isNew }) => {
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
-        {loading ? <Loader /> :
+        {loading ? <Loader isImage={isImage} /> :
           (
             <>
               <FieldsetBeije>
