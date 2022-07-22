@@ -39,6 +39,7 @@ const emptyState = {
 };
 
 let id = null;
+let isQuickSave = false;
 
 const User = ({ isNew }) => {
 
@@ -102,7 +103,7 @@ const User = ({ isNew }) => {
   }
 
   return (
-    getUserResult?.response ?
+    getUserResult?.response || isNew ?
       <div className={styles["container"]}>
         <form>
           <DetailsHeader
@@ -220,7 +221,7 @@ const User = ({ isNew }) => {
           goBack={goBack}
           path={"/community"}
           actions={{
-            save: () => { saveUser({ ...state, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
+            save: () => { saveUser({ ...state, picImage: null, picImageThumbnail: null, hireDate: !state.hireDate ? null : format(state.hireDate, "yyyy-MM-dd") }) },
             disable: () => { disableUser() }
           }}
           setModal={setShouldShowModal}
