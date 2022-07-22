@@ -232,8 +232,6 @@ const Blog = ({ isNew }) => {
 
   return (
     <div className={styles["container-bg"]}>
-
-      {console.log(state)}
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
