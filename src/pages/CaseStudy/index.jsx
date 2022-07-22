@@ -104,7 +104,7 @@ const CaseStudy = ({ isNew }) => {
     const disableOrActive = getResponse(disableOrActiveResult);
 
     if (disableOrActive.response) navigateWithNotify(navigate, "/case-studies");
-    
+
     if (disableOrActive.error) notify('error', toastId);
 
     return () => (id = null);
@@ -188,6 +188,9 @@ const CaseStudy = ({ isNew }) => {
                 </CardContainerMemo>
                 <CardContainerMemo head={"Logo"}>
                   <SingleImageInput
+                    idProp={idToUse}
+                    isNew={isNew}
+                    type="case_study"
                     aspectRatio="1"
                     style={{ maxWidth: "200px", maxHeight: "200px" }}
                     value={state.logo}
@@ -249,7 +252,12 @@ const CaseStudy = ({ isNew }) => {
         <Message message={goBack ? "Non hai Salvato, Vuoi salvare?" : "Sicur* di Procedere?"} />
       </Modal>
 
-      { saveCaseStudyResult.error !== null || saveCaseStudyResult.response  &&
+      {saveCaseStudyResult.error !== null &&
+        <ToastContainer />
+      }
+
+      {
+        (isQuickSave && saveCaseStudyResult.response) &&
         <ToastContainer />
       }
     </div>

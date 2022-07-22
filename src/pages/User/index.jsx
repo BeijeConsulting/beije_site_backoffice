@@ -121,6 +121,9 @@ const User = ({ isNew }) => {
                     style={{ justifyContent: 'center' }}>
                     <div className={styles["images"]}>
                       <SingleImageInput
+                        idProp={id}
+                        isNew={isNew}
+                        type="user"
                         aspectRatio="1"
                         style={{ maxWidth: "400px" }}
                         label="Immagine profilo"

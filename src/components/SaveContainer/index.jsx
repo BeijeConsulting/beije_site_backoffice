@@ -6,7 +6,10 @@ function SaveContainer({ isNew, onSubmit }) {
   return (
     <div className={styles["save-container"]}>
 
-      <button type="submit" className="secondary-button"
+      <button
+        name="quickSave"
+        type="submit"
+        className="secondary-button"
         onClick={onSubmit}>
         Salvataggio rapido
       </button>

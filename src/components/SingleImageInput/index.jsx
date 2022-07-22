@@ -22,6 +22,14 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
     method: "delete"
   })
 
+  const [deleteLogoRes, deleteLogo] = useService(`/admin/casestudy/delete_logo/${idProp}`, {
+    method: "put"
+  })
+
+  const [deleteImgProfileRes, deleteImgProfile] = useService(`/team/user/delete_img/${idProp}`, {
+    method: "put"
+  })
+
   useEffect(() => {
     if (isBlogMassive) {
       (async () => {
@@ -89,16 +97,30 @@ const SingleImageInput = ({ value, onChange, label, style, aspectRatio, isBlogMa
             className={styles["delete-btn"]}
             onClick={(e) => {
               e.preventDefault();
+              switch (type) {
+                case "cover_img":
+                  deleteImg();
+                  break;
+                  
+                case "case_study":
+                  deleteLogo();
+                  break;
 
-              if (type === "cover_img") deleteImg();
+                case "user":
+                  deleteImgProfile();
+                  break;
 
-              else !isNew && imagesApi("/admin/site_image/blog/delete", {
-                file_base64: null,
-                name: value,
-                type: null,
-                description: value,
-                [type]: idProp,
-              }, "delete");
+                default:
+                  !isNew && imagesApi("/admin/site_image/blog/delete", {
+                    file_base64: null,
+                    name: value,
+                    type: null,
+                    description: value,
+                    [type]: idProp,
+                  }, "delete");
+                  break;
+              }
+
 
               onChange("", true);
 
