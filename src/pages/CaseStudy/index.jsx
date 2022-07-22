@@ -36,7 +36,7 @@ const emptyState = {
   subtitle: "",
   language: "it",
   description: "",
-  logo: "",
+  logo: null,
   backgroundColor: "",
   permalink: "",
   translateCasePermalink: "",
