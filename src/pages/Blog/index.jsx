@@ -115,9 +115,11 @@ const Blog = ({ isNew }) => {
     }
 
     if (res && isQuickSave) {
-      getBlog();
-      notify("success", toastId);
-      setLoading(false)
+      timeout = setTimeout(() => {
+        getBlog();
+        notify("success", toastId);
+        setLoading(false)
+      }, 1000);
     }
 
     if (res && !isQuickSave) navigateWithNotify(navigate, "/blogs");
@@ -134,21 +136,19 @@ const Blog = ({ isNew }) => {
   useEffect(() => {  //si gestiscono tutti i risultati delle chiamate e si vanno a mostrare dei popup o aggiornare i dati oltre alla navigazione
     const { response } = getResponse(getBlogResult);
     if (response) {
-      console.log(state);
       setLoading(false);
       setState(response);
     }
-    
+
     const responsePermalink = getResponse(getBlogWithPermalinkRes);
     if (responsePermalink.response) {
       id = responsePermalink.response.id
       setState(responsePermalink.response);
     }
-    
+
     const save = getResponse(saveBlogResult);
     if (save.response) {
-      setState({...state, ...save.response});
-      
+
       if (state.images.length === 0 && !isQuickSave) navigateWithNotify(navigate, '/blogs');
 
       setLoading(true);
@@ -233,6 +233,7 @@ const Blog = ({ isNew }) => {
   return (
     <div className={styles["container-bg"]}>
 
+      {console.log(state)}
       <form>
         <DetailsHeader handleBack={handleBack} isNew={isNew} title={isNew ? "Post" : state.title} onSubmit={handleSubmitPost} />
 
