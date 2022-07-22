@@ -10,8 +10,8 @@ const instance = axios.create({
   },
 });
 
-export async function uploadImages(resource, imageObj) {
-    return await instance.post(resource, imageObj)
+export async function imagesApi(resource, imageObj, method) {
+    return await instance(resource, {data: imageObj, method})
     .then((response)=> response.data)
     .catch((error)=> error);
 }

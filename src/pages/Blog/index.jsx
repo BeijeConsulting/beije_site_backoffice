@@ -9,7 +9,7 @@ import useService from "../../hooks/useService";
 import { notify, ToastContainer } from "../../utils/toast";
 import { todayWithTime } from "../../utils/date";
 import { checkIsQuickSave, getResponse, navigateWithNotify, permalink } from "../../utils/utils";
-import { uploadImages } from "../../config/axios.config";
+import { imagesApi } from "../../config/axios.config";
 
 // components
 import Input from "../../components/Input";
@@ -100,17 +100,17 @@ const Blog = ({ isNew }) => {
 
     if (newArray.length > 0) {
       res = await Promise.all(newArray.map((img) => {
-        return uploadImages("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse })
+        return imagesApi("/upload/img", { ...imageState, file_base64: img, blogId: isNew ? id : idToUse },"post")
       }));
     }
 
     if (state.cover_img.startsWith("data")) {
-      res = await uploadImages("/upload/img", {
+      res = await imagesApi("/upload/img", {
         ...imageState,
         file_base64: state.cover_img,
         blogId: isNew ? id : idToUse,
         type: "cover_img"
-      })
+      },"post")
     }
 
     if (res && isQuickSave) getBlog();
