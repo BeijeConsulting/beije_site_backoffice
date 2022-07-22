@@ -226,8 +226,8 @@ const Blog = ({ isNew }) => {
     navigate("/blogs")
   }
 
-  const setImages = (images) => {
-    setState({ ...state, images: [...images] })
+  const SetImages = (images) => {
+    setState({ ...state, images: images })
   }
 
   return (
